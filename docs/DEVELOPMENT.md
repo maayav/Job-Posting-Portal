@@ -8,9 +8,9 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 
 - Phase 1 (Foundation & Security) — **done**
 - Phase 2 (Profile Ingestion) — **done**
-- Phase 3 (AI Extraction) — **in progress**
-- Phase 4 (Deterministic Scoring) — pending
-- Phase 5 (Report & Frontend) — pending
+- Phase 3 (AI Extraction) — **done**
+- Phase 4 (Deterministic Scoring) — **done**
+- Phase 5 (Report & Frontend) — **in progress**
 - Phase 6 (Progress Tracking) — pending
 - Phase 8 (Hardening & Docs) — pending
 - Phase 7 (deferred features) — intentionally skipped
@@ -55,12 +55,22 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 - Ownership middleware on all profile routes — verified cross-user 403.
 - 3 sample resumes generated (`backend/sample-resumes/`) for tests + demo.
 
-### Phase 3 — AI Extraction (in progress)
+### Phase 3 — AI Extraction (done, commit `0918e71`)
 - `geminiService.js`: strict JSON extraction with zod schema validation, transient retry (3 attempts, 1s/2s/4s), malformed-JSON retry-once then `errorCode: extraction_invalid`; maps 404/500/429 → clean errorCodes (`service_unavailable` / `extraction_invalid`). Never logs resume text.
 - `skillService.js`: builds bounded prompt input (resume + GitHub), dedups/merges skills, confidence by fixed rule (high = 2+ sources w/ evidence, medium = 1 source, low = bare keyword) — Gemini never decides confidence.
 - `ExtractedSkillProfile` model (skills + sources + evidence, per submission, upsert).
 - **Bug found & fixed:** `gemini-2.5-flash` returned 404 → switched to `gemini-3.6-flash`.
-- **Next:** re-run extraction on 3 sample resumes and verify evidence traces back.
+- Verified on 3 sample resumes: skills + evidence trace back to resume/GitHub; messy resume degraded to GitHub-only skills.
+
+### Phase 4 — Deterministic Scoring (done, commit `c24e9da`)
+- `SkillOntology` (31 skills: SDE + ML Engineer, weights, cached `gemini-embedding-2` vectors, version `2026-09`) + `ResourceCatalog` (37 curated verified resources) seeded via `scripts/seed-ontology.js`.
+- `embeddingService.js`: bare-skill-name embedding (lowercase+trim), vector normalization, cosine similarity.
+- `scoringService.js`: exact Section 6 formula `score = 100·Σ(wᵢ·mᵢ)/Σwᵢ`; thresholds 80/60 → strong/developing/gap; gap priority `wᵢ(1−mᵢ)` rescaled to [0,1]; study plan from `ResourceCatalog` exact normalized match; no fuzzy matching.
+- `analysisService.js`: async in-process job (queued→processing→completed/failed), lifecycle logging (no resume/evidence in logs), graceful `errorCode`s.
+- `POST /api/analyze`: partial-unique-index idempotency (duplicate → same report id + 202), 60s cooldown from `completedAt` → 429 fixed body, rate limited.
+- `GET /api/analyze/:id/status`, `GET /api/report/:id` (owner/admin), `PATCH /api/report/:id/study-plan/:itemId` (owner).
+- Verified: score determinism (same submission → 91 twice), gap breakdown + study plan with curated resources, cooldown 429, cross-user 403.
+- **Bugs found & fixed:** `weight` lives inside `roles[]` (not skill root) → NaN score; gap entries missing required `priority` → failed report; NaN score hardened with finiteness guard; failure path now raw-updates status (avoids re-validating stale NaN fields).
 
 ## How to run
 
@@ -81,9 +91,9 @@ node scripts/server.js stop
 | POST | `/api/profile` | done (uploads + extraction) |
 | GET | `/api/profile/:id` | done |
 | DELETE | `/api/profile/:id` | done |
-| POST | `/api/analyze` | pending (Phase 4) |
-| GET | `/api/analyze/:id/status` | pending (Phase 4) |
-| GET | `/api/report/:id` | pending (Phase 4) |
+| POST | `/api/analyze` | done (async job, idempotent, cooldown) |
+| GET | `/api/analyze/:id/status` | done |
+| GET | `/api/report/:id` | done |
+| PATCH | `/api/report/:id/study-plan/:itemId` | done |
 | GET | `/api/report/history` | pending (Phase 6) |
 | GET | `/api/users/:userId/reports` | pending (Phase 6) |
-| PATCH | `/api/report/:id/study-plan/:itemId` | pending (Phase 5) |
