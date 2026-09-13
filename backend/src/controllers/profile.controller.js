@@ -4,6 +4,7 @@ import { ProfileSubmission } from '../models/profileSubmission.js';
 import { saveResume, deleteResume } from '../services/storageService.js';
 import { extractResumeText } from '../services/resumeService.js';
 import { normalizeUsername, fetchGithubProfile } from '../services/githubService.js';
+import { processExtraction } from '../services/skillService.js';
 import { AppError } from '../utils/errors.js';
 
 const createSchema = z.object({
@@ -17,12 +18,13 @@ async function collectGithub(username) {
     return {
       github_username: profile.username,
       github_status: 'ok',
+      github_profile: profile,
     };
   } catch (err) {
     if (err instanceof AppError && err.code === 'github_not_found') {
-      return { github_username: username, github_status: 'not_found' };
+      return { github_username: username, github_status: 'not_found', github_profile: null };
     }
-    return { github_username: username, github_status: 'unavailable' };
+    return { github_username: username, github_status: 'unavailable', github_profile: null };
   }
 }
 
@@ -41,7 +43,7 @@ export async function createProfile(req, res) {
     throw err;
   }
 
-  let github = { github_username, github_status: 'none' };
+  let github = { github_username, github_status: 'none', github_profile: null };
   if (github_username) {
     github = await collectGithub(github_username);
   }
@@ -51,14 +53,31 @@ export async function createProfile(req, res) {
     resume_file_ref: filename,
     resume_text,
     target_role: data.target_role,
-    ...github,
+    github_username: github.github_username,
+    github_status: github.github_status,
   });
+
+  let extraction = { status: 'pending', error: null };
+  try {
+    const profile = await processExtraction(submission._id, github.github_profile);
+    extraction = { status: 'completed', error: null, skillCount: profile.skills.length };
+    submission.extraction_status = 'completed';
+    submission.extraction_error = null;
+    await submission.save();
+  } catch (err) {
+    extraction = { status: 'failed', error: err.code ?? 'extraction_failed' };
+    submission.extraction_status = 'failed';
+    submission.extraction_error = extraction.error;
+    await submission.save();
+  }
 
   res.status(201).json({
     id: submission._id.toString(),
     target_role: submission.target_role,
     github_username: submission.github_username,
     github_status: submission.github_status,
+    extraction_status: extraction.status,
+    extraction_error: extraction.error ?? null,
     submitted_at: submission.submitted_at,
     created_at: submission.createdAt,
   });

@@ -13,6 +13,12 @@ const profileSubmissionSchema = new mongoose.Schema(
     },
     target_role: { type: String, enum: ['SDE', 'ML Engineer'], required: true },
     submitted_at: { type: Date, default: Date.now },
+    extraction_status: {
+      type: String,
+      enum: ['pending', 'completed', 'failed'],
+      default: 'pending',
+    },
+    extraction_error: { type: String, default: null },
   },
   { timestamps: true }
 );
