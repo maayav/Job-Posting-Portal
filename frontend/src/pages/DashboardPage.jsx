@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import ScoreCard from '../components/ScoreCard';
 import GapList from '../components/GapList';
 import StudyPlan from '../components/StudyPlan';
+import ProgressChart from '../components/ProgressChart';
 import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const [report, setReport] = useState(null);
+  const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +25,11 @@ export default function DashboardPage() {
       .then((res) => setReport(res.data))
       .catch((err) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
+
+    api
+      .get('/report/history')
+      .then((res) => setHistory(res.data.history))
+      .catch(() => {});
   }, []);
 
   function handleToggle(itemId, skill) {
@@ -64,6 +71,7 @@ export default function DashboardPage() {
       {report && (
         <>
           <ScoreCard score={report.score} targetRole={report.target_role} generatedAt={report.generated_at} />
+          <ProgressChart history={history} />
           <div className="columns">
             <GapList report={report} />
             <StudyPlan

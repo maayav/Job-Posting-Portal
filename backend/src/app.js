@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import analyzeRoutes from './routes/analyze.routes.js';
 import reportRoutes from './routes/report.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/analyze', analyzeRoutes);
 app.use('/api/report', reportRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

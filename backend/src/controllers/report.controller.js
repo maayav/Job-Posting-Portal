@@ -1,4 +1,6 @@
 import { ReadinessReport } from '../models/readinessReport.js';
+import { ProfileSubmission } from '../models/profileSubmission.js';
+import mongoose from 'mongoose';
 import { AppError } from '../utils/errors.js';
 
 function toJson(report) {
@@ -51,4 +53,35 @@ export async function markStudyPlanItemDone(req, res) {
   item.done = !item.done;
   await report.save();
   res.json({ report_id: report._id.toString(), item_id: itemId, done: item.done });
+}
+
+async function historyForUser(userId) {
+  const submissions = await ProfileSubmission.find({ user_id: userId }).select('_id').lean();
+  const reports = await ReadinessReport.find({
+    submission_id: { $in: submissions.map((s) => s._id) },
+    status: 'completed',
+  })
+    .sort({ completedAt: 1 })
+    .lean();
+
+  return reports.map((r) => ({
+    report_id: r._id.toString(),
+    score: r.score,
+    target_role: r.target_role,
+    completed_at: r.completedAt,
+  }));
+}
+
+export async function getOwnHistory(req, res) {
+  const history = await historyForUser(req.user.id);
+  res.json({ history });
+}
+
+export async function getUserReports(req, res) {
+  const { userId } = req.params;
+  if (!mongoose.isValidObjectId(userId)) {
+    throw new AppError('Invalid user id', 400, 'invalid_id');
+  }
+  const history = await historyForUser(userId);
+  res.json({ user_id: userId, history });
 }
