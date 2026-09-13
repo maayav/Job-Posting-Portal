@@ -10,9 +10,9 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 - Phase 2 (Profile Ingestion) — **done**
 - Phase 3 (AI Extraction) — **done**
 - Phase 4 (Deterministic Scoring) — **done**
-- Phase 5 (Report & Frontend) — **in progress**
-- Phase 6 (Progress Tracking) — pending
-- Phase 8 (Hardening & Docs) — pending
+- Phase 5 (Report & Frontend) — **done**
+- Phase 6 (Progress Tracking) — **done**
+- Phase 8 (Hardening & Docs) — **done**
 - Phase 7 (deferred features) — intentionally skipped
 
 ## Environment & setup
@@ -81,7 +81,41 @@ node scripts/server.js start        # API on :5000
 node scripts/server.js stop
 ```
 
-## API surface (implemented so far)
+### Phase 5 — Report & Frontend (done, commit `c31f2cf`)
+- Vite + React 19 + react-router + Recharts; Vite proxy `/api` → `:5000`.
+- `AuthContext` (JWT in localStorage, 401 auto-logout), protected routes.
+- Upload flow: PDF + GitHub + target role → skill review (evidence shown) → Analyze → polling → dashboard.
+- Dashboard: score ring, strong/developing/gap chips, prioritized study plan with checkboxes wired to PATCH.
+- Verified full journey through the proxy: register → upload → 18 skills extracted → analyze → score 90 (ML Engineer).
+
+### Phase 6 — Progress Tracking (done, commit `e3ebb7e`)
+- `GET /api/report/history` (own only, no userId in URL) and `GET /api/users/:userId/reports` (admin only) — mounted at `/api/users` per spec.
+- Recharts score-trend line on the dashboard (renders with ≥2 completed reports).
+- Verified: student2 sees empty history (isolation), non-admin gets 403 on the admin route, admin sees history.
+
+### Phase 8 — Hardening & Docs (done)
+- **Test suite:** 35 tests + 2 opt-in drift tests (`vitest`, supertest, dockerized Mongo test DB). Covers auth (hash/JWT/expiry), upload security (magic bytes/5MB/missing/spoofed), ownership + admin access, delete cascades file, GitHub degradation, scoring formula/thresholds/priority rescaling/exact-match resources, analyze idempotency (partial unique index), cooldown 429 fixed body, retry after failure, clean errorCodes.
+- **Bugs found & fixed during testing:**
+  - `global-setup.js` ran without the test env overrides and **dropped the dev database** — now sets `MONGO_URI` itself.
+  - Rate limiter (10/min) tripped across tests — test mode uses a high limit.
+  - Test-mode job runner made synchronous (`runAnalysis` awaited) for deterministic tests.
+  - Ontology loader didn't merge shared skills across role files (Python lost its SDE role) — now merges roles by skill name.
+- **Observability:** job lifecycle logged (`analysis_job` with report/submission ids, status, errorCode; no resume text/evidence). Gemini/GitHub failures logged with attempt count.
+- **Drift regression:** `tests/drift.test.js` (opt-in via `RUN_DRIFT_TEST=1`) + `tests/fixtures/drift-baseline.json` (SDE 89, ML Engineer 91, tolerance ±2, model/version pinned). Regenerate with `npm run drift-baseline`.
+- **Ops scripts:** `scripts/refresh-ontology.js` (edit weights in `ontology/*.json`, re-embed + upsert), `scripts/server.js` (start/stop), `npm audit` clean (0 vulnerabilities).
+- **Docs:** `docs/API.md`, `docs/SETUP.md`, `docs/SCHEMA.md`.
+- **Security checklist (Section 10):** rate limits ✓, secrets env-only ✓, zod validation everywhere ✓, upload hardening ✓, resume text never returned/logged ✓, owner-or-admin checks on every scoped route ✓, bcrypt ✓, stateless JWT ✓, `maxPoolSize` ✓, retries/idempotency ✓, `npm audit` clean ✓. HTTPS/HSTS is a reverse-proxy concern documented in SETUP.md.
+
+## Demo credentials (dev DB)
+
+| Email | Password | Role |
+|---|---|---|
+| student1@test.com | secret123 | admin |
+| student2@test.com | secret123 | student |
+
+Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-resumes/`).
+
+## API surface (implemented)
 
 | Method | Endpoint | Status |
 |---|---|---|
@@ -95,5 +129,5 @@ node scripts/server.js stop
 | GET | `/api/analyze/:id/status` | done |
 | GET | `/api/report/:id` | done |
 | PATCH | `/api/report/:id/study-plan/:itemId` | done |
-| GET | `/api/report/history` | pending (Phase 6) |
-| GET | `/api/users/:userId/reports` | pending (Phase 6) |
+| GET | `/api/report/history` | done (own history only) |
+| GET | `/api/users/:userId/reports` | done (admin only) |

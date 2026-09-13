@@ -1,0 +1,14 @@
+{
+  "embedding_model": "gemini-embedding-2",
+  "embedding_version": "2026-09",
+  "recorded_at": "2026-09-13T14:42:06.642Z",
+  "tolerance": 2,
+  "roles": {
+    "SDE": {
+      "score": 89
+    },
+    "ML Engineer": {
+      "score": 91
+    }
+  }
+}

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
-import { queueAnalysis } from '../services/analysisService.js';
+import { queueAnalysis, runAnalysis } from '../services/analysisService.js';
+import { env } from '../config/env.js';
 import { AppError } from '../utils/errors.js';
 
 const COOLDOWN_MS = 60 * 1000;
@@ -52,7 +53,11 @@ export async function createAnalysis(req, res) {
     embedding_version: null,
   });
 
-  queueAnalysis(report._id);
+  if (env.NODE_ENV === 'test') {
+    await runAnalysis(report._id);
+  } else {
+    queueAnalysis(report._id);
+  }
 
   res.status(202).json({ report_id: report._id.toString(), status: report.status });
 }

@@ -89,6 +89,12 @@ export async function runAnalysis(reportId) {
 }
 
 export function queueAnalysis(reportId) {
+  if (env.NODE_ENV === 'test') {
+    runAnalysis(reportId).catch((err) => {
+      console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, message: err.message }));
+    });
+    return;
+  }
   setImmediate(() => {
     runAnalysis(reportId).catch((err) => {
       console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, message: err.message }));
