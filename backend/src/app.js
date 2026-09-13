@@ -3,6 +3,8 @@ import { apiLimiter } from './middleware/rateLimit.middleware.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
+import analyzeRoutes from './routes/analyze.routes.js';
+import reportRoutes from './routes/report.routes.js';
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/analyze', analyzeRoutes);
+app.use('/api/report', reportRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

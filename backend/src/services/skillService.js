@@ -79,7 +79,7 @@ export async function processExtraction(submissionId, githubData) {
   const saved = await ExtractedSkillProfile.findOneAndUpdate(
     { submission_id: submissionId },
     { $set: { skills, gemini_model: env.GEMINI_MODEL } },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   );
 
   return saved;
