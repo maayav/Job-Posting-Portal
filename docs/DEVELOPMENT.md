@@ -108,6 +108,21 @@ node scripts/server.js stop
 
 ## Incident log
 
+### 2026-09-14 — resource link audit + expanded catalog
+
+- Added `scripts/check-resource-links.js` — HEAD with GET fallback, reports status/final URL/flags (404, timeouts, unexpected host redirects).
+- First audit (37 links): **2 broken** (jschallenger.com/react, freeCodeCamp React curriculum path — pre-existing, left as-is pending decision), **9 suspicious** (LeetCode 403 = bot block; Node.js/PyTorch/HF/GeeksforGeeks/Mode redirects; OpenCV version redirect; Express trailing slash).
+- Expanded catalog to **92 entries** (`resources/resources-extra.json`) with websites + YouTube per skill; new `video` resource type added to `ResourceCatalog` and `ReadinessReport.study_plan` enums.
+- Seeder now does a **full sync** (removes stale catalog entries no longer in the JSON files).
+- Post-expansion audit: 75 ok, 14 suspicious, **2 broken (both pre-existing)**. Two new links that were broken (`@AutomationStepByStep`, scikit-learn tutorial path) were fixed to verified URLs.
+- Drafted 8 new role skill matrices via Gemini → `ontology/drafts/new-roles-draft.json` (**not live**; awaiting review). Script `scripts/draft-roles.js` is incremental/resumable (`--only=`, `--force`).
+
+### 2026-09-14 — "backend running too long" (draft script + hangs)
+
+- `draft-roles.js` was slow because each role retried up to 3 models × 2 attempts against a rate-limited API with up to 60s retry-after waits, and `| tail` hid all progress. Fixed: flash-lite-first, 30s timeouts, 20s retry cap, per-role incremental saves, resume support, live progress.
+- Hang investigation (reported, not fixed): all Gemini calls have explicit timeouts (60s gen / 30–60s embed / 15s GitHub), but worst-case extraction is ~18 min (3 models × 3 attempts × timeout+retry-after). Frontend polling is bounded (~160s then an error), but `POST /api/profile` runs extraction synchronously with no frontend timeout, so the UI can appear stuck. No stuck jobs found in Mongo.
+
+
 ### 2026-09-14 — `service_unavailable` on extraction and analyze (root cause: Gemini free-tier quota)
 
 **Symptoms:** upload-time extraction and `/api/analyze` both returned `service_unavailable`.

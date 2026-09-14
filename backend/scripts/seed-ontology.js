@@ -31,6 +31,7 @@ async function seedOntology() {
 
 async function seedResources() {
   const entries = loadResourceEntries();
+  const seen = [];
   let inserted = 0;
   for (const resource of entries) {
     await ResourceCatalog.findOneAndUpdate(
@@ -38,9 +39,15 @@ async function seedResources() {
       { $set: resource },
       { upsert: true }
     );
+    seen.push({ skill_name: resource.skill_name, url: resource.url });
     inserted += 1;
   }
-  console.log(`Resources: ${inserted} catalog entries upserted`);
+
+  // Full sync: remove catalog entries that are no longer in the seed files.
+  const stale = await ResourceCatalog.deleteMany({
+    $nor: seen.map((s) => ({ skill_name: s.skill_name, url: s.url })),
+  });
+  console.log(`Resources: ${inserted} catalog entries upserted${stale.deletedCount ? `, ${stale.deletedCount} stale removed` : ''}`);
 }
 
 async function main() {

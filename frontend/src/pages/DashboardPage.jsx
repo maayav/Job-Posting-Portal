@@ -50,7 +50,7 @@ export default function DashboardPage() {
           <strong>SkillGap Tracker</strong>
         </div>
         <div className="topbar-user">
-          <Link to="/upload">New analysis</Link>
+          <Link to="/">New analysis</Link>
           <span>{user?.name}</span>
           <button className="link" onClick={logout}>Log out</button>
         </div>
@@ -64,7 +64,7 @@ export default function DashboardPage() {
         <div className="card center">
           <h2>No report yet</h2>
           <p className="muted">Upload a resume to get your readiness score.</p>
-          <Link to="/upload" className="primary inline">Go to upload</Link>
+          <Link to="/" className="primary inline">Go to upload</Link>
         </div>
       )}
 

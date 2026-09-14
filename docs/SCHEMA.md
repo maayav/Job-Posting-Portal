@@ -84,7 +84,7 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 |---|---|---|
 | `skill_name` | string | indexed; matched exactly (normalized) |
 | `title` / `url` | string | human-vetted, never model-generated |
-| `type` | enum `documentation` / `course` / `practice-set` | |
+| `type` | enum `documentation` / `course` / `practice-set` / `video` | |
 | `verified` | boolean | always true in seed data |
 | unique index | `{skill_name, url}` | |
 

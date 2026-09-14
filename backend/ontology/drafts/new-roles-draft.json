@@ -1,0 +1,725 @@
+{
+  "generated_at": "2026-09-14T17:36:11.712Z",
+  "scale": "1-5 (5 = critical)",
+  "note": "DRAFT for review — not loaded into SkillOntology. On approval, weights are normalized to 0-1 for the live schema.",
+  "roles": {
+    "Full-Stack Developer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 5,
+          "note": "Primary language for both frontend and backend development."
+        },
+        {
+          "name": "TypeScript",
+          "category": "language",
+          "weight": 5,
+          "note": "Essential for type safety in modern scalable applications."
+        },
+        {
+          "name": "React",
+          "category": "framework",
+          "weight": 5,
+          "note": "Dominant library for building dynamic user interfaces."
+        },
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 5,
+          "note": "Standard runtime for server-side JavaScript execution."
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 5,
+          "note": "Leading relational database for enterprise applications."
+        },
+        {
+          "name": "RESTful APIs",
+          "category": "architecture",
+          "weight": 5,
+          "note": "Fundamental pattern for client-server communication."
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 5,
+          "note": "Universal standard for version control and collaboration."
+        },
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 4,
+          "note": "Required for building scalable and maintainable architectures."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 4,
+          "note": "Critical for consistent containerized environments."
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 3,
+          "note": "Popular NoSQL alternative for flexible document storage."
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 3,
+          "note": "Leading cloud platform for deploying and scaling apps."
+        },
+        {
+          "name": "GraphQL",
+          "category": "architecture",
+          "weight": 2,
+          "note": "Alternative query language for efficient API data fetching."
+        },
+        {
+          "name": "Redis",
+          "category": "database",
+          "weight": 2,
+          "note": "Useful for caching and real-time session management."
+        },
+        {
+          "name": "Jest",
+          "category": "testing",
+          "weight": 2,
+          "note": "Standard testing framework for unit and integration tests."
+        }
+      ]
+    },
+    "Backend Developer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 5,
+          "note": "Primary runtime environment for modern backend applications."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 5,
+          "note": "Essential language for APIs, microservices, and scripting."
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 5,
+          "note": "Industry standard relational database for complex data."
+        },
+        {
+          "name": "RESTful APIs",
+          "category": "architecture",
+          "weight": 5,
+          "note": "Core paradigm for client-server communication."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 4,
+          "note": "Standard tool for containerizing applications."
+        },
+        {
+          "name": "Redis",
+          "category": "database",
+          "weight": 4,
+          "note": "Crucial for caching, session management, and message queues."
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 4,
+          "note": "Dominant cloud provider for hosting backend infrastructure."
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 4,
+          "note": "Mandatory version control system for team collaboration."
+        },
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 4,
+          "note": "Required for building scalable and reliable distributed systems."
+        },
+        {
+          "name": "GraphQL",
+          "category": "framework",
+          "weight": 3,
+          "note": "Alternative query language for flexible API data fetching."
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 3,
+          "note": "Popular NoSQL choice for unstructured or rapid-schema data."
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 3,
+          "note": "Used for advanced container orchestration at scale."
+        },
+        {
+          "name": "OAuth",
+          "category": "security",
+          "weight": 3,
+          "note": "Standard protocol for authentication and authorization."
+        },
+        {
+          "name": "Jest",
+          "category": "testing",
+          "weight": 2,
+          "note": "Common framework for unit and integration testing."
+        }
+      ]
+    },
+    "Data Scientist": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 5,
+          "note": "Primary language for data manipulation and machine learning."
+        },
+        {
+          "name": "SQL",
+          "category": "language",
+          "weight": 5,
+          "note": "Essential for data extraction and relational database querying."
+        },
+        {
+          "name": "Machine Learning",
+          "category": "ml",
+          "weight": 5,
+          "note": "Core capability for predictive modeling and algorithms."
+        },
+        {
+          "name": "Pandas",
+          "category": "framework",
+          "weight": 5,
+          "note": "Standard library for data wrangling and analysis."
+        },
+        {
+          "name": "Statistics",
+          "category": "core-cs",
+          "weight": 5,
+          "note": "Foundation for experimental design and data interpretation."
+        },
+        {
+          "name": "Scikit-Learn",
+          "category": "framework",
+          "weight": 4,
+          "note": "Standard toolkit for implementing traditional machine learning algorithms."
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 4,
+          "note": "Crucial for communicating insights to stakeholders."
+        },
+        {
+          "name": "Git",
+          "category": "devops",
+          "weight": 4,
+          "note": "Required for version control and collaborative code development."
+        },
+        {
+          "name": "PyTorch",
+          "category": "framework",
+          "weight": 3,
+          "note": "Popular deep learning framework for advanced AI tasks."
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 3,
+          "note": "Common cloud platform for scaling data pipelines and models."
+        },
+        {
+          "name": "Spark",
+          "category": "data",
+          "weight": 3,
+          "note": "Needed for processing large-scale big data sets."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 3,
+          "note": "Useful for containerizing models and ensuring reproducibility."
+        },
+        {
+          "name": "A/B Testing",
+          "category": "core-cs",
+          "weight": 2,
+          "note": "Important for measuring product changes and user experimentation."
+        },
+        {
+          "name": "Snowflake",
+          "category": "database",
+          "weight": 2,
+          "note": "Popular cloud data warehouse for modern data stacks."
+        },
+        {
+          "name": "Tableau",
+          "category": "tools",
+          "weight": 1,
+          "note": "Nice-to-have BI tool for building executive dashboards."
+        }
+      ]
+    },
+    "Data Engineer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "SQL",
+          "category": "language",
+          "weight": 5,
+          "note": "Fundamental for data querying, transformation, and database management."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 5,
+          "note": "Primary programming language for data pipelines and scripting."
+        },
+        {
+          "name": "Apache Spark",
+          "category": "framework",
+          "weight": 5,
+          "note": "Industry standard for large-scale data processing and analytics."
+        },
+        {
+          "name": "ETL/ELT Design",
+          "category": "architecture",
+          "weight": 5,
+          "note": "Core paradigm for moving and transforming data systems."
+        },
+        {
+          "name": "Snowflake",
+          "category": "database",
+          "weight": 4,
+          "note": "Popular cloud data warehouse for modern data stacks."
+        },
+        {
+          "name": "Apache Airflow",
+          "category": "tools",
+          "weight": 4,
+          "note": "Leading workflow orchestration tool for managing data pipelines."
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 4,
+          "note": "Dominant cloud provider hosting enterprise data infrastructure."
+        },
+        {
+          "name": "Data Modeling",
+          "category": "architecture",
+          "weight": 4,
+          "note": "Essential for designing efficient and scalable database schemas."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 3,
+          "note": "Containerization ensures consistent environments across development and production."
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 3,
+          "note": "Common transactional database source for operational data."
+        },
+        {
+          "name": "Git",
+          "category": "devops",
+          "weight": 3,
+          "note": "Standard version control for code collaboration and tracking."
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 2,
+          "note": "Infrastructure as code for provisioning cloud resources."
+        },
+        {
+          "name": "Kafka",
+          "category": "tools",
+          "weight": 2,
+          "note": "Used for real-time streaming data ingestion architectures."
+        },
+        {
+          "name": "dbt",
+          "category": "tools",
+          "weight": 2,
+          "note": "Modern data transformation tool for analytics engineering workflows."
+        },
+        {
+          "name": "NoSQL",
+          "category": "database",
+          "weight": 1,
+          "note": "Useful for handling unstructured or semi-structured data sources."
+        }
+      ]
+    },
+    "DevOps Engineer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 5,
+          "note": "Industry standard for container orchestration at scale."
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 5,
+          "note": "Essential tool for infrastructure as code provisioning."
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 5,
+          "note": "Dominant cloud provider platform required by most enterprises."
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 5,
+          "note": "Critical for automating build, test, and deployment workflows."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 4,
+          "note": "Core technology for containerizing applications consistently."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 4,
+          "note": "Most popular scripting language for automation tasks."
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 4,
+          "note": "Foundational operating system knowledge for cloud environments."
+        },
+        {
+          "name": "Prometheus",
+          "category": "tools",
+          "weight": 4,
+          "note": "Leading monitoring and alerting toolkit for cloud-native apps."
+        },
+        {
+          "name": "Bash",
+          "category": "language",
+          "weight": 3,
+          "note": "Required for quick shell scripting and system administration."
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 3,
+          "note": "Standard version control system for source code and configs."
+        },
+        {
+          "name": "Ansible",
+          "category": "devops",
+          "weight": 3,
+          "note": "Popular configuration management tool for server setup."
+        },
+        {
+          "name": "IAM",
+          "category": "security",
+          "weight": 3,
+          "note": "Crucial for managing cloud access and security compliance."
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 3,
+          "note": "Understanding of VPCs, DNS, and load balancing is vital."
+        },
+        {
+          "name": "Helm",
+          "category": "devops",
+          "weight": 2,
+          "note": "Package manager for simplifying Kubernetes deployments."
+        }
+      ]
+    },
+    "Cybersecurity Analyst": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "SIEM Tools",
+          "category": "tools",
+          "weight": 5,
+          "note": "Essential for real-time log analysis and threat detection."
+        },
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 5,
+          "note": "Critical for containing and mitigating active cyber attacks."
+        },
+        {
+          "name": "Vulnerability Assessment",
+          "category": "security",
+          "weight": 5,
+          "note": "Required for identifying and remediating system weaknesses."
+        },
+        {
+          "name": "Network Security",
+          "category": "security",
+          "weight": 4,
+          "note": "Fundamental for protecting enterprise network infrastructure."
+        },
+        {
+          "name": "Endpoint Detection and Response",
+          "category": "tools",
+          "weight": 4,
+          "note": "Used to monitor and protect end-user devices."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 4,
+          "note": "Primary language for writing security automation scripts."
+        },
+        {
+          "name": "Firewalls and VPNs",
+          "category": "tools",
+          "weight": 4,
+          "note": "Core perimeter defense technologies."
+        },
+        {
+          "name": "Threat Modeling",
+          "category": "architecture",
+          "weight": 3,
+          "note": "Helps anticipate and design against potential attack vectors."
+        },
+        {
+          "name": "Linux",
+          "category": "tools",
+          "weight": 3,
+          "note": "Common OS for servers, security tools, and forensic analysis."
+        },
+        {
+          "name": "IAM (Identity and Access Management)",
+          "category": "security",
+          "weight": 3,
+          "note": "Important for enforcing principle of least privilege."
+        },
+        {
+          "name": "Cloud Security",
+          "category": "cloud",
+          "weight": 3,
+          "note": "Needed as infrastructure increasingly moves to AWS or Azure."
+        },
+        {
+          "name": "Penetration Testing",
+          "category": "testing",
+          "weight": 2,
+          "note": "Useful for proactively probing systems for exploitable flaws."
+        },
+        {
+          "name": "Wireshark",
+          "category": "tools",
+          "weight": 2,
+          "note": "Standard packet analyzer for deep network traffic inspection."
+        },
+        {
+          "name": "PowerShell",
+          "category": "language",
+          "weight": 2,
+          "note": "Helpful for administrative security tasks in Windows environments."
+        },
+        {
+          "name": "Compliance Frameworks",
+          "category": "security",
+          "weight": 1,
+          "note": "NIST and ISO standards for regulatory alignment."
+        }
+      ]
+    },
+    "QA/Test Engineer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "Test Automation",
+          "category": "testing",
+          "weight": 5,
+          "note": "Essential for scalable and efficient software testing."
+        },
+        {
+          "name": "Selenium",
+          "category": "framework",
+          "weight": 5,
+          "note": "Industry standard for web UI test automation."
+        },
+        {
+          "name": "API Testing",
+          "category": "testing",
+          "weight": 5,
+          "note": "Critical for validating backend services and integrations."
+        },
+        {
+          "name": "Postman",
+          "category": "tools",
+          "weight": 4,
+          "note": "Widely used for manual and automated API validation."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 4,
+          "note": "Commonly used language for writing automation scripts."
+        },
+        {
+          "name": "Java",
+          "category": "language",
+          "weight": 4,
+          "note": "Dominant language in enterprise QA automation frameworks."
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 4,
+          "note": "Required for integrating automated tests into deployment."
+        },
+        {
+          "name": "Jira",
+          "category": "tools",
+          "weight": 3,
+          "note": "Standard tool for bug tracking and test management."
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 3,
+          "note": "Needed for database validation and backend test data."
+        },
+        {
+          "name": "Cypress",
+          "category": "framework",
+          "weight": 3,
+          "note": "Popular modern framework for front-end end-to-end testing."
+        },
+        {
+          "name": "Performance Testing",
+          "category": "testing",
+          "weight": 2,
+          "note": "Important for assessing system load and scalability."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 2,
+          "note": "Useful for running isolated test environments consistently."
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 2,
+          "note": "Required for version control of test automation code."
+        }
+      ]
+    },
+    "Cloud Engineer": {
+      "model_used": "gemini-flash-lite-latest",
+      "skills": [
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 5,
+          "note": "Dominant cloud provider platform required by most enterprises."
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 5,
+          "note": "Industry standard for Infrastructure as Code."
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 5,
+          "note": "Essential for containerizing applications across environments."
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 5,
+          "note": "Critical for modern container orchestration at scale."
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 5,
+          "note": "Core automation requirement for modern software delivery."
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 5,
+          "note": "Fundamental OS for almost all cloud infrastructure."
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 4,
+          "note": "Primary language for cloud automation and scripting."
+        },
+        {
+          "name": "Azure",
+          "category": "cloud",
+          "weight": 4,
+          "note": "Major secondary cloud provider in enterprise environments."
+        },
+        {
+          "name": "Cloud Security",
+          "category": "security",
+          "weight": 4,
+          "note": "Vital for IAM, compliance, and securing infrastructure."
+        },
+        {
+          "name": "Prometheus",
+          "category": "tools",
+          "weight": 3,
+          "note": "Standard monitoring and metrics tool for cloud systems."
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 3,
+          "note": "Understanding VPCs, subnets, DNS, and load balancing."
+        },
+        {
+          "name": "Ansible",
+          "category": "devops",
+          "weight": 3,
+          "note": "Useful for configuration management and server provisioning."
+        },
+        {
+          "name": "Go",
+          "category": "language",
+          "weight": 2,
+          "note": "Increasingly used for cloud-native tool development."
+        }
+      ]
+    }
+  }
+}

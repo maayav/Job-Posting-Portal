@@ -5,7 +5,7 @@ const resourceCatalogSchema = new mongoose.Schema(
     skill_name: { type: String, required: true, trim: true, index: true },
     title: { type: String, required: true },
     url: { type: String, required: true },
-    type: { type: String, enum: ['documentation', 'course', 'practice-set'], required: true },
+    type: { type: String, enum: ['documentation', 'course', 'practice-set', 'video'], required: true },
     verified: { type: Boolean, default: true },
   },
   { timestamps: true }

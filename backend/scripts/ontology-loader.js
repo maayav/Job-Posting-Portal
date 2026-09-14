@@ -32,6 +32,14 @@ export function loadOntologyFiles() {
 }
 
 export function loadResourceEntries() {
-  const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'resources', 'resources.json'), 'utf8'));
-  return data.resources;
+  const files = fs
+    .readdirSync(path.join(ROOT, 'resources'))
+    .filter((f) => f.endsWith('.json'))
+    .sort();
+  const entries = [];
+  for (const file of files) {
+    const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'resources', file), 'utf8'));
+    entries.push(...data.resources);
+  }
+  return entries;
 }
