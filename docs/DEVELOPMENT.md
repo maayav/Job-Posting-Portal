@@ -134,6 +134,16 @@ Also seen: `HTTP 503 UNAVAILABLE This model is currently experiencing high deman
 - Extraction model switched to **`gemini-3.5-flash`** — each model has its own free-tier bucket; `gemini-3.6-flash` was saturated.
 - Drift test env fix: `global-setup.js` no longer poisons the worker env with `GEMINI_API_KEY=test-key` when `RUN_DRIFT_TEST=1`, so dotenv loads the real key.
 
+### 2026-09-14 — second wave: `503 high demand` on the primary model → model fallback chain
+
+**Symptom:** extraction/analyze failed with `service_unavailable` again; raw log showed `HTTP 503 UNAVAILABLE This model is currently experiencing high demand.` (plus one 30s timeout) — model overload, not quota.
+
+**Fix:** `geminiService` now tries a fallback chain: `GEMINI_MODEL` first, then `GEMINI_FALLBACK_MODELS` (`gemini-flash-lite-latest,gemini-3-flash-preview` — each has separate quota buckets and capacity). Transient failures on a model move to the next; malformed JSON still retries once then fails as `extraction_invalid`. Generation timeout raised to 60s. The model that actually succeeded is recorded on `ExtractedSkillProfile.gemini_model`.
+
+**Verified:** with `gemini-3.5-flash` returning 503, extraction failed over to `gemini-flash-lite-latest`; profile records `gemini_flash_lite` and the report completed with score 90.
+
+> Note: `Unable to load script: moz-extension://.../atbc.js` in the browser console is a Firefox extension error, unrelated to this app.
+
 **Verified after fix:** upload → `extraction_status: "completed"`; analyze → `status: "completed"`, score 91; server log shows one transient 503 logged raw, then a successful retry.
 
 ## Demo credentials (dev DB)

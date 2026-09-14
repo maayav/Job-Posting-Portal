@@ -1,4 +1,3 @@
-import { env } from '../config/env.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
 import { extractSkills } from './geminiService.js';
@@ -73,12 +72,12 @@ export async function processExtraction(submissionId, githubData) {
   }
 
   const profileText = buildProfileText(submission, githubData);
-  const geminiSkills = await extractSkills(profileText);
+  const { skills: geminiSkills, model: usedModel } = await extractSkills(profileText);
   const skills = mergeSkills(geminiSkills);
 
   const saved = await ExtractedSkillProfile.findOneAndUpdate(
     { submission_id: submissionId },
-    { $set: { skills, gemini_model: env.GEMINI_MODEL } },
+    { $set: { skills, gemini_model: usedModel } },
     { upsert: true, returnDocument: 'after' }
   );
 

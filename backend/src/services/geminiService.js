@@ -20,6 +20,14 @@ export const skillSchema = z.object({
 const RETRY_DELAYS_MS = [1000, 2000, 4000];
 const MAX_TRANSIENT_ATTEMPTS = 3;
 
+function modelChain() {
+  const fallbacks = (env.GEMINI_FALLBACK_MODELS || '')
+    .split(',')
+    .map((m) => m.trim())
+    .filter(Boolean);
+  return [...new Set([env.GEMINI_MODEL, ...fallbacks])];
+}
+
 function isTransientError(err) {
   const status = err.response?.status;
   if ([429, 500, 502, 503, 504].includes(status)) return true;
@@ -45,15 +53,15 @@ function retryAfterSecondsFromError(err) {
   return null;
 }
 
-async function generateContent(prompt) {
-  const url = `${API_BASE}/models/${env.GEMINI_MODEL}:generateContent?key=${env.GEMINI_API_KEY}`;
+async function generateContent(prompt, model) {
+  const url = `${API_BASE}/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
   const res = await axios.post(
     url,
     {
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.2, responseMimeType: 'application/json' },
     },
-    { timeout: 30000 }
+    { timeout: 60000 }
   );
   const text = res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (typeof text !== 'string' || !text.trim()) {
@@ -64,11 +72,11 @@ async function generateContent(prompt) {
   return text;
 }
 
-async function generateContentWithTransientRetry(prompt) {
+async function generateContentWithTransientRetry(prompt, model) {
   let lastError;
   for (let attempt = 1; attempt <= MAX_TRANSIENT_ATTEMPTS; attempt += 1) {
     try {
-      return await generateContent(prompt);
+      return await generateContent(prompt, model);
     } catch (err) {
       lastError = err;
       if (attempt < MAX_TRANSIENT_ATTEMPTS && isTransientError(err)) {
@@ -76,7 +84,7 @@ async function generateContentWithTransientRetry(prompt) {
         // are visible in server.log, not just the mapped errorCode.
         const raw = err.response?.data?.error;
         console.error(
-          `Gemini transient failure (attempt ${attempt}): HTTP ${err.response?.status ?? 'no response'} ` +
+          `Gemini transient failure [${model}] (attempt ${attempt}): HTTP ${err.response?.status ?? 'no response'} ` +
           `${raw ? `${raw.status ?? ''} ${raw.message ?? ''}`.trim() : err.message}`
         );
         const waitSeconds = retryAfterSecondsFromError(err);
@@ -94,8 +102,8 @@ function stripCodeFences(text) {
   return cleaned;
 }
 
-async function callExtraction(prompt) {
-  const raw = await generateContentWithTransientRetry(prompt);
+async function callExtraction(prompt, model) {
+  const raw = await generateContentWithTransientRetry(prompt, model);
   const parsed = skillSchema.safeParse(JSON.parse(stripCodeFences(raw)));
   if (!parsed.success) {
     const err = new Error('Gemini output failed schema validation');
@@ -105,8 +113,7 @@ async function callExtraction(prompt) {
   return parsed.data.skills;
 }
 
-export async function extractSkills(profileText) {
-  const prompt = `Extract demonstrated skills from this profile data with supporting evidence. Return ONLY valid JSON, no markdown fences, matching exactly this shape:
+const PROMPT_TEMPLATE = `Extract demonstrated skills from this profile data with supporting evidence. Return ONLY valid JSON, no markdown fences, matching exactly this shape:
 {
   "skills": [
     { "name": "React", "sources": ["resume", "github"],
@@ -122,24 +129,44 @@ Rules:
 - Include 5 to 30 skills. Only return the JSON object.
 
 PROFILE DATA:
-${profileText}`;
+`;
 
-  try {
-    return await callExtraction(prompt);
-  } catch (err) {
-    if (err.code === 'schema_invalid') {
-      // Malformed JSON shape: retry once with the same input, then fail cleanly.
-      try {
-        return await callExtraction(prompt);
-      } catch (retryErr) {
-        if (retryErr.code === 'schema_invalid') {
-          throw new AppError('Skill extraction returned invalid data', 422, 'extraction_invalid');
+// Try the primary model first, then each fallback model (separate quota buckets
+// and capacity). Transient overload/quota failures move to the next model;
+// malformed JSON retries once on the same model, then fails as extraction_invalid.
+export async function extractSkills(profileText) {
+  const prompt = PROMPT_TEMPLATE + profileText;
+  let lastError;
+
+  for (const model of modelChain()) {
+    try {
+      const skills = await callExtraction(prompt, model);
+      return { skills, model };
+    } catch (err) {
+      if (err.code === 'schema_invalid') {
+        try {
+          const skills = await callExtraction(prompt, model);
+          return { skills, model };
+        } catch (retryErr) {
+          if (retryErr.code === 'schema_invalid') {
+            throw new AppError('Skill extraction returned invalid data', 422, 'extraction_invalid');
+          }
+          lastError = retryErr;
+          console.error(`Gemini model ${model} failed after malformed-JSON retry, trying fallback`);
+          continue;
         }
-        throw mapGeminiError(retryErr);
       }
+
+      lastError = err;
+      if (isTransientError(err)) {
+        console.error(`Gemini model ${model} unavailable, trying fallback model`);
+        continue;
+      }
+      throw mapGeminiError(err);
     }
-    throw mapGeminiError(err);
   }
+
+  throw mapGeminiError(lastError);
 }
 
 function mapGeminiError(err) {

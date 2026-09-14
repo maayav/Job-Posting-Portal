@@ -9,6 +9,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
   GEMINI_MODEL: z.string().default('gemini-3.5-flash'),
+  GEMINI_FALLBACK_MODELS: z.string().default('gemini-flash-lite-latest,gemini-3-flash-preview'),
   EMBEDDING_MODEL: z.string().default('gemini-embedding-2'),
   EMBEDDING_VERSION: z.string().default('2026-09'),
   GITHUB_TOKEN: z.string().optional().default(''),

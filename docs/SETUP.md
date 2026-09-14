@@ -34,7 +34,8 @@ Server control script (recommended for demos): `node scripts/server.js start|sto
 | `MONGO_URI` | yes | |
 | `JWT_SECRET` | yes | |
 | `GEMINI_API_KEY` | yes (non-test) | |
-| `GEMINI_MODEL` | no | default `gemini-3.5-flash` |
+| `GEMINI_MODEL` | no | default `gemini-3.5-flash` — free-tier quota is per model (20 req/min), so overload/quota falls back to `GEMINI_FALLBACK_MODELS` |
+| `GEMINI_FALLBACK_MODELS` | no | comma-separated, default `gemini-flash-lite-latest,gemini-3-flash-preview` |
 | `EMBEDDING_MODEL` | no | default `gemini-embedding-2` — pinned; changing requires re-seeding + new drift baseline |
 | `EMBEDDING_VERSION` | no | default `2026-09` |
 | `GITHUB_TOKEN` | no | authenticated GitHub calls (5,000 req/hr) |

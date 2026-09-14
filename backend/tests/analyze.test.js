@@ -21,13 +21,16 @@ vi.mock('../src/services/embeddingService.js', async (importOriginal) => {
 });
 
 vi.mock('../src/services/geminiService.js', () => ({
-  extractSkills: vi.fn(async () => [
-    { name: 'Python', sources: ['resume'], evidence: [{ source: 'resume', text: 'wrote python' }] },
-    { name: 'PyTorch', sources: ['resume'], evidence: [{ source: 'resume', text: 'fine-tuned a model' }] },
-    { name: 'React', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a dashboard' }] },
-    { name: 'Node.js', sources: ['resume'], evidence: [{ source: 'resume', text: 'built an api' }] },
-    { name: 'Git', sources: ['resume'], evidence: [{ source: 'resume', text: 'used git' }] },
-  ]),
+  extractSkills: vi.fn(async () => ({
+    skills: [
+      { name: 'Python', sources: ['resume'], evidence: [{ source: 'resume', text: 'wrote python' }] },
+      { name: 'PyTorch', sources: ['resume'], evidence: [{ source: 'resume', text: 'fine-tuned a model' }] },
+      { name: 'React', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a dashboard' }] },
+      { name: 'Node.js', sources: ['resume'], evidence: [{ source: 'resume', text: 'built an api' }] },
+      { name: 'Git', sources: ['resume'], evidence: [{ source: 'resume', text: 'used git' }] },
+    ],
+    model: 'mock-model',
+  })),
 }));
 
 async function createSubmission(token, github = 'maayav') {

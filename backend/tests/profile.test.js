@@ -8,10 +8,13 @@ import {
 } from './helpers.js';
 
 vi.mock('../src/services/geminiService.js', () => ({
-  extractSkills: vi.fn(async () => [
-    { name: 'React', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a React dashboard' }] },
-    { name: 'Node.js', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a REST API' }] },
-  ]),
+  extractSkills: vi.fn(async () => ({
+    skills: [
+      { name: 'React', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a React dashboard' }] },
+      { name: 'Node.js', sources: ['resume'], evidence: [{ source: 'resume', text: 'built a REST API' }] },
+    ],
+    model: 'mock-model',
+  })),
 }));
 
 const SAMPLE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'sample-resumes');
