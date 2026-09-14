@@ -14,7 +14,7 @@ export async function seedRealOntology() {
   const { connectDB } = await import('../src/config/db.js');
   const { SkillOntology } = await import('../src/models/skillOntology.js');
   const { ResourceCatalog } = await import('../src/models/resourceCatalog.js');
-  const { embedSkill } = await import('../src/services/embeddingService.js');
+  const { embedSkillsBatch } = await import('../src/services/embeddingService.js');
   const { env } = await import('../src/config/env.js');
 
   await connectDB({ retry: true });
@@ -23,14 +23,16 @@ export async function seedRealOntology() {
 
   const { loadOntologyFiles, loadResourceEntries } = await import('./ontology-loader.js');
   const entries = loadOntologyFiles();
-  for (const entry of entries) {
-    const vector = await embedSkill(entry.skill_name);
+  const vectors = await embedSkillsBatch(entries.map((e) => e.skill_name));
+
+  for (let i = 0; i < entries.length; i += 1) {
+    const entry = entries[i];
     await SkillOntology.create({
       skill_name: entry.skill_name,
       category: entry.category,
       embedding_model: env.EMBEDDING_MODEL,
       embedding_version: env.EMBEDDING_VERSION,
-      embedding_vector: vector,
+      embedding_vector: vectors[i],
       roles: entry.roles,
     });
   }
@@ -42,7 +44,7 @@ export async function seedRealOntology() {
 
 export async function computeRoleScore(role) {
   const { SkillOntology } = await import('../src/models/skillOntology.js');
-  const { embedSkill } = await import('../src/services/embeddingService.js');
+  const { embedSkillsBatch } = await import('../src/services/embeddingService.js');
   const { computeBestMatches, computeScore } = await import('../src/services/scoringService.js');
 
   const raw = await SkillOntology.find({ roles: { $elemMatch: { role_name: role } } }).lean();
@@ -52,10 +54,9 @@ export async function computeRoleScore(role) {
     weight: (s.roles || []).find((r) => r.role_name === role)?.weight ?? 0,
   }));
 
-  const candidates = [];
-  for (const name of DRIFT_CANDIDATES[role]) {
-    candidates.push({ name, vector: await embedSkill(name) });
-  }
+  const names = DRIFT_CANDIDATES[role];
+  const vectors = await embedSkillsBatch(names);
+  const candidates = names.map((name, i) => ({ name, vector: vectors[i] }));
   const perSkill = computeBestMatches(ontology, candidates);
   return computeScore(perSkill);
 }

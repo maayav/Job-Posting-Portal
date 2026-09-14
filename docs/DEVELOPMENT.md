@@ -23,7 +23,7 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 | Backend | Node 24, Express 5, Mongoose 9, plain ESM JS, port **5000** |
 | MongoDB | Docker `mongo:7` (`docker compose up -d mongo`), `mongodb://127.0.0.1:27017/placement_skill_gap` |
 | Frontend | Vite + React (not yet scaffolded) |
-| Gemini model | **`gemini-3.6-flash`** (extraction) — `gemini-2.5-flash` returns 404 for new users |
+| Gemini model | **`gemini-3.5-flash`** (extraction) — `gemini-2.5-flash` returns 404 for new users |
 | Embedding model | `gemini-embedding-2`, version tag `2026-09` (spec pinned `text-embedding-004`, which is retired — see decisions) |
 | GitHub | Authenticated fine-grained PAT (user `maayav`) |
 | Server control | `node scripts/server.js start|stop` (pidfile + log at `backend/server.log`) |
@@ -31,7 +31,7 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 ## Decisions & deviations from the spec
 
 1. **Embedding model swap:** spec pinned `text-embedding-004`, which no longer exists for this key. Using `gemini-embedding-2` with `embedding_version: "2026-09"` recorded on every stored vector. Drift regression test still required (Section 14).
-2. **Generation model:** `gemini-2.5-flash` → `gemini-3.6-flash` (API returned 404 "no longer available to new users").
+2. **Generation model:** `gemini-2.5-flash` → `gemini-3.5-flash` (API returned 404 "no longer available to new users").
 3. **Skill extraction runs at upload time** (`POST /api/profile`), not inside `/api/analyze`. This enables the "review extracted skills before scoring" screen (Phase 5 UX). `/api/analyze` reuses the cached `ExtractedSkillProfile` and only does embedding + deterministic scoring + study plan. Gemini quota is spent once per submission.
 4. **Async jobs:** in-process fire-and-forget runner with in-Mongo lifecycle state (per spec — no Bull/Redis).
 5. **pdf-parse v2** (`PDFParse` class) — ESM-native, used instead of v1.
@@ -59,7 +59,7 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 - `geminiService.js`: strict JSON extraction with zod schema validation, transient retry (3 attempts, 1s/2s/4s), malformed-JSON retry-once then `errorCode: extraction_invalid`; maps 404/500/429 → clean errorCodes (`service_unavailable` / `extraction_invalid`). Never logs resume text.
 - `skillService.js`: builds bounded prompt input (resume + GitHub), dedups/merges skills, confidence by fixed rule (high = 2+ sources w/ evidence, medium = 1 source, low = bare keyword) — Gemini never decides confidence.
 - `ExtractedSkillProfile` model (skills + sources + evidence, per submission, upsert).
-- **Bug found & fixed:** `gemini-2.5-flash` returned 404 → switched to `gemini-3.6-flash`.
+- **Bug found & fixed:** `gemini-2.5-flash` returned 404 → switched to `gemini-3.5-flash`.
 - Verified on 3 sample resumes: skills + evidence trace back to resume/GitHub; messy resume degraded to GitHub-only skills.
 
 ### Phase 4 — Deterministic Scoring (done, commit `c24e9da`)
@@ -105,6 +105,36 @@ node scripts/server.js stop
 - **Ops scripts:** `scripts/refresh-ontology.js` (edit weights in `ontology/*.json`, re-embed + upsert), `scripts/server.js` (start/stop), `npm audit` clean (0 vulnerabilities).
 - **Docs:** `docs/API.md`, `docs/SETUP.md`, `docs/SCHEMA.md`.
 - **Security checklist (Section 10):** rate limits ✓, secrets env-only ✓, zod validation everywhere ✓, upload hardening ✓, resume text never returned/logged ✓, owner-or-admin checks on every scoped route ✓, bcrypt ✓, stateless JWT ✓, `maxPoolSize` ✓, retries/idempotency ✓, `npm audit` clean ✓. HTTPS/HSTS is a reverse-proxy concern documented in SETUP.md.
+
+## Incident log
+
+### 2026-09-14 — `service_unavailable` on extraction and analyze (root cause: Gemini free-tier quota)
+
+**Symptoms:** upload-time extraction and `/api/analyze` both returned `service_unavailable`.
+
+**Raw upstream error captured** (now logged verbatim by `geminiService`; previously only the mapped code was visible):
+```
+Gemini transient failure (attempt 1): HTTP 429 RESOURCE_EXHAUSTED You exceeded your current quota...
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash
+Please retry in 54.09s.
+```
+Also seen: `HTTP 503 UNAVAILABLE This model is currently experiencing high demand.`
+
+**Diagnosis checklist:**
+1. `GEMINI_API_KEY` present in the running app — yes (dotenv injects into `process.env`, not `/proc/environ`; identical 53-char key in `.env`/dotenv/curl; requests reach Google with a valid key — quota/model errors, not `400 invalid key`).
+2. Model names valid/enabled — yes, both returned HTTP 200 standalone.
+3. Standalone calls with the same key/model — succeed when quota is available, fail with raw 429 once exhausted.
+
+**Root cause:** free-tier quota is **20 requests/min per model**. One analysis issued ~17 calls (1 extraction + ~16 individual embeddings) → quota exhausted in seconds → 429/503 → mapped to `service_unavailable`. Fixed 1s/2s/4s backoff was useless against a 12–55s quota window.
+
+**Fixes applied:**
+- `embeddingService.embedSkillsBatch()` — all candidate skills embedded in **one** `batchEmbedContents` call (per-analysis calls drop from ~17 to 2). Seed and drift scripts batched too (27 skills = 1 call).
+- Retry loop now honors the API's `Please retry in Ns` / `Retry-After` (capped 60s) instead of fixed backoff.
+- Raw HTTP status + API error body now logged on every transient failure.
+- Extraction model switched to **`gemini-3.5-flash`** — each model has its own free-tier bucket; `gemini-3.6-flash` was saturated.
+- Drift test env fix: `global-setup.js` no longer poisons the worker env with `GEMINI_API_KEY=test-key` when `RUN_DRIFT_TEST=1`, so dotenv loads the real key.
+
+**Verified after fix:** upload → `extraction_status: "completed"`; analyze → `status: "completed"`, score 91; server log shows one transient 503 logged raw, then a successful retry.
 
 ## Demo credentials (dev DB)
 

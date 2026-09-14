@@ -4,7 +4,7 @@ import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
 import { SkillOntology } from '../models/skillOntology.js';
 import { processExtraction } from './skillService.js';
-import { embedSkill } from './embeddingService.js';
+import { embedSkillsBatch } from './embeddingService.js';
 import { generateReport } from './scoringService.js';
 
 function logTransition(report, to, extra = {}) {
@@ -49,11 +49,8 @@ export async function runAnalysis(reportId) {
       return { ...skill, weight: role?.weight ?? 0 };
     });
 
-    const candidateVectors = [];
-    for (const skill of skillProfile.skills) {
-      const vector = await embedSkill(skill.name);
-      candidateVectors.push({ name: skill.name, vector });
-    }
+    const vectors = await embedSkillsBatch(skillProfile.skills.map((s) => s.name));
+    const candidateVectors = skillProfile.skills.map((skill, i) => ({ name: skill.name, vector: vectors[i] }));
 
     const result = await generateReport(ontologySkills, candidateVectors);
 

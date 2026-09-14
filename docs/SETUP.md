@@ -4,7 +4,7 @@
 
 - Node.js ≥ 20 (built against v24)
 - Docker (for local MongoDB) — `mongo:7`
-- A Google AI (Gemini) API key — covers both extraction (`gemini-3.6-flash`) and embeddings (`gemini-embedding-2`). Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
+- A Google AI (Gemini) API key — covers both extraction (`gemini-3.5-flash`) and embeddings (`gemini-embedding-2`). Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
 - Optional: a GitHub fine-grained PAT for the higher rate-limit tier (public-data read is enough).
 
 ## 1. MongoDB
@@ -34,7 +34,7 @@ Server control script (recommended for demos): `node scripts/server.js start|sto
 | `MONGO_URI` | yes | |
 | `JWT_SECRET` | yes | |
 | `GEMINI_API_KEY` | yes (non-test) | |
-| `GEMINI_MODEL` | no | default `gemini-3.6-flash` |
+| `GEMINI_MODEL` | no | default `gemini-3.5-flash` |
 | `EMBEDDING_MODEL` | no | default `gemini-embedding-2` — pinned; changing requires re-seeding + new drift baseline |
 | `EMBEDDING_VERSION` | no | default `2026-09` |
 | `GITHUB_TOKEN` | no | authenticated GitHub calls (5,000 req/hr) |

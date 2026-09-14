@@ -1,7 +1,10 @@
 process.env.NODE_ENV = 'test';
 process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/placement_skill_gap_test';
 process.env.JWT_SECRET = 'test-secret';
-process.env.GEMINI_API_KEY = 'test-key';
+// Drift runs need the real key from .env — don't poison the worker env with a dummy.
+if (process.env.RUN_DRIFT_TEST !== '1') {
+  process.env.GEMINI_API_KEY = 'test-key';
+}
 
 export default async function globalSetup() {
   const { connectDB, disconnectDB } = await import('../src/config/db.js');

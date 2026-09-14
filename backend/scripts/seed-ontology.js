@@ -2,15 +2,15 @@ import { connectDB, disconnectDB } from '../src/config/db.js';
 import { env } from '../src/config/env.js';
 import { SkillOntology } from '../src/models/skillOntology.js';
 import { ResourceCatalog } from '../src/models/resourceCatalog.js';
-import { embedSkill } from '../src/services/embeddingService.js';
+import { embedSkillsBatch } from '../src/services/embeddingService.js';
 import { loadOntologyFiles, loadResourceEntries } from './ontology-loader.js';
 
 async function seedOntology() {
   const entries = loadOntologyFiles();
-  let embedded = 0;
+  const vectors = await embedSkillsBatch(entries.map((e) => e.skill_name));
 
-  for (const entry of entries) {
-    const vector = await embedSkill(entry.skill_name);
+  for (let i = 0; i < entries.length; i += 1) {
+    const entry = entries[i];
     await SkillOntology.findOneAndUpdate(
       { skill_name: entry.skill_name },
       {
@@ -19,15 +19,14 @@ async function seedOntology() {
           category: entry.category,
           embedding_model: env.EMBEDDING_MODEL,
           embedding_version: env.EMBEDDING_VERSION,
-          embedding_vector: vector,
+          embedding_vector: vectors[i],
           roles: entry.roles,
         },
       },
       { upsert: true }
     );
-    embedded += 1;
   }
-  console.log(`Ontology: ${embedded} skills embedded (model=${env.EMBEDDING_MODEL}, version=${env.EMBEDDING_VERSION})`);
+  console.log(`Ontology: ${entries.length} skills embedded in 1 batch call (model=${env.EMBEDDING_MODEL}, version=${env.EMBEDDING_VERSION})`);
 }
 
 async function seedResources() {

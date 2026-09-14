@@ -16,6 +16,7 @@ vi.mock('../src/services/embeddingService.js', async (importOriginal) => {
   return {
     ...original,
     embedSkill: vi.fn(async (name) => fakeEmbed(name)),
+    embedSkillsBatch: vi.fn(async (names) => names.map((name) => fakeEmbed(name))),
   };
 });
 

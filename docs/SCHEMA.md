@@ -32,7 +32,7 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 |---|---|
 | `submission_id` | ref ProfileSubmission, unique |
 | `skills[]` | see below |
-| `gemini_model` | string (e.g. `gemini-3.6-flash`) |
+| `gemini_model` | string (e.g. `gemini-3.5-flash`) |
 
 `skills[]`:
 | Field | Type | Notes |

@@ -7,7 +7,7 @@ Built from the spec in `EXECUTION_PLAN.md`.
 ## Stack
 
 - Backend: Node.js + Express (ESM), MongoDB via Mongoose, JWT auth
-- AI: Google Gemini (`gemini-3.6-flash` extraction, `gemini-embedding-2` embeddings)
+- AI: Google Gemini (`gemini-3.5-flash` extraction, `gemini-embedding-2` embeddings)
 - Frontend: React (Vite) + Recharts
 
 ## Quick start

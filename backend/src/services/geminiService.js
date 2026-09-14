@@ -30,6 +30,21 @@ function isTransientError(err) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Parse "Please retry in N.Ns." from the 429 body so we wait out the quota
+// window instead of hammering with fixed 1s/2s/4s delays.
+function retryAfterSecondsFromError(err) {
+  const raw = err.response?.data?.error?.message ?? '';
+  const match = raw.match(/retry in ([\d.]+)s/i);
+  if (match) {
+    return Math.min(60, Math.max(1, Math.ceil(Number(match[1]))));
+  }
+  const header = Number(err.response?.headers?.['retry-after']);
+  if (Number.isFinite(header) && header > 0) {
+    return Math.min(60, Math.ceil(header));
+  }
+  return null;
+}
+
 async function generateContent(prompt) {
   const url = `${API_BASE}/models/${env.GEMINI_MODEL}:generateContent?key=${env.GEMINI_API_KEY}`;
   const res = await axios.post(
@@ -57,8 +72,15 @@ async function generateContentWithTransientRetry(prompt) {
     } catch (err) {
       lastError = err;
       if (attempt < MAX_TRANSIENT_ATTEMPTS && isTransientError(err)) {
-        console.error(`Gemini transient failure (attempt ${attempt}): ${err.message}`);
-        await sleep(RETRY_DELAYS_MS[attempt - 1]);
+        // Log the raw upstream status + API error body so quota/overload causes
+        // are visible in server.log, not just the mapped errorCode.
+        const raw = err.response?.data?.error;
+        console.error(
+          `Gemini transient failure (attempt ${attempt}): HTTP ${err.response?.status ?? 'no response'} ` +
+          `${raw ? `${raw.status ?? ''} ${raw.message ?? ''}`.trim() : err.message}`
+        );
+        const waitSeconds = retryAfterSecondsFromError(err);
+        await sleep((waitSeconds ?? RETRY_DELAYS_MS[attempt - 1] / 1000) * 1000);
         continue;
       }
       throw err;
