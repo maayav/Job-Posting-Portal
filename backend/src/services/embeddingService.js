@@ -84,17 +84,26 @@ export async function embedSkill(name) {
   }
 }
 
-// Embed many skill names in a single API request — critical for staying inside
-// the free-tier quota (20 requests/min): one analysis needs ~16 embeddings, which
-// used to be 16 calls and exhausted the quota in seconds.
+// Embed many skill names in as few API requests as possible — critical for
+// staying inside the free-tier quota (20 requests/min). Requests are chunked
+// because batchEmbedContents has a per-request limit.
+const BATCH_CHUNK_SIZE = 50;
+
 export async function embedSkillsBatch(names) {
   const normalized = names.map((name) => normalizeName(name));
   if (normalized.length === 0) return [];
+
+  const results = [];
   try {
-    return await withTransientRetry(
-      () => embedBatchRequest(normalized),
-      { label: 'Embedding batch', attempts: 3, delays: [2000, 5000, 10000] }
-    );
+    for (let i = 0; i < normalized.length; i += BATCH_CHUNK_SIZE) {
+      const chunk = normalized.slice(i, i + BATCH_CHUNK_SIZE);
+      const vectors = await withTransientRetry(
+        () => embedBatchRequest(chunk),
+        { label: 'Embedding batch', attempts: 3, delays: [2000, 5000, 10000] }
+      );
+      results.push(...vectors);
+    }
+    return results;
   } catch (err) {
     if (err instanceof AppError) throw err;
     if (isTransientError(err)) {

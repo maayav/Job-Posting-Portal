@@ -1,0 +1,135 @@
+{
+  "role": "Cloud Engineer",
+  "skills": [
+    {
+      "skill_name": "AWS",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Terraform",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Kubernetes",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "CI/CD Pipelines",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Azure",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Cloud Security",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Prometheus",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Networking",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Ansible",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Go",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Cloud Engineer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "role": "Full-Stack Developer",
+  "skills": [
+    {
+      "skill_name": "JavaScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "TypeScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "React",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Node.js",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "PostgreSQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "REST APIs",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "System Design",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "MongoDB",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "AWS",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "GraphQL",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Redis",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Jest",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "Full-Stack Developer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

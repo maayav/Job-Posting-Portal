@@ -96,3 +96,8 @@ node scripts/seed-jobs.js --admin=you@example.com
 - Serve the built frontend (`npm run build` → `dist/`) from the proxy; the API must never serve `backend/storage/`.
 - Run `npm audit` routinely.
 - The async analysis job runs in-process (per the spec's MVP scope — no Bull/Redis). For horizontal scaling, move `queueAnalysis` behind a queue first.
+### Adding or updating target roles
+
+1. Edit role files under `backend/ontology/*.json` (one file per role), or draft new roles with `node scripts/draft-roles.js` (writes `ontology/drafts/new-roles-draft.json`).
+2. If you used the draft flow, materialize the reviewed roles: `node scripts/import-role-drafts.js`.
+3. `npm run seed` — embeds new skills and upserts the ontology. Roles appear automatically in the UI (`GET /api/roles`); no code change is needed.

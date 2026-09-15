@@ -1,0 +1,145 @@
+{
+  "role": "Backend Developer",
+  "skills": [
+    {
+      "skill_name": "Node.js",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "PostgreSQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "REST APIs",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Redis",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "AWS",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "System Design",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "GraphQL",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "MongoDB",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Kubernetes",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "OAuth",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Jest",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "Backend Developer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

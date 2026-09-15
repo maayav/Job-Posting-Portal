@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
 export function loadOntologyFiles() {
-  const files = ['sde.json', 'ml-engineer.json'];
+  // Every top-level ontology/*.json is a role file ({ role, skills: [...] }).
+  // The drafts/ directory is intentionally ignored — drafts must be imported
+  // with scripts/import-role-drafts.js first.
+  const files = fs
+    .readdirSync(path.join(ROOT, 'ontology'))
+    .filter((f) => f.endsWith('.json'))
+    .sort();
   const byName = new Map();
 
   for (const file of files) {

@@ -1,0 +1,135 @@
+{
+  "role": "QA/Test Engineer",
+  "skills": [
+    {
+      "skill_name": "Test Automation",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Selenium",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "API Testing",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Postman",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Java",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "CI/CD Pipelines",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Jira",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "SQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Cypress",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Performance Testing",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "QA/Test Engineer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

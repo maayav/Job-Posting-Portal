@@ -1,0 +1,155 @@
+{
+  "role": "Cybersecurity Analyst",
+  "skills": [
+    {
+      "skill_name": "SIEM Tools",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Incident Response",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Vulnerability Assessment",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "skill_name": "Network Security",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Endpoint Detection and Response",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Firewalls and VPNs",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Threat Modeling",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Linux",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "IAM",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Cloud Security",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Penetration Testing",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Wireshark",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "PowerShell",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Compliance Frameworks",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Cybersecurity Analyst",
+          "weight": 0.2
+        }
+      ]
+    }
+  ]
+}
