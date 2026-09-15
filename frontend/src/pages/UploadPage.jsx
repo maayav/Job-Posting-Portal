@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 import UploadForm from '../components/UploadForm';
 import ExtractedSkillReview from '../components/ExtractedSkillReview';
-import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 const POLL_MS = 4000;
 
 export default function UploadPage() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const [phase, setPhase] = useState('upload'); // upload | review | analyzing
@@ -91,18 +90,7 @@ export default function UploadPage() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <div>
-          <strong>SkillGap Tracker</strong>
-        </div>
-        <div className="topbar-user">
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/jobs">Jobs</Link>
-          {user?.role === 'admin' && <Link to="/admin/jobs">Admin Jobs</Link>}
-          <span>{user?.name} ({user?.role})</span>
-          <button className="link" onClick={logout}>Log out</button>
-        </div>
-      </header>
+      <NavBar />
 
       {phase === 'upload' && (
         <UploadForm onSubmit={handleUpload} loading={loading} />

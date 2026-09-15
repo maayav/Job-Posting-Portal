@@ -88,6 +88,23 @@ Ascending by completion time (oldest → newest, chart-friendly).
 ### `GET /api/users/:userId/reports` — **admin only**
 Same shape as history, for any user. Non-admins get `403`.
 
+## Roles
+
+### `GET /api/roles` — any authenticated user
+
+Returns the available target roles, derived live from `SkillOntology` (the single source of truth — adding a role to the ontology seed makes it appear here with no code change):
+
+```json
+{
+  "roles": [
+    { "id": "SDE", "label": "Software Development Engineer" },
+    { "id": "ML Engineer", "label": "ML Engineer" }
+  ]
+}
+```
+
+Unknown roles fall back to their raw id as the label. `target_role` on `POST /api/profile` is validated against this same live role set (no hard-coded enum).
+
 ## Jobs
 
 All job routes require `Authorization: Bearer <JWT>` (students and admins share the same auth system).

@@ -1,10 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { api, errorMessage } from '../api/client';
 
 export default function UploadForm({ onSubmit, loading }) {
   const [file, setFile] = useState(null);
   const [github, setGithub] = useState('');
-  const [role, setRole] = useState('SDE');
+  const [roles, setRoles] = useState([]);
+  const [role, setRole] = useState('');
+  const [rolesError, setRolesError] = useState('');
   const [error, setError] = useState('');
+
+  // Roles come from the backend (SkillOntology) — no hard-coded subset.
+  useEffect(() => {
+    let active = true;
+    api
+      .get('/roles')
+      .then((res) => {
+        if (!active) return;
+        const available = res.data.roles ?? [];
+        setRoles(available);
+        if (available.length > 0) setRole(available[0].id);
+      })
+      .catch((err) => {
+        if (active) setRolesError(errorMessage(err));
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function handleFile(e) {
     const f = e.target.files?.[0] ?? null;
@@ -19,6 +41,10 @@ export default function UploadForm({ onSubmit, loading }) {
     e.preventDefault();
     if (!file) {
       setError('Choose a resume PDF first.');
+      return;
+    }
+    if (!role) {
+      setError('Select a target role.');
       return;
     }
     if (error) return;
@@ -46,15 +72,20 @@ export default function UploadForm({ onSubmit, loading }) {
 
       <label>
         Target role
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="SDE">Software Development Engineer</option>
-          <option value="ML Engineer">ML Engineer</option>
+        <select value={role} onChange={(e) => setRole(e.target.value)} disabled={roles.length === 0}>
+          {roles.length === 0 && <option value="">{rolesError ? 'Roles unavailable' : 'Loading roles…'}</option>}
+          {roles.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.label}
+            </option>
+          ))}
         </select>
       </label>
 
+      {rolesError && <p className="error">Could not load target roles: {rolesError}</p>}
       {error && <p className="error">{error}</p>}
 
-      <button className="primary" disabled={loading}>
+      <button className="primary" disabled={loading || roles.length === 0}>
         {loading ? 'Uploading & extracting skills…' : 'Upload & extract skills'}
       </button>
     </form>

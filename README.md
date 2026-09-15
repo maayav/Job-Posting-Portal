@@ -141,6 +141,7 @@ node scripts/seed-jobs.js --admin=admin@example.com
 | PATCH | `/api/report/:id/study-plan/:itemId` | Owner | Toggle a study-plan item |
 | GET | `/api/report/history` | Student | Own report history |
 | GET | `/api/users/:userId/reports` | Admin | Any user's report history |
+| GET | `/api/roles` | Authenticated | Available target roles (live from the skill ontology) |
 | GET | `/api/jobs` | Authenticated | Search jobs (skills, experience, city, pagination) |
 | POST | `/api/jobs` | Admin | Create a job posting |
 | PUT | `/api/jobs/:id` | Admin | Update a job posting |

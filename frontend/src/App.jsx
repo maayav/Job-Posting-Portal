@@ -5,6 +5,7 @@ import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
 import JobSearchPage from './pages/JobSearchPage';
 import AdminJobsPage from './pages/AdminJobsPage';
+import AssistantPage from './pages/AssistantPage';
 
 export default function App() {
   return (
@@ -14,7 +15,15 @@ export default function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <UploadPage />
+            <JobSearchPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/jobs"
+        element={
+          <ProtectedRoute>
+            <JobSearchPage />
           </ProtectedRoute>
         }
       />
@@ -27,10 +36,18 @@ export default function App() {
         }
       />
       <Route
-        path="/jobs"
+        path="/analyze"
         element={
           <ProtectedRoute>
-            <JobSearchPage />
+            <UploadPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assistant"
+        element={
+          <ProtectedRoute>
+            <AssistantPage />
           </ProtectedRoute>
         }
       />

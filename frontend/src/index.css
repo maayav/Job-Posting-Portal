@@ -529,3 +529,14 @@ textarea {
 .field-hint {
   margin: -6px 0 12px;
 }
+
+.role-readiness .readiness-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.readiness-score {
+  font-size: 1.4rem;
+}

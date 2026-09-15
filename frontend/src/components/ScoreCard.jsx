@@ -3,7 +3,7 @@ export default function ScoreCard({ score, targetRole, generatedAt }) {
   return (
     <div className="card score-card">
       <div>
-        <h2>Role-Readiness Score</h2>
+        <h2>ATS Score</h2>
         <p className="muted">{targetRole}</p>
         <p className="muted small">{generatedAt ? `generated ${new Date(generatedAt).toLocaleString()}` : ''}</p>
       </div>

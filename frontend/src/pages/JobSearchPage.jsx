@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 import JobFilters from '../components/JobFilters';
 import JobCard from '../components/JobCard';
-import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 export default function JobSearchPage() {
-  const { user, logout } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -55,21 +53,7 @@ export default function JobSearchPage() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <div>
-          <strong>SkillGap Tracker</strong>
-        </div>
-        <div className="topbar-user">
-          <Link to="/">New analysis</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/jobs" className="active-link">Jobs</Link>
-          {user?.role === 'admin' && <Link to="/admin/jobs">Admin Jobs</Link>}
-          <span>
-            {user?.name} ({user?.role})
-          </span>
-          <button className="link" onClick={logout}>Log out</button>
-        </div>
-      </header>
+      <NavBar />
 
       <JobFilters onSearch={handleSearch} onClear={handleClear} loading={loading} />
 

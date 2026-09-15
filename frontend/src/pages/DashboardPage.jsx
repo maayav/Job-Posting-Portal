@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 import ScoreCard from '../components/ScoreCard';
 import GapList from '../components/GapList';
 import StudyPlan from '../components/StudyPlan';
-import ProgressChart from '../components/ProgressChart';
-import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
   const [report, setReport] = useState(null);
-  const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -25,38 +22,18 @@ export default function DashboardPage() {
       .then((res) => setReport(res.data))
       .catch((err) => setError(errorMessage(err)))
       .finally(() => setLoading(false));
-
-    api
-      .get('/report/history')
-      .then((res) => setHistory(res.data.history))
-      .catch(() => {});
   }, []);
 
-  function handleToggle(itemId, skill) {
+  function handleToggle(itemId) {
     setReport((prev) => ({
       ...prev,
-      study_plan: prev.study_plan.map((it) =>
-        it._id === itemId ? { ...it, done: !it.done } : it
-      ),
+      study_plan: prev.study_plan.map((it) => (it._id === itemId ? { ...it, done: !it.done } : it)),
     }));
-    // best-effort: no-op; PATCH already applied server-side
-    void skill;
   }
 
   return (
     <div className="page">
-      <header className="topbar">
-        <div>
-          <strong>SkillGap Tracker</strong>
-        </div>
-        <div className="topbar-user">
-          <Link to="/">New analysis</Link>
-          <Link to="/jobs">Jobs</Link>
-          {user?.role === 'admin' && <Link to="/admin/jobs">Admin Jobs</Link>}
-          <span>{user?.name}</span>
-          <button className="link" onClick={logout}>Log out</button>
-        </div>
-      </header>
+      <NavBar />
 
       {loading && <p className="muted">Loading report…</p>}
 
@@ -66,21 +43,32 @@ export default function DashboardPage() {
         <div className="card center">
           <h2>No report yet</h2>
           <p className="muted">Upload a resume to get your readiness score.</p>
-          <Link to="/" className="primary inline">Go to upload</Link>
+          <Link to="/analyze" className="primary inline">Start a new analysis</Link>
         </div>
       )}
 
       {report && (
         <>
+          {/* 1. ATS score */}
           <ScoreCard score={report.score} targetRole={report.target_role} generatedAt={report.generated_at} />
-          <ProgressChart history={history} />
-          <div className="columns">
-            <GapList report={report} />
-            <StudyPlan
-              reportId={report.report_id}
-              items={report.study_plan}
-              onToggle={handleToggle}
-            />
+
+          {/* 2. Skill breakdown */}
+          <GapList report={report} />
+
+          {/* 3. Study plan */}
+          <StudyPlan reportId={report.report_id} items={report.study_plan} onToggle={handleToggle} />
+
+          {/* 4. Role readiness */}
+          <div className="card role-readiness">
+            <h2>Role readiness</h2>
+            <div className="readiness-row">
+              <span className="chip">{report.target_role}</span>
+              <strong className="readiness-score">{report.score}/100</strong>
+            </div>
+            <p className="muted small">
+              The ATS score above is the weighted readiness for this target role, computed from the role's
+              skill ontology.
+            </p>
           </div>
         </>
       )}

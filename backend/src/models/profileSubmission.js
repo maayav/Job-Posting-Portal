@@ -11,7 +11,7 @@ const profileSubmissionSchema = new mongoose.Schema(
       enum: ['ok', 'unavailable', 'not_found', 'none'],
       default: 'none',
     },
-    target_role: { type: String, enum: ['SDE', 'ML Engineer'], required: true },
+    target_role: { type: String, required: true, trim: true },
     submitted_at: { type: Date, default: Date.now },
     extraction_status: {
       type: String,

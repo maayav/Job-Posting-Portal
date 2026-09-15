@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  app, initDb, closeDb, clearDb, registerUser, loginUser, authHeader, uploadResume, minimalPdfBuffer,
+  app, initDb, closeDb, clearDb, registerUser, loginUser, authHeader, uploadResume, minimalPdfBuffer, seedTestOntology,
 } from './helpers.js';
 
 vi.mock('../src/services/geminiService.js', () => ({
@@ -30,6 +30,7 @@ describe('Profile ingestion & security', () => {
   afterAll(closeDb);
   beforeEach(async () => {
     await clearDb();
+    await seedTestOntology();
     token = (await registerUser({ email: 'owner@test.com' })).token;
     otherToken = (await registerUser({ email: 'other@test.com' })).token;
     await registerUser({ email: 'admin@test.com' });
@@ -87,6 +88,26 @@ describe('Profile ingestion & security', () => {
       .attach('resume', minimalPdfBuffer(), { filename: 'r.pdf' })
       .field('target_role', 'CEO');
     expect(r.status).toBe(400);
+  });
+
+  it('accepts a target role that exists in the ontology (no hard-coded enum)', async () => {
+    const { SkillOntology } = await import('../src/models/skillOntology.js');
+    await SkillOntology.create({
+      skill_name: 'Data Analysis',
+      category: 'data',
+      embedding_model: 'test-model',
+      embedding_version: 'test',
+      embedding_vector: [1, 0, 0],
+      roles: [{ role_name: 'Data Scientist', weight: 0.8 }],
+    });
+
+    const r = await request(app)
+      .post('/api/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .attach('resume', minimalPdfBuffer(), { filename: 'r.pdf' })
+      .field('target_role', 'Data Scientist');
+    expect(r.status).toBe(201);
+    expect(r.body.target_role).toBe('Data Scientist');
   });
 
   it('normalizes GitHub URL into a canonical username', async () => {

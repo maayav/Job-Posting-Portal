@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 import JobForm from '../components/JobForm';
-import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 export default function AdminJobsPage() {
-  const { user, logout } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -79,21 +77,7 @@ export default function AdminJobsPage() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <div>
-          <strong>SkillGap Tracker</strong>
-        </div>
-        <div className="topbar-user">
-          <Link to="/">New analysis</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/jobs">Jobs</Link>
-          <Link to="/admin/jobs" className="active-link">Admin Jobs</Link>
-          <span>
-            {user?.name} ({user?.role})
-          </span>
-          <button className="link" onClick={logout}>Log out</button>
-        </div>
-      </header>
+      <NavBar />
 
       {notice && <p className="notice">{notice}</p>}
       {error && <p className="error card-error">{error}</p>}

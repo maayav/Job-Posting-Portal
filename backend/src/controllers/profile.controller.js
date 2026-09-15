@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { ProfileSubmission } from '../models/profileSubmission.js';
+import { SkillOntology } from '../models/skillOntology.js';
 import { saveResume, deleteResume } from '../services/storageService.js';
 import { extractResumeText } from '../services/resumeService.js';
 import { normalizeUsername, fetchGithubProfile } from '../services/githubService.js';
@@ -9,8 +10,15 @@ import { AppError } from '../utils/errors.js';
 
 const createSchema = z.object({
   github_username: z.string().trim().optional().default(''),
-  target_role: z.enum(['SDE', 'ML Engineer']),
+  target_role: z.string().trim().min(1, 'Target role is required').max(100),
 });
+
+async function assertKnownRole(targetRole) {
+  const available = await SkillOntology.distinct('roles.role_name');
+  if (!available.includes(targetRole)) {
+    throw new AppError(`Unknown target role "${targetRole}"`, 400, 'validation_error');
+  }
+}
 
 async function collectGithub(username) {
   try {
@@ -30,6 +38,7 @@ async function collectGithub(username) {
 
 export async function createProfile(req, res) {
   const data = createSchema.parse(req.body);
+  await assertKnownRole(data.target_role);
   const github_username = data.github_username
     ? normalizeUsername(data.github_username)
     : '';
