@@ -39,6 +39,7 @@ if (action === 'start') {
   const child = spawn('node', ['server.js'], {
     cwd: root,
     detached: true,
+    windowsHide: true,
     stdio: ['ignore', fs.openSync(logFile, 'a'), fs.openSync(logFile, 'a')],
   });
   child.unref();

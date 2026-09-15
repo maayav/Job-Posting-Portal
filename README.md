@@ -28,6 +28,8 @@ A MERN application for college placement cells and students:
 
 ## Tech stack
 
+The project is **cross-platform** (Windows, macOS, Linux) — plain Node ESM, no Unix-only tooling. Windows setup notes, including PowerShell commands, Docker Desktop, firewall, and bcrypt build tips, are in `docs/SETUP.md` §7.
+
 | Layer | Technology |
 |---|---|
 | Backend | Node.js 24, Express 5 (plain ESM JavaScript), Mongoose 9 |

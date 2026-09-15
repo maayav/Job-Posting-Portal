@@ -8,7 +8,6 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "test": "vitest run",
-    "test": "vitest run",
     "seed": "node scripts/seed-ontology.js",
     "refresh-ontology": "node scripts/refresh-ontology.js",
     "drift-baseline": "node scripts/record-drift-baseline.js",
