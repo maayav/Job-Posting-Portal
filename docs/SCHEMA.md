@@ -95,3 +95,29 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 | `username` | string | unique, lowercase |
 | `data` | mixed | ≤10 newest repos, 800-char README excerpts, languages, topics, manifests |
 | `fetchedAt` | date | 24h TTL at read time |
+## Job (`jobs`)
+
+Job postings for the placement job portal. Created/updated/deleted only by admins; readable by any authenticated user.
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | string | required, trimmed, max 150 |
+| `skills` | string[] | required, non-empty; each skill trimmed, max 50 chars; duplicate normalized skills rejected at the API layer |
+| `skillsLower` | string[] | derived (trimmed + lowercased) on every write for case/whitespace-insensitive search |
+| `experienceLevel` | number | required, minimum 0, max 50 (required years of experience) |
+| `city` | string | required, trimmed, max 100 |
+| `cityLower` | string | derived lowercase city for case-insensitive exact search |
+| `description` | string | required, trimmed, max 5000 |
+| `createdBy` | ObjectId ref `User` | required; always set server-side from the verified admin JWT |
+| `createdAt` / `updatedAt` | date | timestamps |
+
+Indexes: `{ skillsLower: 1 }`, `{ cityLower: 1 }`, `{ experienceLevel: 1 }`, `{ createdAt: -1 }`, `{ cityLower: 1, experienceLevel: 1 }`.
+
+No cascade deletion: if an admin account is removed, existing jobs keep the `createdBy` ObjectId (rendered as an opaque id by the API).
+
+### Search semantics (v1)
+
+- `skills` — comma-separated, ANY-match (`$in` on `skillsLower`), case/whitespace-insensitive.
+- `experience` — seeker's years; matches `experienceLevel <= experience`.
+- `city` — case-insensitive exact match on `cityLower`.
+- Combined filters AND together; results sorted `createdAt` desc; `page` default 1, `limit` default 20 (max 50, clamped).

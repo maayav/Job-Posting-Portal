@@ -88,6 +88,64 @@ Ascending by completion time (oldest → newest, chart-friendly).
 ### `GET /api/users/:userId/reports` — **admin only**
 Same shape as history, for any user. Non-admins get `403`.
 
+## Jobs
+
+All job routes require `Authorization: Bearer <JWT>` (students and admins share the same auth system).
+
+### `GET /api/jobs` — any authenticated user
+
+Query parameters (all optional):
+
+| Param | Default | Rules |
+|---|---|---|
+| `skills` | — | comma-separated; ANY-match, case-insensitive, whitespace-insensitive (`react, node.js`) |
+| `experience` | — | the seeker's years; returns jobs with `experienceLevel <= experience` |
+| `city` | — | case-insensitive exact match after trim (`CHENNAI` matches `Chennai`) |
+| `page` | `1` | integer ≥ 1 |
+| `limit` | `20` | integer ≥ 1; values above 50 are clamped to 50 |
+
+Filters combine with AND across categories; within `skills` it is OR. Sorted newest first (`createdAt` desc). Empty results still return `200`:
+
+```json
+{
+  "jobs": [
+    {
+      "id": "job-id",
+      "title": "Frontend Developer",
+      "skills": ["React", "JavaScript"],
+      "experienceLevel": 1,
+      "city": "Chennai",
+      "description": "Job description",
+      "createdBy": "admin-user-id",
+      "createdAt": "2026-09-15T13:53:29.896Z",
+      "updatedAt": "2026-09-15T13:53:29.896Z"
+    }
+  ],
+  "page": 1,
+  "limit": 20,
+  "total": 0,
+  "totalPages": 0
+}
+```
+
+### `POST /api/jobs` — **admin only** (`403` for students)
+
+Body (unknown keys, including `createdBy`, are rejected with `400`):
+```json
+{ "title": "Frontend Developer", "skills": ["React", "JavaScript"], "experienceLevel": 1, "city": "Chennai", "description": "Build UIs" }
+```
+Returns `201 { "job": { ... } }`. `createdBy` is always set server-side from the verified JWT.
+
+### `PUT /api/jobs/:id` — **admin only**
+
+Partial body (at least one field). Returns `200 { "job": { ... } }`; `404` if the job does not exist; `400` for an invalid id or empty body.
+
+### `DELETE /api/jobs/:id` — **admin only**
+
+Returns `204`; `404` if the job does not exist.
+
+Validation errors use the shared shape: `{ "error": "validation_error", "message": "Validation failed", "issues": [...] }`. Missing/invalid JWT → `401`; insufficient role → `403 { "error": "forbidden", ... }`.
+
 ## Scoring (deterministic, not model-decided)
 
 `score = 100 × (Σ(wᵢ·mᵢ) / Σwᵢ)` where `wᵢ` is the role weight and `mᵢ` is the best normalized-cosine similarity of the ontology skill against the candidate skill embeddings, clamped to `[0,1]`. Strong ≥ 80%, Developing 60–79%, Gap < 60%. Gap priority = `wᵢ(1−mᵢ)` rescaled to `[0,1]`. Resources come only from the curated `ResourceCatalog` (exact normalized skill-name match).

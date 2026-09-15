@@ -73,15 +73,20 @@ npm run refresh-ontology   # re-embed + upsert ontology from backend/ontology/*.
 npm run gen-resumes        # regenerate sample resumes under backend/sample-resumes/
 ```
 
-Promote a user to admin (no UI yet):
+Promote or create an admin (explicit CLI; never via public registration):
 
 ```bash
-node --input-type=module -e "
-const { connectDB } = await import('./src/config/db.js');
-const { User } = await import('./src/models/user.js');
-await connectDB({ retry: false });
-await User.updateOne({ email: 'you@example.com' }, { \$set: { role: 'admin' } });
-process.exit(0);"
+# promote an existing account
+node scripts/create-admin.js you@example.com
+
+# create a new admin — password via env so it never lands in shell history or logs
+ADMIN_PASSWORD='...' node scripts/create-admin.js you@example.com --name "Placement Admin"
+```
+
+Seed demo job postings (development/demo only, idempotent, requires an existing admin):
+
+```bash
+node scripts/seed-jobs.js --admin=you@example.com
 ```
 
 ## 6. Production checklist (deployment)

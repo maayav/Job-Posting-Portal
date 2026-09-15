@@ -3,7 +3,7 @@
 A MERN application for college placement cells and students:
 
 1. **Skill-Gap Tracker** — students upload a resume (+ GitHub profile); AI extracts demonstrated skills with evidence; skills are matched against a role's skill ontology via embedding similarity; a deterministic Role-Readiness Score and a prioritized study plan are produced; re-uploads over time track progress.
-2. **Job Posting Portal** — a shared job board where students (job seekers) search and filter postings by skills, experience, and city, and admins create, edit, and delete job postings. *(Integration in progress — see `docs/DEVELOPMENT.md`.)*
+2. **Job Posting Portal** — a shared job board where students (job seekers) search and filter postings by skills, experience, and city, and admins create, edit, and delete job postings.
 
 ## Features
 
@@ -19,12 +19,12 @@ A MERN application for college placement cells and students:
 - Report history, score-trend chart, and per-item study-plan tracking
 - Admin-only endpoints for viewing any user's reports
 
-**Job portal (integration in progress)**
+**Job portal**
 
 - Shared login for students and admins (same auth system, no separate accounts)
 - `GET /api/jobs` — authenticated search by skills (ANY-match), experience, and city, with pagination
 - Admin-only `POST /api/jobs`, `PUT /api/jobs/:id`, `DELETE /api/jobs/:id`
-- React pages for job search (filters, results, pagination) and admin job management
+- React pages for job search (filters, results, pagination) and admin job management (create/edit/delete with confirmation)
 
 ## Tech stack
 
@@ -109,7 +109,21 @@ Frontend: no variables required for local development (Vite proxies `/api`).
 | `student` | Job seeker / placement student | Upload resumes, run analyses, view reports, search jobs |
 | `admin` | Placement cell administrator | Everything a student can do, plus view any user's reports and manage job postings |
 
-Public registration always creates a `student`. Privileged roles are never self-assignable; admins are created/promoted with an explicit CLI script (see `docs/SETUP.md`).
+Public registration always creates a `student`. Privileged roles are never self-assignable; admins are created or promoted with an explicit CLI script:
+
+```bash
+# promote an existing account
+node scripts/create-admin.js admin@example.com
+
+# create a new admin (password via env so it never lands in shell history or logs)
+ADMIN_PASSWORD='...' node scripts/create-admin.js admin@example.com --name "Placement Admin"
+```
+
+Optional demo data (development only, idempotent, requires an existing admin):
+
+```bash
+node scripts/seed-jobs.js --admin=admin@example.com
+```
 
 ## API overview
 
