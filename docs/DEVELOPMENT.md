@@ -186,3 +186,15 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 | PATCH | `/api/report/:id/study-plan/:itemId` | done |
 | GET | `/api/report/history` | done (own history only) |
 | GET | `/api/users/:userId/reports` | done (admin only) |
+---
+
+## Job Portal Integration — Phase 1 Baseline (2026-09-15)
+
+- **Instruction sources:** `JOB_PORTAL_INTEGRATION_AUDIT_REQUEST.md` (audit) and the owner-approved implementation brief.
+- **Git state before changes:** branch `main`; tracked working tree clean; untracked audit documents preserved.
+- **Backend test baseline (before any job-portal change):** `npx vitest run` → **4 files passed + 1 skipped; 35 tests passed + 2 skipped** (drift tests are opt-in via `RUN_DRIFT_TEST=1`).
+- **Infrastructure:** Docker MongoDB container `placement_mongo` running on `127.0.0.1:27017`; backend port `5000`; frontend port `5173`.
+- **Role mapping decision (owner-approved):** `student` = Job Seeker, `admin` = Placement Portal Admin. **No new `seeker` role.**
+- **Job API namespace decision:** new isolated `/api/jobs` routes; no existing endpoint renamed, removed, or altered; canonical `GET /api/health` response untouched.
+- **Access decisions (owner-approved):** job search requires login (no anonymous browsing); students and admins share the existing login; any admin can edit/delete any job posting.
+- **Response/error conventions to follow:** zod validation in controllers, `AppError` + centralized error handler, `{ "error": "...", "message": "..." }`, `401` for missing/invalid JWT, `403` for role violations, `404` for missing jobs, `400` for validation failures.
