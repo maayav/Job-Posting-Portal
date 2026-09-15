@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import UploadForm from '../components/UploadForm';
 import ExtractedSkillReview from '../components/ExtractedSkillReview';
 import { useAuth } from '../context/AuthContext';
@@ -96,6 +96,9 @@ export default function UploadPage() {
           <strong>SkillGap Tracker</strong>
         </div>
         <div className="topbar-user">
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/jobs">Jobs</Link>
+          {user?.role === 'admin' && <Link to="/admin/jobs">Admin Jobs</Link>}
           <span>{user?.name} ({user?.role})</span>
           <button className="link" onClick={logout}>Log out</button>
         </div>

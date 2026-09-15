@@ -3,6 +3,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
+import JobSearchPage from './pages/JobSearchPage';
+import AdminJobsPage from './pages/AdminJobsPage';
 
 export default function App() {
   return (
@@ -21,6 +23,22 @@ export default function App() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/jobs"
+        element={
+          <ProtectedRoute>
+            <JobSearchPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/jobs"
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminJobsPage />
           </ProtectedRoute>
         }
       />

@@ -1,0 +1,74 @@
+import { useState } from 'react';
+
+export default function JobFilters({ onSearch, onClear, loading }) {
+  const [skills, setSkills] = useState('');
+  const [experience, setExperience] = useState('');
+  const [city, setCity] = useState('');
+  const [error, setError] = useState('');
+
+  function submit(e) {
+    e.preventDefault();
+    if (experience !== '' && (Number.isNaN(Number(experience)) || Number(experience) < 0)) {
+      setError('Experience must be a number of years (0 or more).');
+      return;
+    }
+    setError('');
+    onSearch({
+      skills: skills.trim(),
+      experience: experience.trim(),
+      city: city.trim(),
+    });
+  }
+
+  function clear() {
+    setSkills('');
+    setExperience('');
+    setCity('');
+    setError('');
+    onClear();
+  }
+
+  return (
+    <form className="card" onSubmit={submit}>
+      <h2>Find jobs</h2>
+      <div className="filters">
+        <label>
+          Skills (comma-separated)
+          <input
+            value={skills}
+            onChange={(e) => setSkills(e.target.value)}
+            placeholder="react,node.js"
+          />
+        </label>
+        <label>
+          Your experience (years)
+          <input
+            type="number"
+            min="0"
+            step="1"
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+            placeholder="e.g. 2"
+          />
+        </label>
+        <label>
+          City
+          <input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="e.g. Chennai"
+          />
+        </label>
+      </div>
+      {error && <p className="error">{error}</p>}
+      <div className="filters-actions">
+        <button className="primary" disabled={loading}>
+          {loading ? 'Searching…' : 'Search'}
+        </button>
+        <button type="button" className="link" onClick={clear}>
+          Clear filters
+        </button>
+      </div>
+    </form>
+  );
+}

@@ -51,6 +51,8 @@ export default function DashboardPage() {
         </div>
         <div className="topbar-user">
           <Link to="/">New analysis</Link>
+          <Link to="/jobs">Jobs</Link>
+          {user?.role === 'admin' && <Link to="/admin/jobs">Admin Jobs</Link>}
           <span>{user?.name}</span>
           <button className="link" onClick={logout}>Log out</button>
         </div>

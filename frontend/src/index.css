@@ -429,3 +429,99 @@ button.link {
     transform: rotate(360deg);
   }
 }
+/* job portal */
+.active-link {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.filters label {
+  margin-bottom: 0;
+}
+
+.filters-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.job-card h3 {
+  margin: 0 0 2px;
+}
+
+.job-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.job-head-info {
+  min-width: 0;
+}
+
+.job-desc {
+  color: var(--muted);
+  margin: 10px 0 6px;
+}
+
+.job-actions {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.link.danger {
+  color: var(--low);
+}
+
+.confirm-delete {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--low);
+  border-radius: 8px;
+  background: rgba(239, 100, 120, 0.08);
+}
+
+.confirm-delete p {
+  margin: 0 0 10px;
+}
+
+.danger-btn {
+  background: var(--low);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.notice {
+  color: var(--good);
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
