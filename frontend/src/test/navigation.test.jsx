@@ -25,6 +25,19 @@ function renderApp(initialPath = '/') {
   );
 }
 
+const report = {
+  report_id: 'r1',
+  submission_id: 's1',
+  target_role: 'SDE',
+  status: 'completed',
+  score: 77,
+  strong_areas: [{ skill: 'React', percent: 100 }],
+  developing_areas: [],
+  gaps: [],
+  study_plan: [],
+  generated_at: '2026-09-15T00:00:00.000Z',
+};
+
 describe('App routing and navigation order', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,14 +46,24 @@ describe('App routing and navigation order', () => {
       if (url === '/jobs') {
         return Promise.resolve({ data: { jobs: [], page: 1, limit: 20, total: 0, totalPages: 0 } });
       }
+      if (url.startsWith('/report/')) {
+        return Promise.resolve({ data: report });
+      }
       return Promise.resolve({ data: {} });
     });
   });
 
-  it('lands on the Jobs page for an authenticated user at /', async () => {
+  it('lands on the Dashboard page for an authenticated user at /', async () => {
+    signIn('student');
+    localStorage.setItem('report_id', 'r1');
+    renderApp('/');
+    expect(await screen.findByRole('heading', { name: /ats score/i })).toBeTruthy();
+  });
+
+  it('shows the empty dashboard state when no report exists yet', async () => {
     signIn('student');
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /find jobs/i })).toBeTruthy();
+    expect(await screen.findByText(/no report yet/i)).toBeTruthy();
   });
 
   it('keeps deep links working (/dashboard, /analyze, /assistant)', async () => {

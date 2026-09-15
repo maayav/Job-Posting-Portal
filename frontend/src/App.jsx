@@ -15,7 +15,7 @@ export default function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <JobSearchPage />
+            <DashboardPage />
           </ProtectedRoute>
         }
       />
