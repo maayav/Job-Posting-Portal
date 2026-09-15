@@ -239,3 +239,10 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 - **What changed:** new `scripts/import-role-drafts.js` converts the reviewed draft into per-role ontology seed files (weights normalized 1–5 → 0–1, with alias mapping so shared skills merge: `RESTful APIs`→`REST APIs`, `Scikit-Learn`→`scikit-learn`, `Spark`→`Apache Spark`, `IAM (Identity and Access Management)`→`IAM`). `ontology-loader.js` now reads every top-level `ontology/*.json` (drafts/ ignored) instead of hard-coding two filenames. `embedSkillsBatch` chunks requests (50/request) for large seeds.
 - **Result:** 74 unique skills across **10 roles** — SDE, ML Engineer, Full-Stack Developer, Backend Developer, Data Scientist, Data Engineer, DevOps Engineer, Cybersecurity Analyst, QA/Test Engineer, Cloud Engineer. Shared skills carry one weight per role (e.g. Python: 9 roles, Docker: 9, AWS: 7). `npm run seed` embeds them in a single batch call.
 - **Verification:** `GET /api/roles` returns all 10; a full upload → analyze run with target role **Data Scientist** completed (score 84, strong: Git/SQL/Python/PyTorch/scikit-learn/Pandas). New `tests/ontology-source.test.js` guards the seed source (all roles present, shared skills merged, weights in (0,1]). Backend **80 passed + 2 skipped**; frontend **11 passed**; build ✓.
+
+### 2026-09-15 — Frontend visual redesign
+
+- Refreshed the existing React UI with a dark editorial "mission control" visual system: centered floating navigation, lime/blue/orange signal palette, responsive cards, score treatments, job hero section, and mobile-safe layout.
+- Added `lenis` smooth scrolling and `motion` entrance transitions without changing API contracts or page data flows.
+- Added shared motion-aware `NavBar`, preserved the existing Jobs/Dashboard/New Analysis/AI Assistant route order, and kept the score-trend component in the codebase without rendering it on the dashboard.
+- Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.

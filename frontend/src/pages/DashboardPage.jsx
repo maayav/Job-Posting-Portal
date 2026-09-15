@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import NavBar from '../components/NavBar';
 import ScoreCard from '../components/ScoreCard';
 import GapList from '../components/GapList';
@@ -48,7 +49,12 @@ export default function DashboardPage() {
       )}
 
       {report && (
-        <>
+        <motion.div
+          className="dashboard-stack"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45 }}
+        >
           {/* 1. ATS score */}
           <ScoreCard score={report.score} targetRole={report.target_role} generatedAt={report.generated_at} />
 
@@ -70,7 +76,7 @@ export default function DashboardPage() {
               skill ontology.
             </p>
           </div>
-        </>
+        </motion.div>
       )}
     </div>
   );

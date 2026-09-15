@@ -1,6 +1,13 @@
+import { motion } from 'motion/react';
+
 export default function JobCard({ job, actions }) {
   return (
-    <div className="card job-card">
+    <motion.article
+      className="card job-card"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+    >
       <div className="job-head">
         <div className="job-head-info">
           <h3>{job.title}</h3>
@@ -19,6 +26,6 @@ export default function JobCard({ job, actions }) {
       </div>
       <p className="job-desc">{job.description}</p>
       <p className="muted small">Posted {new Date(job.createdAt).toLocaleDateString()}</p>
-    </div>
+    </motion.article>
   );
 }

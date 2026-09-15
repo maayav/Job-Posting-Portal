@@ -34,7 +34,7 @@ The project is **cross-platform** (Windows, macOS, Linux) — plain Node ESM, no
 |---|---|
 | Backend | Node.js 24, Express 5 (plain ESM JavaScript), Mongoose 9 |
 | Database | MongoDB 7 (Docker locally, Atlas for production) |
-| Frontend | React 19, Vite 8, React Router 7, Recharts, Axios |
+| Frontend | React 19, Vite 8, React Router 7, Recharts, Axios, Lenis, Motion |
 | Auth | JWT (`jsonwebtoken`) + `bcrypt` |
 | Validation | Zod |
 | AI | Google Gemini — `gemini-3.5-flash` (extraction), `gemini-embedding-2` (embeddings) |

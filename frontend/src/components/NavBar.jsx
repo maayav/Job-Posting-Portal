@@ -14,24 +14,25 @@ export default function NavBar() {
 
   return (
     <header className="topbar">
-      <div>
-        <strong>SkillGap Tracker</strong>
-      </div>
+      <Link className="brand-lockup" to="/">
+        <span className="brand-mark">S</span>
+        <span>SkillGap <em>OS</em></span>
+      </Link>
       <nav className="topbar-user" aria-label="Main navigation">
-        {NAV_ITEMS.map((item) => (
-          <Link key={item.to} to={item.to} className={pathname === item.to ? 'active-link' : undefined}>
-            {item.label}
-          </Link>
-        ))}
-        {user?.role === 'admin' && (
-          <Link to="/admin/jobs" className={pathname === '/admin/jobs' ? 'active-link' : undefined}>
-            Admin Jobs
-          </Link>
-        )}
-        <span>
-          {user?.name} ({user?.role})
-        </span>
-        <button className="link" onClick={logout}>Log out</button>
+        <div className="nav-pill">
+          {NAV_ITEMS.map((item) => (
+            <Link key={item.to} to={item.to} className={pathname === item.to ? 'active-link' : undefined}>
+              {item.label}
+            </Link>
+          ))}
+          {user?.role === 'admin' && (
+            <Link to="/admin/jobs" className={pathname === '/admin/jobs' ? 'active-link' : undefined}>
+              Admin Jobs
+            </Link>
+          )}
+        </div>
+        <span className="user-chip"><i />{user?.name}</span>
+        <button className="link logout-link" onClick={logout}>Exit</button>
       </nav>
     </header>
   );

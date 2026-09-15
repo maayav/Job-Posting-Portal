@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { parseSkillsInput } from '../utils/skills';
+import { motion } from 'motion/react';
 
 export default function JobFilters({ onSearch, onClear, loading }) {
   const [skills, setSkills] = useState('');
@@ -30,7 +31,13 @@ export default function JobFilters({ onSearch, onClear, loading }) {
   }
 
   return (
-    <form className="card" onSubmit={submit}>
+    <motion.form
+      className="card"
+      onSubmit={submit}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
       <h2>Find jobs</h2>
       <div className="filters">
         <label>
@@ -74,6 +81,6 @@ export default function JobFilters({ onSearch, onClear, loading }) {
           Clear filters
         </button>
       </div>
-    </form>
+    </motion.form>
   );
 }
