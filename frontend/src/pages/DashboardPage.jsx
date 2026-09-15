@@ -40,6 +40,24 @@ export default function DashboardPage() {
 
       {error && <p className="error card-error">{error}</p>}
 
+      <motion.section
+        className="dashboard-intro"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+      >
+        <div>
+          <p className="hero-kicker"><span className="signal-dot" />Placement / personal console</p>
+          <h1>Make your next move <em>more intentional.</em></h1>
+          <p className="hero-copy">Your readiness signal, skill map, and next learning moves in one place.</p>
+        </div>
+        <div className="dashboard-intro-rail">
+          <span>PROFILE STATUS</span>
+          <strong>{report ? 'SCANNED' : 'AWAITING SCAN'}</strong>
+          <small>{report ? report.target_role : 'Upload a profile to begin'}</small>
+        </div>
+      </motion.section>
+
       {!loading && !report && !error && (
         <div className="card center">
           <h2>No report yet</h2>

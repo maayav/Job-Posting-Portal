@@ -17,8 +17,14 @@ function Area({ title, items, tone, percentField = 'percent' }) {
 
 export default function GapList({ report }) {
   return (
-    <div className="card">
-      <h2>Skill breakdown</h2>
+    <div className="card breakdown-card">
+      <div className="section-heading">
+        <div>
+          <p className="section-kicker">02 / PROFILE MAP</p>
+          <h2>Skill breakdown</h2>
+        </div>
+        <span className="section-note">{report.gaps?.length ?? 0} gaps identified</span>
+      </div>
       <Area title="Strong" tone="good" items={report.strong_areas} />
       <Area title="Developing" tone="mid" items={report.developing_areas} />
       <Area title="Gaps" tone="low" items={report.gaps} percentField="percent" />

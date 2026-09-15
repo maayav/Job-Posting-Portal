@@ -1,16 +1,28 @@
+import { motion } from 'motion/react';
+
 export default function ScoreCard({ score, targetRole, generatedAt }) {
   const color = score >= 80 ? 'good' : score >= 60 ? 'mid' : 'low';
   return (
-    <div className="card score-card">
-      <div>
+    <motion.div
+      className="card score-card"
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      <div className="score-copy">
+        <p className="section-kicker">01 / READINESS SIGNAL</p>
         <h2>ATS Score</h2>
-        <p className="muted">{targetRole}</p>
-        <p className="muted small">{generatedAt ? `generated ${new Date(generatedAt).toLocaleString()}` : ''}</p>
+        <p className="score-context">A deterministic read on how your profile maps to the target role.</p>
+        <div className="score-tags">
+          <span className="chip">{targetRole}</span>
+          <span className="score-status"><i /> verified pipeline</span>
+        </div>
+        <p className="muted small generated-at">{generatedAt ? `last generated ${new Date(generatedAt).toLocaleString()}` : ''}</p>
       </div>
       <div className={`score-ring ${color}`}>
         <span>{score}</span>
         <small>/100</small>
       </div>
-    </div>
+    </motion.div>
   );
 }

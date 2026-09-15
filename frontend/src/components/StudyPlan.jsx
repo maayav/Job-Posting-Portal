@@ -19,6 +19,7 @@ export default function StudyPlan({ reportId, items, onToggle }) {
   if (!items?.length) {
     return (
       <div className="card">
+        <p className="section-kicker">03 / NEXT MOVES</p>
         <h2>Study plan</h2>
         <p className="muted">No gaps found — no study items needed. Keep it up!</p>
       </div>
@@ -27,7 +28,13 @@ export default function StudyPlan({ reportId, items, onToggle }) {
 
   return (
     <div className="card">
-      <h2>Prioritized study plan</h2>
+      <div className="section-heading">
+        <div>
+          <p className="section-kicker">03 / NEXT MOVES</p>
+          <h2>Prioritized study plan</h2>
+        </div>
+        <span className="section-note">{items.filter((item) => !item.done).length} open</span>
+      </div>
       <ul className="plan-list">
         {items.map((item) => (
           <li key={item._id} className={item.done ? 'done' : ''}>
