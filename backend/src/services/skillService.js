@@ -34,6 +34,29 @@ function deriveConfidence(sources, evidence) {
   return 'low';
 }
 
+const DEPTH_RANK = { low: 0, medium: 1, high: 2 };
+
+function defaultProficiency(signals) {
+  return {
+    projects_count: signals?.projects_count ?? 0,
+    has_production_usage: signals?.has_production_usage ?? false,
+    mentions_depth: signals?.mentions_depth ?? 'low',
+  };
+}
+
+function mergeProficiency(a, b) {
+  const left = defaultProficiency(a);
+  const right = defaultProficiency(b);
+  return {
+    projects_count: Math.max(left.projects_count, right.projects_count),
+    has_production_usage: left.has_production_usage || right.has_production_usage,
+    mentions_depth:
+      DEPTH_RANK[right.mentions_depth] > DEPTH_RANK[left.mentions_depth]
+        ? right.mentions_depth
+        : left.mentions_depth,
+  };
+}
+
 function mergeSkills(geminiSkills) {
   const map = new Map();
   for (const skill of geminiSkills) {
@@ -41,13 +64,17 @@ function mergeSkills(geminiSkills) {
     if (!map.has(key)) {
       map.set(key, {
         name: skill.name.trim(),
+        category: skill.category ?? 'other',
         sources: [...new Set(skill.sources)],
         evidence: skill.evidence || [],
+        proficiency_signals: defaultProficiency(skill.proficiency_signals),
       });
       continue;
     }
     const existing = map.get(key);
     existing.sources = [...new Set([...existing.sources, ...skill.sources])];
+    existing.category = existing.category === 'other' ? skill.category ?? 'other' : existing.category;
+    existing.proficiency_signals = mergeProficiency(existing.proficiency_signals, skill.proficiency_signals);
     const existingKeys = new Set(existing.evidence.map((e) => `${e.source}:${e.text}`));
     for (const item of skill.evidence || []) {
       const k = `${item.source}:${item.text}`;

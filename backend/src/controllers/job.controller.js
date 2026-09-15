@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { Job } from '../models/job.js';
 import { AppError } from '../utils/errors.js';
+import { normalizeSkillName, normalizeSkills, hasDuplicateNormalizedSkills } from '../utils/skillNormalizer.js';
 
 const MAX_LIMIT = 50;
 
@@ -8,10 +9,9 @@ const skillsSchema = z
   .array(z.string().trim().min(1, 'Skill cannot be empty').max(50))
   .min(1, 'At least one skill is required')
   .max(30, 'Too many skills')
-  .refine(
-    (skills) => new Set(skills.map((s) => s.toLowerCase())).size === skills.length,
-    { message: 'Duplicate skills are not allowed' }
-  );
+  .refine((skills) => !hasDuplicateNormalizedSkills(skills), {
+    message: 'Duplicate skills are not allowed (synonyms are treated as the same skill)',
+  });
 
 const jobFields = {
   title: z.string().trim().min(1, 'Title is required').max(150),
@@ -59,7 +59,7 @@ function toJobResponse(job) {
 }
 
 function parseSkillsParam(value) {
-  return [...new Set(value.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean))];
+  return [...new Set(value.split(',').map((s) => normalizeSkillName(s).toLowerCase()).filter(Boolean))];
 }
 
 export async function listJobs(req, res) {
@@ -97,7 +97,7 @@ export async function createJob(req, res) {
 
   const job = await Job.create({
     title: data.title,
-    skills: data.skills,
+    skills: normalizeSkills(data.skills),
     experienceLevel: data.experienceLevel,
     city: data.city,
     description: data.description,
@@ -117,7 +117,7 @@ export async function updateJob(req, res) {
   }
 
   if (data.title !== undefined) job.title = data.title;
-  if (data.skills !== undefined) job.skills = data.skills;
+  if (data.skills !== undefined) job.skills = normalizeSkills(data.skills);
   if (data.experienceLevel !== undefined) job.experienceLevel = data.experienceLevel;
   if (data.city !== undefined) job.city = data.city;
   if (data.description !== undefined) job.description = data.description;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { parseSkillsInput, duplicateNormalizedSkills } from '../utils/skills';
 
 export default function JobForm({ initial, onSubmit, onCancel, saving }) {
   const [title, setTitle] = useState(initial?.title ?? '');
@@ -10,13 +11,12 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
 
   function submit(e) {
     e.preventDefault();
-    const skillList = skills.split(',').map((s) => s.trim()).filter(Boolean);
+    const skillList = parseSkillsInput(skills);
 
     if (!title.trim()) return setError('Title is required.');
     if (skillList.length === 0) return setError('At least one skill is required.');
-    const normalized = skillList.map((s) => s.toLowerCase());
-    if (new Set(normalized).size !== normalized.length) {
-      return setError('Duplicate skills are not allowed.');
+    if (duplicateNormalizedSkills(skillList)) {
+      return setError('Duplicate skills are not allowed (synonyms like "reactjs" and "React" count as the same skill).');
     }
     const exp = Number(experienceLevel);
     if (experienceLevel === '' || Number.isNaN(exp) || exp < 0) {
@@ -45,8 +45,12 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
         </label>
         <label>
           Skills (comma-separated)
-          <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="React, JavaScript" />
+          <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="React, Node.js, UI/UX, MongoDB, PyTorch" />
         </label>
+        <p className="muted small field-hint">
+          Examples: “React” for frontend engineering, “UI/UX” for design roles, “PyTorch” for ML.
+          Common synonyms (reactjs, nodejs, ui/ux, …) are normalized automatically.
+        </p>
         <label>
           Required experience (years)
           <input

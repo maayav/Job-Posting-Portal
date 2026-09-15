@@ -1,8 +1,21 @@
 import mongoose from 'mongoose';
 
+const CATEGORIES = [
+  'language',
+  'frontend_framework',
+  'backend_framework',
+  'database',
+  'ml_framework',
+  'devops_tool',
+  'cloud_platform',
+  'testing_tool',
+  'other',
+];
+
 const skillSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    category: { type: String, enum: CATEGORIES, default: 'other' },
     confidence: { type: String, enum: ['low', 'medium', 'high'], required: true },
     sources: [{ type: String, enum: ['resume', 'github'] }],
     evidence: [
@@ -11,6 +24,11 @@ const skillSchema = new mongoose.Schema(
         text: { type: String, required: true },
       },
     ],
+    proficiency_signals: {
+      projects_count: { type: Number, default: 0, min: 0, max: 5 },
+      has_production_usage: { type: Boolean, default: false },
+      mentions_depth: { type: String, enum: ['low', 'medium', 'high'], default: 'low' },
+    },
   },
   { _id: false }
 );

@@ -5,14 +5,41 @@ import { AppError } from '../utils/errors.js';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
+export const SKILL_CATEGORIES = [
+  'language',
+  'frontend_framework',
+  'backend_framework',
+  'database',
+  'ml_framework',
+  'devops_tool',
+  'cloud_platform',
+  'testing_tool',
+  'other',
+];
+
+const proficiencySchema = z.object({
+  projects_count: z.coerce
+    .number()
+    .catch(0)
+    .transform((value) => Math.max(0, Math.min(5, Math.round(value)))),
+  has_production_usage: z.boolean().catch(false),
+  mentions_depth: z.enum(['low', 'medium', 'high']).catch('low'),
+});
+
 export const skillSchema = z.object({
   skills: z.array(
     z.object({
       name: z.string().trim().min(1),
+      category: z.enum(SKILL_CATEGORIES).catch('other'),
       sources: z.array(z.enum(['resume', 'github'])).default([]),
       evidence: z
         .array(z.object({ source: z.enum(['resume', 'github']), text: z.string().trim() }))
         .default([]),
+      proficiency_signals: proficiencySchema.default({
+        projects_count: 0,
+        has_production_usage: false,
+        mentions_depth: 'low',
+      }),
     })
   ),
 });
@@ -113,20 +140,37 @@ async function callExtraction(prompt, model) {
   return parsed.data.skills;
 }
 
-const PROMPT_TEMPLATE = `Extract demonstrated skills from this profile data with supporting evidence. Return ONLY valid JSON, no markdown fences, matching exactly this shape:
+const PROMPT_TEMPLATE = `You are a technical skill extraction engine. Analyze the candidate PROFILE DATA below and extract every technical skill that is genuinely supported by the data.
+
+Return ONLY a single valid JSON object (no markdown fences, no commentary, no extra text) with exactly this shape:
 {
   "skills": [
-    { "name": "React", "sources": ["resume", "github"],
-      "evidence": [{ "source": "resume", "text": "Built a React-based placement dashboard" }] }
+    {
+      "name": "React",
+      "category": "frontend_framework",
+      "sources": ["resume", "github"],
+      "evidence": [{ "source": "resume", "text": "Built a React-based placement dashboard" }],
+      "proficiency_signals": { "projects_count": 2, "has_production_usage": true, "mentions_depth": "high" }
+    }
   ]
 }
 
-Rules:
-- "name" is a specific technology or capability (e.g. "React", "MongoDB", "PyTorch", "REST APIs"). Do not invent skills that are not supported by the data.
-- "sources" lists which parts of the profile data mention the skill ("resume" and/or "github").
-- "evidence" must be short excerpts (max ~120 chars) taken verbatim or near-verbatim from the profile data, one per source, supporting the skill.
-- If a skill appears only as a bare listed keyword with no supporting sentence in any source, include it with an empty "evidence" array.
-- Include 5 to 30 skills. Only return the JSON object.
+Field rules:
+- "name": one specific technical skill, technology, framework, tool, or engineering capability (e.g. "React", "MongoDB", "PyTorch", "REST APIs", "Feature Engineering"). Technical skills only — never soft skills such as "Communication", "Teamwork", "Leadership", or "Problem Solving".
+- "category": exactly one of ["language", "frontend_framework", "backend_framework", "database", "ml_framework", "devops_tool", "cloud_platform", "testing_tool", "other"].
+- "sources": array containing "resume" and/or "github" — list only the sources where the skill actually appears.
+- "evidence": up to 2 short excerpts (max ~120 characters each), one per source, copied verbatim or near-verbatim from the PROFILE DATA. Use an empty array only when the skill appears as a bare keyword with no supporting sentence.
+- "proficiency_signals":
+  - "projects_count": integer 0-5 — the number of distinct projects, roles, or experiences in the data that use this skill.
+  - "has_production_usage": true only when the data shows real professional or deployed use (e.g. production, deployed, live users, internship, employment); otherwise false.
+  - "mentions_depth": "low" | "medium" | "high" — how deeply the data discusses the skill (bare keyword = low; listed with a project sentence = medium; detailed impact, scale, or architecture = high).
+
+Strictness rules:
+- Extract ONLY skills justified by the PROFILE DATA. Never invent, infer, or pad skills that are not present.
+- If a technology is absent from the data, it must be absent from the output.
+- Include every meaningful technical skill the data supports: aim for 8-40 skills when the profile is rich, and only fewer when the data is genuinely sparse. Never reach the count by inventing skills.
+- Do not emit duplicates; use the most specific common name (e.g. "PyTorch" rather than "Deep Learning Frameworks").
+- Return the JSON object only.
 
 PROFILE DATA:
 `;

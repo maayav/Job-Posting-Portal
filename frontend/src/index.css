@@ -525,3 +525,7 @@ textarea {
   font-family: inherit;
   resize: vertical;
 }
+
+.field-hint {
+  margin: -6px 0 12px;
+}

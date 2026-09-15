@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { parseSkillsInput } from '../utils/skills';
 
 export default function JobFilters({ onSearch, onClear, loading }) {
   const [skills, setSkills] = useState('');
@@ -14,7 +15,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
     }
     setError('');
     onSearch({
-      skills: skills.trim(),
+      skills: parseSkillsInput(skills).join(','),
       experience: experience.trim(),
       city: city.trim(),
     });
@@ -33,11 +34,11 @@ export default function JobFilters({ onSearch, onClear, loading }) {
       <h2>Find jobs</h2>
       <div className="filters">
         <label>
-          Skills (comma-separated)
+          Skills (comma-separated, any match)
           <input
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
-            placeholder="react,node.js"
+            placeholder="react, ui/ux, node.js"
           />
         </label>
         <label>
@@ -60,6 +61,10 @@ export default function JobFilters({ onSearch, onClear, loading }) {
           />
         </label>
       </div>
+      <p className="muted small field-hint">
+        Skills match any of the listed values (synonyms are normalized). Experience shows jobs
+        requiring up to your years. City is an exact, case-insensitive match.
+      </p>
       {error && <p className="error">{error}</p>}
       <div className="filters-actions">
         <button className="primary" disabled={loading}>

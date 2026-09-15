@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { normalizeSkills } from '../utils/skillNormalizer.js';
 
 const jobSchema = new mongoose.Schema(
   {
@@ -21,8 +22,11 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Derive normalized search fields from the canonical values on every write.
+// Normalize skills to canonical names, then derive normalized search fields.
 jobSchema.pre('validate', function deriveSearchFields() {
+  if (Array.isArray(this.skills)) {
+    this.skills = normalizeSkills(this.skills);
+  }
   this.skillsLower = [
     ...new Set((this.skills || []).map((s) => String(s).trim().toLowerCase()).filter(Boolean)),
   ];

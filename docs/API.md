@@ -98,13 +98,13 @@ Query parameters (all optional):
 
 | Param | Default | Rules |
 |---|---|---|
-| `skills` | — | comma-separated; ANY-match, case-insensitive, whitespace-insensitive (`react, node.js`) |
+| `skills` | — | comma-separated; ANY-match, case-insensitive; synonyms normalized to canonical names (`reactjs` → `React`, `ui/ux` → `UI/UX`, `nodejs` → `Node.js`, …) |
 | `experience` | — | the seeker's years; returns jobs with `experienceLevel <= experience` |
-| `city` | — | case-insensitive exact match after trim (`CHENNAI` matches `Chennai`) |
+| `city` | — | case-insensitive exact match after trim (`CHENNAI` matches `Chennai`; no partial matching) |
 | `page` | `1` | integer ≥ 1 |
 | `limit` | `20` | integer ≥ 1; values above 50 are clamped to 50 |
 
-Filters combine with AND across categories; within `skills` it is OR. Sorted newest first (`createdAt` desc). Empty results still return `200`:
+Filters combine with AND across categories; within `skills` it is OR (any listed skill may match). Job skills are canonicalized with an explicit synonym map on create/update and on search (`UI/UX` stays distinct from frontend frameworks like `React`). Sorted newest first (`createdAt` desc). Empty results still return `200`:
 
 ```json
 {

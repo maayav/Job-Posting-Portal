@@ -151,6 +151,11 @@ describe('Job posting portal', () => {
       expect(res.status).toBe(400);
     });
 
+    it('rejects synonym duplicates after normalization (400)', async () => {
+      const res = await createJob(jobBody({ skills: ['reactjs', 'react.js'] }));
+      expect(res.status).toBe(400);
+    });
+
     it('rejects an invalid job id (400)', async () => {
       const res = await request(app)
         .put('/api/jobs/not-an-id')
@@ -277,6 +282,61 @@ describe('Job posting portal', () => {
       expect(Object.keys(job).sort()).toEqual(
         ['city', 'createdAt', 'createdBy', 'description', 'experienceLevel', 'id', 'skills', 'title', 'updatedAt']
       );
+    });
+  });
+
+  describe('skill normalization and design vs frontend separation', () => {
+    it('normalizes synonyms to canonical skill names on create', async () => {
+      const res = await createJob(jobBody({ skills: ['reactjs', 'nodejs', 'ui/ux', 'postgres'] }));
+      expect(res.status).toBe(201);
+      expect(res.body.job.skills).toEqual(['React', 'Node.js', 'UI/UX', 'PostgreSQL']);
+    });
+
+    it('normalizes synonyms on update', async () => {
+      const created = await createJob();
+      const res = await request(app)
+        .put(`/api/jobs/${created.body.job.id}`)
+        .set(authHeader(adminToken))
+        .send({ skills: ['react.js', 'mongo'] });
+      expect(res.status).toBe(200);
+      expect(res.body.job.skills).toEqual(['React', 'MongoDB']);
+    });
+
+    it('finds jobs by synonym search terms', async () => {
+      await createJob(jobBody({ title: 'React Role', skills: ['React'] }));
+      const res = await request(app).get('/api/jobs?skills=reactjs').set(authHeader(studentToken));
+      expect(res.body.total).toBe(1);
+      expect(res.body.jobs[0].title).toBe('React Role');
+    });
+
+    it('keeps UI/UX distinct from frontend engineering skills', async () => {
+      await createJob(jobBody({ title: 'Product Designer', skills: ['UI/UX', 'Figma'] }));
+      await createJob(jobBody({ title: 'React Developer', skills: ['React', 'JavaScript', 'Node.js'] }));
+
+      const design = await request(app).get('/api/jobs?skills=ui/ux').set(authHeader(studentToken));
+      expect(design.body.total).toBe(1);
+      expect(design.body.jobs[0].title).toBe('Product Designer');
+
+      const frontend = await request(app).get('/api/jobs?skills=React').set(authHeader(studentToken));
+      expect(frontend.body.total).toBe(1);
+      expect(frontend.body.jobs[0].title).toBe('React Developer');
+
+      const designSynonym = await request(app).get('/api/jobs?skills=product%20design').set(authHeader(studentToken));
+      expect(designSynonym.body.total).toBe(1);
+      expect(designSynonym.body.jobs[0].title).toBe('Product Designer');
+    });
+
+    it('supports multi-skill filters with documented ANY-match semantics', async () => {
+      await createJob(jobBody({ title: 'Product Designer', skills: ['UI/UX', 'Figma'] }));
+      await createJob(jobBody({ title: 'React Developer', skills: ['React', 'Node.js'] }));
+      await createJob(jobBody({ title: 'ML Engineer', skills: ['Python', 'PyTorch'] }));
+
+      const res = await request(app)
+        .get('/api/jobs?skills=react,ui/ux')
+        .set(authHeader(studentToken));
+      expect(res.body.total).toBe(2);
+      const titles = res.body.jobs.map((j) => j.title).sort();
+      expect(titles).toEqual(['Product Designer', 'React Developer']);
     });
   });
 });

@@ -117,7 +117,7 @@ No cascade deletion: if an admin account is removed, existing jobs keep the `cre
 
 ### Search semantics (v1)
 
-- `skills` — comma-separated, ANY-match (`$in` on `skillsLower`), case/whitespace-insensitive.
+- `skills` — comma-separated, ANY-match (`$in` on `skillsLower`), case-insensitive. Synonyms are canonicalized by `backend/src/utils/skillNormalizer.js` on both write and search (`reactjs`/`react.js` → `React`; `ui/ux`/`product design` → `UI/UX`; `nodejs`/`node` → `Node.js`; …). Unknown skills keep their original (trimmed) name.
 - `experience` — seeker's years; matches `experienceLevel <= experience`.
-- `city` — case-insensitive exact match on `cityLower`.
-- Combined filters AND together; results sorted `createdAt` desc; `page` default 1, `limit` default 20 (max 50, clamped).
+- `city` — case-insensitive exact match on `cityLower` (no partial matching).
+- Combined filters AND together; within `skills` it is OR; results sorted `createdAt` desc; `page` default 1, `limit` default 20 (max 50, clamped).
