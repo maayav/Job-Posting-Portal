@@ -40,9 +40,9 @@ export default function LoginPage() {
       >
         <section className="auth-story">
           <h2 className="auth-product">SkillGap Tracker</h2>
-          <p className="hero-kicker"><span className="signal-dot" />Signal-based career navigation</p>
+          <p className="hero-kicker">CAREER / PLACEMENT HUB</p>
           <h1>Turn your profile into your <em>next move.</em></h1>
-          <p>One console for job discovery, readiness signals, and the work between where you are and where you want to go.</p>
+          <p>One clear space for job discovery, readiness, and the work between where you are and where you want to go.</p>
           <div className="auth-story-grid">
             <div><strong>01</strong><span>Find relevant roles</span></div>
             <div><strong>02</strong><span>See your real gaps</span></div>

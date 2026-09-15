@@ -16,7 +16,7 @@ export default function NavBar() {
     <header className="topbar">
       <Link className="brand-lockup" to="/">
         <span className="brand-mark">S</span>
-        <span>SkillGap <em>OS</em></span>
+        <span>SkillGap</span>
       </Link>
       <nav className="topbar-user" aria-label="Main navigation">
         <div className="nav-pill">

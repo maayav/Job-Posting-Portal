@@ -246,3 +246,10 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 - Added `lenis` smooth scrolling and `motion` entrance transitions without changing API contracts or page data flows.
 - Added shared motion-aware `NavBar`, preserved the existing Jobs/Dashboard/New Analysis/AI Assistant route order, and kept the score-trend component in the codebase without rendering it on the dashboard.
 - Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.
+
+### 2026-09-15 — Monochrome minimalist/brutalist visual pass
+
+- Removed tactical/cyber language from the UI (`Placement network / live board`, `personal console`, signal-based copy) and replaced it with neutral editorial labels.
+- Replaced the green/blue/orange palette with black, white, and grey only: sharp borders, offset shadows, minimal pill usage, high-contrast type, and monochrome score states.
+- Kept Lenis smooth scrolling and Motion transitions, but made them quieter and more editorial. Existing routes, data flows, and API behavior are unchanged.
+- Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.

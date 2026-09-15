@@ -47,9 +47,9 @@ export default function DashboardPage() {
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
         <div>
-          <p className="hero-kicker"><span className="signal-dot" />Placement / personal console</p>
+          <p className="hero-kicker">DASHBOARD / OVERVIEW</p>
           <h1>Make your next move <em>more intentional.</em></h1>
-          <p className="hero-copy">Your readiness signal, skill map, and next learning moves in one place.</p>
+          <p className="hero-copy">Your readiness score, skill map, and next learning moves in one place.</p>
         </div>
         <div className="dashboard-intro-rail">
           <span>PROFILE STATUS</span>

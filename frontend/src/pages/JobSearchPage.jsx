@@ -63,8 +63,8 @@ export default function JobSearchPage() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="hero-orbit" aria-hidden="true" />
-        <p className="hero-kicker"><span className="signal-dot" />Placement network / live board</p>
-        <h1>Find work that <em>fits your signal.</em></h1>
+        <p className="hero-kicker">JOBS / DIRECTORY</p>
+        <h1>Find your next <em>opportunity.</em></h1>
         <p className="hero-copy">Search roles by the skills you are building, the city you want, and the experience you already own.</p>
         <div className="hero-meta"><span>01</span><span>Skills-first search</span><span>Any authenticated student can browse</span></div>
       </motion.section>
