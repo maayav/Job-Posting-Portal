@@ -5,4 +5,5 @@ coverage/
 *.log
 .DS_Store
 backend/storage/*
-!backend/storage/.gitkeep
+!backend/storage/.gitkeepbackend/.server.pid
+backend/scripts/.server.pid
