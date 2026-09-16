@@ -1,9 +1,10 @@
-# AI-Assisted Placement & Skill-Gap Tracker + Job Posting Portal
+# Vortex — AI-Assisted Placement & Skill-Gap Tracker + Job Posting Portal
 
-A MERN application for college placement cells and students:
+Vortex is a MERN application for college placement cells and students:
 
 1. **Skill-Gap Tracker** — students upload a resume (+ GitHub profile); AI extracts demonstrated skills with evidence; skills are matched against a role's skill ontology via embedding similarity; a deterministic Role-Readiness Score and a prioritized study plan are produced; re-uploads over time track progress.
 2. **Job Posting Portal** — a shared job board where students (job seekers) search and filter postings by skills, experience, and city, and admins create, edit, and delete job postings.
+3. **Vortex landing page** — a public marketing page (`/`) with scroll-reveal sections, product story, and a light/dark monochrome theme toggle available throughout the app.
 
 ## Features
 

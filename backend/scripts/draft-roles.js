@@ -70,7 +70,7 @@ async function generateWithFallback(prompt) {
 function rolePrompt(role) {
   return `You are a technical hiring analyst. List the 12-15 most important skills required for a "${role}" role based on typical industry requirements and current job postings.
 
-Return ONLY valid JSON (no markdown fences) in exactly this shape:
+Return ONLY valid JSON (no markdown fences, no text before or after) in exactly this shape:
 {
   "skills": [
     { "name": "JavaScript", "category": "language", "weight": 5, "note": "core language for the role" }
@@ -78,10 +78,11 @@ Return ONLY valid JSON (no markdown fences) in exactly this shape:
 }
 
 Rules:
-- "weight" is an integer 1-5: 5 = absolutely critical, 1 = nice to have. Use the full range, don't give everything a 5.
-- "category" must be one of: ${VALID_CATEGORIES.join(', ')}.
-- "name" should be a specific technology or capability (e.g. "React", "PostgreSQL", "Terraform", "Threat Modeling"). Avoid vague entries like "Problem Solving" unless truly central.
-- Keep skills non-overlapping; prefer concrete tools/technologies plus at most 3 conceptual skills.
+- "name" must be a specific, current technology or capability using its canonical spelling (e.g. "React", "Node.js", "PostgreSQL", "scikit-learn", "Terraform", "Threat Modeling"). Never use vague entries like "Problem Solving" unless truly central to the role.
+- "category" must be exactly one of: ${VALID_CATEGORIES.join(', ')}.
+- "weight" is an integer 1-5: 5 = absolutely critical, 1 = nice to have. Use the full range with a realistic distribution (about two or three 5s, several 3s-4s, and at least one 1-2).
+- Keep entries non-overlapping: prefer concrete tools/technologies plus at most 3 conceptual skills.
+- Do not emit duplicate skills or casing variants of the same skill.
 - "note" is a short (max 12 words) reason for the weight.
 - Order by weight descending.`;
 }

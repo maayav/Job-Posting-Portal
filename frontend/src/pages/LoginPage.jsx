@@ -22,7 +22,7 @@ export default function LoginPage() {
       } else {
         await register(name, email, password);
       }
-      window.location.href = '/';
+      window.location.href = '/dashboard';
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -39,7 +39,7 @@ export default function LoginPage() {
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
         <section className="auth-story">
-          <h2 className="auth-product">SkillGap Tracker</h2>
+          <h2 className="auth-product">Vortex</h2>
           <p className="hero-kicker">CAREER / PLACEMENT HUB</p>
           <h1>Turn your profile into your <em>next move.</em></h1>
           <p>One clear space for job discovery, readiness, and the work between where you are and where you want to go.</p>

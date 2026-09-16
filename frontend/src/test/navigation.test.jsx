@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
 import { AuthProvider } from '../context/AuthContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import { api } from '../api/client';
 
 vi.mock('../api/client', () => ({
@@ -19,7 +20,9 @@ function renderApp(initialPath = '/') {
   return render(
     <MemoryRouter initialEntries={[initialPath]}>
       <AuthProvider>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </AuthProvider>
     </MemoryRouter>
   );
@@ -53,17 +56,16 @@ describe('App routing and navigation order', () => {
     });
   });
 
-  it('lands on the Dashboard page for an authenticated user at /', async () => {
+  it('lands on the public Vortex landing page at /', async () => {
     signIn('student');
     localStorage.setItem('report_id', 'r1');
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /ats score/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /your next role is closer/i })).toBeTruthy();
   });
 
-  it('shows the empty dashboard state when no report exists yet', async () => {
-    signIn('student');
+  it('renders the landing page for unauthenticated users', async () => {
     renderApp('/');
-    expect(await screen.findByText(/no report yet/i)).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /your next role is closer/i })).toBeTruthy();
   });
 
   it('keeps deep links working (/dashboard, /analyze, /assistant)', async () => {
@@ -73,13 +75,13 @@ describe('App routing and navigation order', () => {
   });
 
   it('redirects unauthenticated users to login', async () => {
-    renderApp('/');
-    expect(await screen.findByRole('heading', { name: /skillgap tracker/i })).toBeTruthy();
+    renderApp('/dashboard');
+    expect(await screen.findByRole('heading', { name: /welcome back/i })).toBeTruthy();
   });
 
   it('renders the main navigation in the required order', async () => {
     signIn('student');
-    renderApp('/');
+    renderApp('/jobs');
     const nav = await screen.findByRole('navigation', { name: /main navigation/i });
     const links = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent);
     expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant']);
@@ -88,9 +90,16 @@ describe('App routing and navigation order', () => {
 
   it('adds the Admin Jobs link only for admins', async () => {
     signIn('admin');
-    renderApp('/');
+    renderApp('/jobs');
     const nav = await screen.findByRole('navigation', { name: /main navigation/i });
     const links = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent);
     expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant', 'Admin Jobs']);
+  });
+
+  it('exposes a dark-mode toggle in the navigation', async () => {
+    signIn('student');
+    renderApp('/jobs');
+    const toggle = await screen.findByRole('button', { name: /dark/i });
+    expect(toggle).toBeTruthy();
   });
 });

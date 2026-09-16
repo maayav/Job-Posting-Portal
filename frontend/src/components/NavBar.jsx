@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 const NAV_ITEMS = [
   { to: '/jobs', label: 'Jobs' },
@@ -10,13 +11,14 @@ const NAV_ITEMS = [
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
 
   return (
     <header className="topbar">
       <Link className="brand-lockup" to="/">
-        <span className="brand-mark">S</span>
-        <span>SkillGap</span>
+        <span className="brand-mark">V</span>
+        <span>Vortex</span>
       </Link>
       <nav className="topbar-user" aria-label="Main navigation">
         <div className="nav-pill">
@@ -32,6 +34,9 @@ export default function NavBar() {
           )}
         </div>
         <span className="user-chip"><i />{user?.name}</span>
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
         <button className="link logout-link" onClick={logout}>Exit</button>
       </nav>
     </header>

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import DashboardPage from '../pages/DashboardPage';
 import { AuthProvider } from '../context/AuthContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import { api } from '../api/client';
 
 vi.mock('../api/client', () => ({
@@ -45,7 +46,9 @@ describe('Dashboard layout', () => {
     render(
       <MemoryRouter>
         <AuthProvider>
-          <DashboardPage />
+          <ThemeProvider>
+            <DashboardPage />
+          </ThemeProvider>
         </AuthProvider>
       </MemoryRouter>
     );
@@ -59,7 +62,9 @@ describe('Dashboard layout', () => {
     render(
       <MemoryRouter>
         <AuthProvider>
-          <DashboardPage />
+          <ThemeProvider>
+            <DashboardPage />
+          </ThemeProvider>
         </AuthProvider>
       </MemoryRouter>
     );

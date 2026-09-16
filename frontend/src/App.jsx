@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import JobSearchPage from './pages/JobSearchPage';
 import AdminJobsPage from './pages/AdminJobsPage';
 import AssistantPage from './pages/AssistantPage';
+import LandingPage from './pages/LandingPage';
 
 export default function App() {
   return (
@@ -14,9 +15,7 @@ export default function App() {
       <Route
         path="/"
         element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
+          <LandingPage />
         }
       />
       <Route

@@ -167,10 +167,14 @@ Field rules:
 
 Strictness rules:
 - Extract ONLY skills justified by the PROFILE DATA. Never invent, infer, or pad skills that are not present.
-- If a technology is absent from the data, it must be absent from the output.
+- If a technology is absent from the data, it must be absent from the output. Do not add a skill just because it is common in the field, and do not add a skill because it is missing (gaps are computed later by the scoring pipeline, not here).
 - Include every meaningful technical skill the data supports: aim for 8-40 skills when the profile is rich, and only fewer when the data is genuinely sparse. Never reach the count by inventing skills.
-- Do not emit duplicates; use the most specific common name (e.g. "PyTorch" rather than "Deep Learning Frameworks").
-- Return the JSON object only.
+- If the profile contains no technical skills at all, return exactly {"skills": []}.
+- Evidence must be copied from the PROFILE DATA — never paraphrase, translate, or fabricate an excerpt. If you cannot find a supporting excerpt, use an empty evidence array.
+- Skills that appear only as bare keywords in a list are still valid skills: include them with an empty "evidence" array and "mentions_depth": "low".
+- Do not emit duplicates; merge casing variants into one entry and use the most specific common name (e.g. "PyTorch" rather than "Deep Learning Frameworks", "React" rather than "React.js").
+- "category" must be exactly one of the allowed values — use "other" when none fit.
+- Return the JSON object only, with no markdown fences and no text before or after it.
 
 PROFILE DATA:
 `;

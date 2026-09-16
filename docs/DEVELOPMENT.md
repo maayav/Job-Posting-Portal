@@ -253,3 +253,12 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 - Replaced the green/blue/orange palette with black, white, and grey only: sharp borders, offset shadows, minimal pill usage, high-contrast type, and monochrome score states.
 - Kept Lenis smooth scrolling and Motion transitions, but made them quieter and more editorial. Existing routes, data flows, and API behavior are unchanged.
 - Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.
+
+### 2026-09-15 — Vortex landing page, dark mode, resource audit, prompt polish
+
+- **Landing page:** new public `/` marketing page for the product now branded **Vortex** (was SkillGap): hero with animated product visual, "Trusted by" rolling marquee, "How it works" steps, split narrative, and end CTA. Sections use Motion `whileInView` with `once: false`, so content assembles while scrolling down and recedes when scrolling back up.
+- **Dark mode:** new `ThemeContext` with a persisted `light`/`dark` preference (`localStorage` + `data-theme` on `<html>`). Toggle is available in the app nav and the landing nav. Both themes keep the same monochrome brutalist system (black/white/grey).
+- **Branding:** navbar and landing now use "Vortex" (mark "V"); login product label and page title updated.
+- **Resources:** full link audit re-run and fixed — 8 URLs updated to current/verified destinations (freeCodeCamp React, Frontend Mentor replacing the dead jschallenger link, Node.js docs, PyTorch docs/tutorials, SQL tutorial, GeeksforGeeks DSA, Hugging Face LLM course). Result: **0 broken** (82 ok, 8 benign redirects) across 90 catalog entries; reseeded.
+- **Gemini prompts:** extraction prompt tightened — explicit empty-result contract (`{"skills": []}`), no gap-filling, evidence must be copied (never paraphrased), bare-keyword handling, casing-variant merging, and strict category/JSON rules. Role-drafting prompt now requires canonical names, a realistic weight distribution, and no duplicates.
+- **Verification:** backend **80 passed + 2 skipped**; frontend **12 passed** (added dark-mode toggle test, IntersectionObserver test polyfill); lint 0 errors; build ✓.
