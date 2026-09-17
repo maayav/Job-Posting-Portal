@@ -4,6 +4,7 @@ import { api, errorMessage } from '../api/client';
 export default function UploadForm({ onSubmit, loading }) {
   const [file, setFile] = useState(null);
   const [github, setGithub] = useState('');
+  const [leetcode, setLeetcode] = useState('');
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState('');
   const [rolesError, setRolesError] = useState('');
@@ -48,7 +49,7 @@ export default function UploadForm({ onSubmit, loading }) {
       return;
     }
     if (error) return;
-    onSubmit(file, github.trim(), role);
+    onSubmit(file, github.trim(), leetcode.trim(), role);
   }
 
   return (
@@ -67,6 +68,16 @@ export default function UploadForm({ onSubmit, loading }) {
           value={github}
           onChange={(e) => setGithub(e.target.value)}
           placeholder="e.g. github.com/maayav or maayav"
+        />
+      </label>
+
+      <label>
+        LeetCode username or profile URL <span className="optional">(optional)</span>
+        <input
+          type="text"
+          value={leetcode}
+          onChange={(e) => setLeetcode(e.target.value)}
+          placeholder="e.g. leetcode.com/u/maayav or maayav"
         />
       </label>
 

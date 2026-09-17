@@ -60,12 +60,12 @@ describe('App routing and navigation order', () => {
     signIn('student');
     localStorage.setItem('report_id', 'r1');
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /your next role is closer/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
   });
 
   it('renders the landing page for unauthenticated users', async () => {
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /your next role is closer/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
   });
 
   it('keeps deep links working (/dashboard, /analyze, /assistant)', async () => {
@@ -84,7 +84,7 @@ describe('App routing and navigation order', () => {
     renderApp('/jobs');
     const nav = await screen.findByRole('navigation', { name: /main navigation/i });
     const links = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent);
-    expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant']);
+    expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant', 'My Applications']);
     expect(nav.querySelector('a[href="/analyze"]')).toBeTruthy();
   });
 
@@ -93,7 +93,7 @@ describe('App routing and navigation order', () => {
     renderApp('/jobs');
     const nav = await screen.findByRole('navigation', { name: /main navigation/i });
     const links = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent);
-    expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant', 'Admin Jobs']);
+    expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant', 'Admin Jobs', 'Applications']);
   });
 
   it('exposes a dark-mode toggle in the navigation', async () => {

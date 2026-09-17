@@ -1,0 +1,13 @@
+{
+  "name": "vortex-workspace",
+  "private": true,
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "install:all": "npm --prefix backend ci && npm --prefix frontend ci",
+    "dev": "node scripts/dev.mjs",
+    "test": "npm --prefix backend test && npm --prefix frontend test",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint"
+  }
+}

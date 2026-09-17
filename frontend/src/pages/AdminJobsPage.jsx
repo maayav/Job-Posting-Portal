@@ -78,6 +78,7 @@ export default function AdminJobsPage() {
   return (
     <div className="page">
       <NavBar />
+      <div className="page-title-row"><div><p className="section-kicker">HIRING WORKSPACE</p><h1>Manage opportunities.</h1><p className="muted">Keep your job postings up to date and ready for the right candidates.</p></div></div>
 
       {notice && <p className="notice">{notice}</p>}
       {error && <p className="error card-error">{error}</p>}

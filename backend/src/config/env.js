@@ -1,5 +1,7 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+config({ path: fileURLToPath(new URL('../../.env', import.meta.url)), quiet: true });
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -7,18 +9,30 @@ const envSchema = z.object({
   MONGO_URI: z.string().min(1, 'MONGO_URI is required'),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   JWT_EXPIRES_IN: z.string().default('7d'),
-  GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
+  AI_TEXT_PROVIDER: z.enum(['groq', 'gemini']).default('groq'),
+  AI_EMBEDDING_PROVIDER: z.literal('gemini').default('gemini'),
+  AI_TEXT_FALLBACK_PROVIDER: z.enum(['none', 'groq', 'gemini']).default('none'),
+  // Groq powers text generation (skill extraction and the assistant).
+  GROQ_API_KEY: z.string().default(''),
+  GROQ_MODEL: z.string().default(''),
+  GROQ_FALLBACK_MODELS: z.string().default('openai/gpt-oss-20b,qwen/qwen3.8-27b'),
+  // Gemini is retained for the existing embedding pipeline because Groq does
+  // not expose an embeddings endpoint.
+  GEMINI_API_KEY: z.string().default(''),
   GEMINI_MODEL: z.string().default('gemini-3.5-flash'),
-  GEMINI_FALLBACK_MODELS: z.string().default('gemini-flash-lite-latest,gemini-3-flash-preview'),
+  GEMINI_EMBEDDING_MODEL: z.string().optional(),
   EMBEDDING_MODEL: z.string().default('gemini-embedding-2'),
   EMBEDDING_VERSION: z.string().default('2026-09'),
   GITHUB_TOKEN: z.string().optional().default(''),
 }).superRefine((env, ctx) => {
   if (env.NODE_ENV !== 'test' && !env.GEMINI_API_KEY) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['GEMINI_API_KEY'], message: 'GEMINI_API_KEY is required for embeddings' });
+  }
+  if (env.NODE_ENV !== 'test' && (env.AI_TEXT_PROVIDER === 'groq' || env.AI_TEXT_FALLBACK_PROVIDER === 'groq') && (!env.GROQ_API_KEY || !env.GROQ_MODEL)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ['GEMINI_API_KEY'],
-      message: 'GEMINI_API_KEY is required outside of test mode',
+      path: ['GROQ_API_KEY'],
+      message: 'GROQ_API_KEY and GROQ_MODEL are required for Groq',
     });
   }
 });
@@ -33,4 +47,4 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-export const env = parsed.data;
+export const env = { ...parsed.data, EMBEDDING_MODEL: parsed.data.GEMINI_EMBEDDING_MODEL || parsed.data.EMBEDDING_MODEL };

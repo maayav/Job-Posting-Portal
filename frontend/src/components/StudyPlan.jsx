@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { api } from '../api/client';
+import { safeExternalUrl } from '../utils/links';
 
 export default function StudyPlan({ reportId, items, onToggle }) {
   const [busy, setBusy] = useState(null);
@@ -51,13 +52,15 @@ export default function StudyPlan({ reportId, items, onToggle }) {
                   {item.priority >= 0.75 && <span className="badge badge-high">high priority</span>}
                 </span>
                 <span className="plan-resources">
-                  {item.resources.map((r) => (
-                    <a key={r.url} href={r.url} target="_blank" rel="noreferrer">
-                      {r.title}
-                    </a>
-                  ))}
+                  {item.resources.map((r) => {
+                    const url = safeExternalUrl(r.url);
+                    return url ? <a key={r.url} href={url} target="_blank" rel="noreferrer">{r.title}</a> : null;
+                  })}
                   {item.resources.length === 0 && <em>No curated resources yet</em>}
                 </span>
+                {item.reason && <span className="muted small plan-explanation">{item.reason}</span>}
+                {item.learningObjectives?.length > 0 && <span className="plan-explanation small">Learn: {item.learningObjectives.join(' · ')}</span>}
+                {item.projectRecommendations?.length > 0 && <span className="plan-explanation small">Practice project: {item.projectRecommendations.join(' · ')}</span>}
               </span>
             </label>
           </li>

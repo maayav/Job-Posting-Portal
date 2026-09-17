@@ -27,7 +27,7 @@ Body: `{ "email", "password" }`. Returns `200 { token, user }`. Bad credentials 
 ### `POST /api/profile` — multipart/form-data
 Fields: `resume` (PDF, ≤ 5 MB, magic-byte validated), `github_username` (optional; URL or username, normalized), `target_role` (`SDE` | `ML Engineer`).
 
-Runs skill extraction via Gemini as part of the request. Returns `201`:
+Runs skill extraction via the selected text provider (Groq by default) as part of the request. Returns `201`:
 ```json
 {
   "id": "...", "target_role": "SDE", "github_username": "maayav",
@@ -166,3 +166,51 @@ Validation errors use the shared shape: `{ "error": "validation_error", "message
 ## Scoring (deterministic, not model-decided)
 
 `score = 100 × (Σ(wᵢ·mᵢ) / Σwᵢ)` where `wᵢ` is the role weight and `mᵢ` is the best normalized-cosine similarity of the ontology skill against the candidate skill embeddings, clamped to `[0,1]`. Strong ≥ 80%, Developing 60–79%, Gap < 60%. Gap priority = `wᵢ(1−mᵢ)` rescaled to `[0,1]`. Resources come only from the curated `ResourceCatalog` (exact normalized skill-name match).
+## Applications
+
+Applications use the existing JWT and role system: `student` users apply and see only their own applications; `admin` users manage every application.
+
+### `POST /api/applications` — student only
+
+Body:
+```json
+{ "jobId": "...", "coverLetter": "Optional text", "resumeUrl": "Optional URL" }
+```
+
+The applicant is always derived from the JWT. New records start as `applied`. Duplicate student/job applications return `409 already_applied`. Returns `201 { "application": { ...populated job... } }`.
+
+### `GET /api/applications/me` — authenticated
+
+Returns only the current user's applications. Optional query: `status=applied|under_review|shortlisted|interview_scheduled|rejected|selected`. Job details are populated.
+
+### `GET /api/admin/applications` — admin only
+
+Paginated newest-first list. Query parameters: `jobId`, `status`, `search` (applicant name/email), `page` (default 1), `limit` (default 20, max 50). Returns `{ applications, page, limit, total, totalPages }` with populated applicant/job details.
+
+### `PATCH /api/admin/applications/:applicationId/status` — admin only
+
+Body: `{ "status": "shortlisted" }`. Valid statuses: `applied`, `under_review`, `shortlisted`, `interview_scheduled`, `rejected`, `selected`. Appends the new status and admin id to `statusHistory`. Invalid status → `400`; missing application → `404`.
+
+### `GET /api/admin/dashboard/application-summary` — admin only
+
+Returns aggregation-backed totals, every job's application/status counts (including jobs with zero applications), and the ordered pipeline array used by the admin dashboard.
+
+### `GET /api/admin/dashboard` — admin only
+
+Returns the application-driven candidate review dashboard. Optional query parameters are `jobId`, `search`, `page`, and `limit`. The response includes `totalApplications`, roles with application counts, and compact candidate rows containing the applicant, job, applied date, ATS score, role-readiness score, and simplified review stage.
+
+### `GET /api/admin/applications/:applicationId` — admin only
+
+Returns the selected application plus the applicant's latest completed AI review data: ATS/readiness scores, matched/developing/missing skills, evidence, GitHub profile, and study plan. Passwords, tokens, and password hashes are excluded. Invalid IDs return `400`; missing applications return `404`.
+
+### `GET /api/assistant/context` — authenticated
+
+Returns the current student's latest completed analysis context, including target role, scores, demonstrated skills, verified gaps, and study plan. Returns `409 analysis_required` when no completed analysis exists.
+
+### `POST /api/assistant/chat` — authenticated
+
+Body: `{ "message": "What should I learn first?", "analysisId": "...", "history": [] }`. The server loads the owned analysis and sends only trusted structured context to Groq. Returns `{ reply, analysisId, usage: { groundedInAnalysis: true } }`. Messages are limited to 1200 characters and history to 12 entries.
+
+### POST /api/profile/:id/retry-extraction
+
+Authenticated owner/admin endpoint. Reuses the stored resume and refreshes optional public profiles. Returns the same safe profile response as GET /api/profile/:id, with extraction_status and extraction_error. No resume re-upload is required. Provider errors are controlled 422/503 responses.

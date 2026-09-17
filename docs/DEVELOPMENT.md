@@ -23,7 +23,7 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 | Backend | Node 24, Express 5, Mongoose 9, plain ESM JS, port **5000** |
 | MongoDB | Docker `mongo:7` (`docker compose up -d mongo`), `mongodb://127.0.0.1:27017/placement_skill_gap` |
 | Frontend | Vite + React (not yet scaffolded) |
-| Gemini model | **`gemini-3.5-flash`** (extraction) — `gemini-2.5-flash` returns 404 for new users |
+| Groq model | **`openai/gpt-oss-120b`** (extraction and assistant); fallback models are configured with `GROQ_FALLBACK_MODELS` |
 | Embedding model | `gemini-embedding-2`, version tag `2026-09` (spec pinned `text-embedding-004`, which is retired — see decisions) |
 | GitHub | Authenticated fine-grained PAT (user `maayav`) |
 | Server control | `node scripts/server.js start|stop` (pidfile + log at `backend/server.log`) |
@@ -31,7 +31,7 @@ Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Update
 ## Decisions & deviations from the spec
 
 1. **Embedding model swap:** spec pinned `text-embedding-004`, which no longer exists for this key. Using `gemini-embedding-2` with `embedding_version: "2026-09"` recorded on every stored vector. Drift regression test still required (Section 14).
-2. **Generation model:** `gemini-2.5-flash` → `gemini-3.5-flash` (API returned 404 "no longer available to new users").
+2. **Generation provider:** Groq's OpenAI-compatible chat API is used for extraction and assistant responses. Gemini remains only for embeddings.
 3. **Skill extraction runs at upload time** (`POST /api/profile`), not inside `/api/analyze`. This enables the "review extracted skills before scoring" screen (Phase 5 UX). `/api/analyze` reuses the cached `ExtractedSkillProfile` and only does embedding + deterministic scoring + study plan. Gemini quota is spent once per submission.
 4. **Async jobs:** in-process fire-and-forget runner with in-Mongo lifecycle state (per spec — no Bull/Redis).
 5. **pdf-parse v2** (`PDFParse` class) — ESM-native, used instead of v1.
@@ -262,3 +262,13 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 - **Resources:** full link audit re-run and fixed — 8 URLs updated to current/verified destinations (freeCodeCamp React, Frontend Mentor replacing the dead jschallenger link, Node.js docs, PyTorch docs/tutorials, SQL tutorial, GeeksforGeeks DSA, Hugging Face LLM course). Result: **0 broken** (82 ok, 8 benign redirects) across 90 catalog entries; reseeded.
 - **Gemini prompts:** extraction prompt tightened — explicit empty-result contract (`{"skills": []}`), no gap-filling, evidence must be copied (never paraphrased), bare-keyword handling, casing-variant merging, and strict category/JSON rules. Role-drafting prompt now requires canonical names, a realistic weight distribution, and no duplicates.
 - **Verification:** backend **80 passed + 2 skipped**; frontend **12 passed** (added dark-mode toggle test, IntersectionObserver test polyfill); lint 0 errors; build ✓.
+
+### 2026-09-15 — Admin application dashboard
+
+- Added `Application` model with unique `{ applicant, job }` index, status enum, initial `applied` history entry, and admin transition history.
+- Added student routes: `POST /api/applications` (student-only apply, duplicate `409`) and `GET /api/applications/me` (own records only).
+- Added admin routes: `GET /api/admin/applications`, `PATCH /api/admin/applications/:applicationId/status`, aggregation-backed `GET /api/admin/dashboard/application-summary`, and application-driven `GET /api/admin/dashboard` for the candidate review workspace.
+- Added `AdminApplicationsPage` with summary cards, applications-by-job table, filters/pagination, and six-column pipeline; added `MyApplicationsPage` and student Apply/Applied behavior on job cards.
+- Added idempotent `scripts/seed-applications.js` for development/demo records across all statuses.
+- Dark mode now applies before first paint, has a login-page toggle, and keeps the monochrome theme consistent.
+- Verification: backend **98 passed + 2 skipped**, frontend **12 passed**, frontend lint 0 errors, build ✓.

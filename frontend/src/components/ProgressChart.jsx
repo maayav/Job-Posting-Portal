@@ -24,15 +24,15 @@ export default function ProgressChart({ history }) {
       <h2>Score trend</h2>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: -20 }}>
-          <CartesianGrid stroke="#2a3052" strokeDasharray="3 3" />
-          <XAxis dataKey="label" stroke="#9aa3c0" fontSize={12} />
-          <YAxis domain={[0, 100]} stroke="#9aa3c0" fontSize={12} />
+          <CartesianGrid stroke="#444442" strokeDasharray="3 3" />
+          <XAxis dataKey="label" stroke="#999995" fontSize={12} />
+          <YAxis domain={[0, 100]} stroke="#999995" fontSize={12} />
           <Tooltip
-            contentStyle={{ background: '#171b2e', border: '1px solid #2a3052', borderRadius: 8 }}
-            labelStyle={{ color: '#e7eaf6' }}
+            contentStyle={{ background: '#252523', border: '1px solid #444442', borderRadius: 8 }}
+            labelStyle={{ color: '#eeeeea' }}
             formatter={(value, _name, props) => [`${value}% (${props.payload.role})`, 'Score']}
           />
-          <Line type="monotone" dataKey="score" stroke="#7c6cff" strokeWidth={2.5} dot={{ r: 4 }} />
+          <Line type="monotone" dataKey="score" stroke="#d0d0ca" strokeWidth={2.5} dot={{ r: 4 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>

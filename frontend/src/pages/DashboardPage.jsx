@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 import NavBar from '../components/NavBar';
+import AdminCandidateDashboard from '../components/AdminCandidateDashboard';
 import ScoreCard from '../components/ScoreCard';
 import GapList from '../components/GapList';
 import StudyPlan from '../components/StudyPlan';
 import { api, errorMessage } from '../api/client';
 
-export default function DashboardPage() {
+function StudentDashboard() {
   const [report, setReport] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -33,9 +35,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="page">
-      <NavBar />
-
+    <>
       {loading && <p className="muted">Loading report…</p>}
 
       {error && <p className="error card-error">{error}</p>}
@@ -47,13 +47,13 @@ export default function DashboardPage() {
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
         <div>
-          <p className="hero-kicker">DASHBOARD / OVERVIEW</p>
-          <h1>Make your next move <em>more intentional.</em></h1>
+          <p className="hero-kicker">YOUR WORKSPACE</p>
+          <h1>A clearer view of <em>what’s next.</em></h1>
           <p className="hero-copy">Your readiness score, skill map, and next learning moves in one place.</p>
         </div>
         <div className="dashboard-intro-rail">
-          <span>PROFILE STATUS</span>
-          <strong>{report ? 'SCANNED' : 'AWAITING SCAN'}</strong>
+          <span>LATEST ANALYSIS</span>
+          <strong>{report ? 'Ready to explore' : 'Get started'}</strong>
           <small>{report ? report.target_role : 'Upload a profile to begin'}</small>
         </div>
       </motion.section>
@@ -96,6 +96,16 @@ export default function DashboardPage() {
           </div>
         </motion.div>
       )}
+    </>
+  );
+}
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  return (
+    <div className="page">
+      <NavBar />
+      {user?.role === 'admin' ? <AdminCandidateDashboard /> : <StudentDashboard />}
     </div>
   );
 }

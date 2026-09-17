@@ -10,6 +10,7 @@ import { AppError } from '../utils/errors.js';
 
 const createSchema = z.object({
   github_username: z.string().trim().optional().default(''),
+  leetcode_username: z.string().trim().max(120).optional().default(''),
   target_role: z.string().trim().min(1, 'Target role is required').max(100),
 });
 
@@ -42,6 +43,12 @@ export async function createProfile(req, res) {
   const github_username = data.github_username
     ? normalizeUsername(data.github_username)
     : '';
+  const leetcode_username = data.leetcode_username
+    ? data.leetcode_username.replace(/^(https?:\/\/)?(www\.)?leetcode\.com\/(u\/|profile\/)?/i, '').replace(/\/.*$/, '').trim()
+    : '';
+  if (leetcode_username && !/^[a-zA-Z0-9._-]+$/.test(leetcode_username)) {
+    throw new AppError('Invalid LeetCode username or profile URL', 400, 'validation_error');
+  }
 
   const filename = await saveResume(req.file.buffer, req.file.originalname);
   let resume_text;
@@ -64,6 +71,7 @@ export async function createProfile(req, res) {
     target_role: data.target_role,
     github_username: github.github_username,
     github_status: github.github_status,
+    leetcode_username,
   });
 
   let extraction = { status: 'pending', error: null };
@@ -85,6 +93,8 @@ export async function createProfile(req, res) {
     target_role: submission.target_role,
     github_username: submission.github_username,
     github_status: submission.github_status,
+    leetcode_username: submission.leetcode_username,
+    leetcode_status: submission.leetcode_status,
     extraction_status: extraction.status,
     extraction_error: extraction.error ?? null,
     submitted_at: submission.submitted_at,
@@ -109,10 +119,22 @@ export async function getProfile(req, res) {
     target_role: submission.target_role,
     github_username: submission.github_username,
     github_status: submission.github_status,
+    leetcode_username: submission.leetcode_username,
+    leetcode_status: submission.leetcode_status,
     submitted_at: submission.submitted_at,
     created_at: submission.createdAt,
     extracted_skills,
+    extraction_status: submission.extraction_status,
+    extraction_error: submission.extraction_error,
   });
+}
+
+export async function retryExtraction(req, res) {
+  const submission = req.resource;
+  const github = submission.github_username ? await collectGithub(submission.github_username) : null;
+  await processExtraction(submission._id, github?.github_profile);
+  req.resource = await ProfileSubmission.findById(submission._id);
+  return getProfile(req, res);
 }
 
 export async function deleteProfile(req, res) {

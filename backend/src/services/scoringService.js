@@ -3,6 +3,8 @@ import { ResourceCatalog } from '../models/resourceCatalog.js';
 
 const STRONG_MIN = 80;
 const DEVELOPING_MIN = 60;
+const aliases = { reactjs: 'react', 'react.js': 'react', node: 'node.js', nodejs: 'node.js', js: 'javascript', ts: 'typescript', mongo: 'mongodb', 'express.js': 'express', sklearn: 'scikit-learn' };
+function canonical(name) { const key = normalizeName(name); return aliases[key] || key; }
 
 export function computeBestMatches(ontologySkills, candidateVectors) {
   const perSkill = [];
@@ -10,7 +12,15 @@ export function computeBestMatches(ontologySkills, candidateVectors) {
     let best = 0;
     let matched = null;
     for (const candidate of candidateVectors) {
-      const sim = cosineSimilarity(skill.embedding_vector, candidate.vector);
+      // Similarity alone never establishes that two distinct technologies match.
+      if (canonical(skill.skill_name) !== canonical(candidate.name)) continue;
+      const categories = ['language', 'frontend_framework', 'backend_framework', 'database', 'ml_framework', 'devops_tool', 'cloud_platform', 'testing_tool'];
+      if (categories.includes(skill.category) && categories.includes(candidate.category) && skill.category !== candidate.category) continue;
+      let sim = canonical(skill.skill_name) === canonical(candidate.name) ? 1 : cosineSimilarity(skill.embedding_vector, candidate.vector);
+      if (candidate.evidence) {
+        if (!candidate.evidence.length) sim = Math.min(sim, 0.4);
+        else if (candidate.proficiency_signals?.mentions_depth === 'low') sim = Math.min(sim, 0.65);
+      }
       if (sim > best) {
         best = sim;
         matched = candidate.name;
@@ -62,7 +72,7 @@ export async function buildStudyPlan(gaps) {
   const plan = [];
   for (const g of gaps) {
     const resources = await ResourceCatalog.find({ skill_name: new RegExp(`^${escapeRegExp(g.skill)}$`, 'i') }).lean();
-    const mapped = resources.map((r) => ({
+    const mapped = resources.filter((r) => { try { const url = new URL(r.url); return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password; } catch { return false; } }).map((r) => ({
       title: r.title,
       url: r.url,
       type: r.type,

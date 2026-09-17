@@ -4,6 +4,7 @@ process.env.JWT_SECRET = 'test-secret';
 // Drift runs need the real key from .env — don't poison the worker env with a dummy.
 if (process.env.RUN_DRIFT_TEST !== '1') {
   process.env.GEMINI_API_KEY = 'test-key';
+  process.env.GROQ_API_KEY = 'test-key';
 }
 
 export default async function globalSetup() {

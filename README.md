@@ -13,7 +13,7 @@ Vortex is a MERN application for college placement cells and students:
 - JWT authentication with bcrypt-hashed passwords (`student` / `admin` roles)
 - PDF resume upload with magic-byte validation, 5 MB cap, server-generated filenames
 - Bounded GitHub profile collection (10 newest repos, 800-char README excerpts, 24 h cache)
-- Gemini skill extraction with per-skill evidence and schema-validated output
+- Groq skill extraction with per-skill evidence and schema-validated output
 - Deterministic readiness scoring: `score = 100 × Σ(wᵢ·mᵢ) / Σwᵢ` (Gemini never decides the score)
 - Gap analysis with a prioritized study plan built from a curated, human-verified resource catalog
 - Async analysis jobs with idempotency, cooldown, and lifecycle status (`queued → processing → completed/failed`)
@@ -38,7 +38,7 @@ The project is **cross-platform** (Windows, macOS, Linux) — plain Node ESM, no
 | Frontend | React 19, Vite 8, React Router 7, Recharts, Axios, Lenis, Motion |
 | Auth | JWT (`jsonwebtoken`) + `bcrypt` |
 | Validation | Zod |
-| AI | Google Gemini — `gemini-3.5-flash` (extraction), `gemini-embedding-2` (embeddings) |
+| AI | Groq — `openai/gpt-oss-120b` (extraction and assistant); Google Gemini `gemini-embedding-2` (embeddings) |
 | Uploads | `multer` + `file-type` (magic-byte checks), `pdf-parse` |
 | Tests | Vitest + Supertest (backend) |
 | Rate limiting | `express-rate-limit` |
@@ -53,11 +53,14 @@ docs/       API reference, schema, setup guide, development log, audits
 
 ## Quick start
 
+Cross-platform shortcut: `npm run setup`, `npm run install:all`, configure `backend/.env`, then `npm run dev`. See `docs/SETUP.md` for Windows PowerShell instructions.
+
 ### Prerequisites
 
-- Node.js 20+ (built on v24)
+- Node.js 22.12+ (Node 24 LTS recommended)
 - Docker (for local MongoDB)
-- A Google AI (Gemini) API key (for resume skill extraction)
+- A Groq API key (for resume skill extraction and the AI assistant)
+- A Google AI (Gemini) API key (for skill embeddings)
 - Optional: a GitHub token for higher GitHub API rate limits
 
 ### 1. MongoDB
@@ -99,7 +102,8 @@ Backend (`backend/.env`, never committed — see `backend/.env.example`):
 
 ```
 NODE_ENV, PORT, MONGO_URI, JWT_SECRET, JWT_EXPIRES_IN,
-GEMINI_API_KEY, GEMINI_MODEL, GEMINI_FALLBACK_MODELS,
+AI_TEXT_PROVIDER, AI_EMBEDDING_PROVIDER, AI_TEXT_FALLBACK_PROVIDER,
+GROQ_API_KEY, GROQ_MODEL, GROQ_FALLBACK_MODELS, GEMINI_API_KEY, GEMINI_EMBEDDING_MODEL,
 EMBEDDING_MODEL, EMBEDDING_VERSION, GITHUB_TOKEN
 ```
 
@@ -146,6 +150,14 @@ node scripts/seed-jobs.js --admin=admin@example.com
 | GET | `/api/users/:userId/reports` | Admin | Any user's report history |
 | GET | `/api/roles` | Authenticated | Available target roles (live from the skill ontology) |
 | GET | `/api/jobs` | Authenticated | Search jobs (skills, experience, city, pagination) |
+| POST | `/api/applications` | Student | Apply to a job (one application per job) |
+| GET | `/api/applications/me` | Authenticated | Current user's applications |
+| GET | `/api/admin/applications` | Admin | Filtered paginated application list |
+| PATCH | `/api/admin/applications/:applicationId/status` | Admin | Move an application through the pipeline |
+| GET | `/api/admin/dashboard/application-summary` | Admin | Aggregated totals, job breakdown, pipeline |
+| GET | `/api/admin/dashboard` | Admin | Candidate-focused dashboard data with role/search filters and review stages |
+| GET | `/api/assistant/context` | Authenticated | Latest owned analysis context for the AI Assistant |
+| POST | `/api/assistant/chat` | Authenticated | Grounded assistant response for the owned analysis |
 | POST | `/api/jobs` | Admin | Create a job posting |
 | PUT | `/api/jobs/:id` | Admin | Update a job posting |
 | DELETE | `/api/jobs/:id` | Admin | Delete a job posting |
@@ -168,3 +180,9 @@ Full request/response details: `docs/API.md`. Data models: `docs/SCHEMA.md`.
 - Resume text is treated as sensitive: never returned in full by the API, never logged.
 - Every owner-scoped route enforces ownership or admin role server-side.
 - Auth and analysis endpoints are rate-limited.
+
+**Applications**
+
+- Students can apply once per job and track their own application status.
+- Admins get `/admin/applications` with totals, applications grouped by job, filters, pagination, and a status pipeline.
+- Status history records every admin transition from Applied through Selected/Rejected.

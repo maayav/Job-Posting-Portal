@@ -1,3 +1,4 @@
+vi.mock('../src/services/ai/studyPlanService.js', () => ({ enrichStudyPlan: vi.fn(async (plan) => plan) }));
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import fs from 'node:fs';

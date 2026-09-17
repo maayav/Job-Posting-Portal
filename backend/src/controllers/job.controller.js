@@ -15,6 +15,7 @@ const skillsSchema = z
 
 const jobFields = {
   title: z.string().trim().min(1, 'Title is required').max(150),
+  company: z.string().trim().max(150).optional().default(''),
   skills: skillsSchema,
   experienceLevel: z.coerce.number().min(0, 'Experience cannot be negative').max(50),
   city: z.string().trim().min(1, 'City is required').max(100),
@@ -27,6 +28,7 @@ const createJobSchema = z.strictObject(jobFields);
 const updateJobSchema = z
   .strictObject({
     title: jobFields.title.optional(),
+    company: z.string().trim().max(150).optional(),
     skills: jobFields.skills.optional(),
     experienceLevel: jobFields.experienceLevel.optional(),
     city: jobFields.city.optional(),
@@ -48,6 +50,7 @@ function toJobResponse(job) {
   return {
     id: job._id.toString(),
     title: job.title,
+    company: job.company ?? '',
     skills: job.skills,
     experienceLevel: job.experienceLevel,
     city: job.city,
@@ -97,6 +100,7 @@ export async function createJob(req, res) {
 
   const job = await Job.create({
     title: data.title,
+    company: data.company,
     skills: normalizeSkills(data.skills),
     experienceLevel: data.experienceLevel,
     city: data.city,
@@ -117,6 +121,7 @@ export async function updateJob(req, res) {
   }
 
   if (data.title !== undefined) job.title = data.title;
+  if (data.company !== undefined) job.company = data.company;
   if (data.skills !== undefined) job.skills = normalizeSkills(data.skills);
   if (data.experienceLevel !== undefined) job.experienceLevel = data.experienceLevel;
   if (data.city !== undefined) job.city = data.city;

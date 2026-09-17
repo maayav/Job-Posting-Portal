@@ -12,10 +12,10 @@ export default function ScoreCard({ score, targetRole, generatedAt }) {
       <div className="score-copy">
         <p className="section-kicker">01 / READINESS SIGNAL</p>
         <h2>ATS Score</h2>
-        <p className="score-context">A deterministic read on how your profile maps to the target role.</p>
+        <p className="score-context">See how your skills align with your target role.</p>
         <div className="score-tags">
           <span className="chip">{targetRole}</span>
-          <span className="score-status"><i /> verified pipeline</span>
+          <span className="score-status"><i /> Profile analyzed</span>
         </div>
         <p className="muted small generated-at">{generatedAt ? `last generated ${new Date(generatedAt).toLocaleString()}` : ''}</p>
       </div>

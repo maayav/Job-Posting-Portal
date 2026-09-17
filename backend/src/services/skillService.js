@@ -1,6 +1,7 @@
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
 import { extractSkills } from './geminiService.js';
+import { fetchLeetcodeProfile } from './leetcodeService.js';
 
 function buildProfileText(submission, github) {
   const parts = [];
@@ -98,7 +99,8 @@ export async function processExtraction(submissionId, githubData) {
     throw err;
   }
 
-  const profileText = buildProfileText(submission, githubData);
+  const leetcode = await fetchLeetcodeProfile(submission.leetcode_username);
+  const profileText = buildProfileText(submission, githubData) + (leetcode.evidence ? '\n=== LEETCODE PROFILE ===\n' + leetcode.evidence : '');
   const { skills: geminiSkills, model: usedModel } = await extractSkills(profileText);
   const skills = mergeSkills(geminiSkills);
 
@@ -107,6 +109,7 @@ export async function processExtraction(submissionId, githubData) {
     { $set: { skills, gemini_model: usedModel } },
     { upsert: true, returnDocument: 'after' }
   );
+  await ProfileSubmission.findByIdAndUpdate(submissionId, { $set: { extraction_status: 'completed', extraction_error: null, leetcode_status: leetcode.status } });
 
   return saved;
 }

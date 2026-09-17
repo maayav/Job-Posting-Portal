@@ -36,7 +36,7 @@ if (action === 'start') {
       fs.rmSync(pidFile, { force: true });
     }
   }
-  const child = spawn('node', ['server.js'], {
+  const child = spawn(process.execPath, ['server.js'], {
     cwd: root,
     detached: true,
     windowsHide: true,

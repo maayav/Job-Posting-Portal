@@ -16,14 +16,15 @@ export default function UploadPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleUpload(file, github, role) {
+  async function handleUpload(file, github, leetcode, role) {
     setError('');
     setLoading(true);
     setPhase('upload');
     try {
       const form = new FormData();
       form.append('resume', file);
-      form.append('github_username', github);
+    form.append('github_username', github);
+    form.append('leetcode_username', leetcode);
       form.append('target_role', role);
 
       const res = await api.post('/profile', form);
@@ -34,13 +35,22 @@ export default function UploadPage() {
       setSkills(profile.data.extracted_skills ?? []);
       setPhase('review');
       if (res.data.extraction_status === 'failed') {
-        setError(`Skill extraction failed (${res.data.extraction_error}). Re-upload may be needed.`);
+        setError('We could not extract skills yet. Retry below using your saved resume.');
       }
     } catch (err) {
       setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
+  }
+
+  async function retryExtraction() {
+    setLoading(true); setError('');
+    try {
+      const { data } = await api.post(`/profile/${submission.id}/retry-extraction`);
+      setSubmission(data); setSkills(data.extracted_skills || []);
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setLoading(false); }
   }
 
   async function handleAnalyze() {
@@ -91,6 +101,8 @@ export default function UploadPage() {
   return (
     <div className="page">
       <NavBar />
+      <div className="page-title-row"><div><p className="section-kicker">BUILD YOUR NEXT STEP</p><h1>Understand your potential.</h1><p className="muted">Start with your resume. Leave with a clearer plan.</p></div></div>
+      <div className="analysis-content">
 
       {phase === 'upload' && (
         <UploadForm onSubmit={handleUpload} loading={loading} />
@@ -99,9 +111,11 @@ export default function UploadPage() {
       {phase === 'review' && (
         <>
           <ExtractedSkillReview skills={skills} extractionError={submission?.extraction_status === 'failed' ? submission?.extraction_error : null} />
+          {['unavailable', 'not_found'].includes(submission?.leetcode_status) && <p className="muted small">The public LeetCode profile could not be retrieved. The analysis uses your other available evidence.</p>}
           {error && <p className="error card-error">{error}</p>}
           <div className="actions card">
-            <button className="primary" onClick={handleAnalyze}>
+            {submission?.extraction_status === 'failed' && <button className="primary" disabled={loading} onClick={retryExtraction}>{loading ? 'Retrying extraction…' : 'Retry skill extraction'}</button>}
+            <button className="primary" onClick={handleAnalyze} disabled={loading || submission?.extraction_status === 'failed'}>
               Analyze &amp; score for {submission?.target_role}
             </button>
             <button className="link" onClick={() => setPhase('upload')}>
@@ -115,9 +129,10 @@ export default function UploadPage() {
         <div className="card center">
           <div className="spinner" />
           <h2>Analyzing your profile…</h2>
-          <p className="muted">Embedding skills, matching against the {submission?.target_role} ontology, and computing your readiness score.</p>
+          <p className="muted">Comparing your skills with {submission?.target_role} and preparing your readiness report.</p>
         </div>
       )}
+      </div>
     </div>
   );
 }

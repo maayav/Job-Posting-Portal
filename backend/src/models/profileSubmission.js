@@ -11,6 +11,8 @@ const profileSubmissionSchema = new mongoose.Schema(
       enum: ['ok', 'unavailable', 'not_found', 'none'],
       default: 'none',
     },
+    leetcode_username: { type: String, trim: true, default: '' },
+    leetcode_status: { type: String, enum: ['none', 'ok', 'not_found', 'unavailable'], default: 'none' },
     target_role: { type: String, required: true, trim: true },
     submitted_at: { type: Date, default: Date.now },
     extraction_status: {

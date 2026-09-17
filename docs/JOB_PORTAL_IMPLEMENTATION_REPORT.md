@@ -128,10 +128,25 @@ All pushed to `origin` → `github.com/maayav/Job-Posting-Poral` (`main`).
 
 ## 12. Deferred improvements
 
-- Frontend tests (no React test runner is installed; API behavior is covered by the backend suite).
 - Admin list pagination beyond the first 50 jobs (admin page loads up to 50; search page is paginated).
 - Job `createdBy` display: the API returns the admin's ObjectId; a name lookup/join is not implemented.
 - Sorting options (e.g., by experience) and skills ALL-match mode.
 - Helmet security headers, explicit CORS allowlist, and CI workflow (identified in the audit; require owner approval).
-- Job application/apply flow (not in the requested scope).
-- GitHub repo rename to `job-posting-portal` (owner action; remote update needed afterward).
+
+
+## 13. Application Dashboard Extension
+
+- Added `Application` model with unique applicant/job compound index, status history, and six-stage pipeline.
+- Student API: `POST /api/applications`, `GET /api/applications/me`.
+- Admin API: `GET /api/admin/applications`, `PATCH /api/admin/applications/:applicationId/status`, `GET /api/admin/dashboard/application-summary`.
+- Added student Apply button + My Applications page; duplicate applies are blocked with `409`.
+- Added admin summary cards, job/role breakdown table, filters, pagination, and pipeline board.
+- Added `scripts/seed-applications.js`; idempotent and development-only.
+- Added 18 application tests covering auth, duplicate prevention, ownership, RBAC, CRUD transitions, history, summary aggregation, and zero-application jobs.
+
+## 14. Current Verification
+
+- Backend: 98 passed, 2 skipped.
+- Frontend: 12 passed, lint has 0 errors, production build succeeds.
+- Existing placement and job portal routes remain functional.
+- Theme toggle works in the application navigation, landing page, and login page; preference persists in local storage.

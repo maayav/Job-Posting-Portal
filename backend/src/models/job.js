@@ -4,6 +4,7 @@ import { normalizeSkills } from '../utils/skillNormalizer.js';
 const jobSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 150 },
+    company: { type: String, trim: true, maxlength: 150, default: '' },
     skills: {
       type: [{ type: String, trim: true, maxlength: 50 }],
       required: true,

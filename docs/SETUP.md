@@ -1,10 +1,60 @@
+# Quick setup on Windows, macOS and Linux
+
+Use Node.js 22.12+ (Node 24 LTS recommended), npm and MongoDB. On Windows use PowerShell or Command Prompt; WSL is not required. Docker Desktop should use Linux containers for the supplied MongoDB container.
+
+From the project folder:
+
+```powershell
+npm run setup
+npm run install:all
+docker compose up -d mongo
+```
+
+Edit `backend/.env` in your editor, then run:
+
+```powershell
+npm --prefix backend run seed
+npm run dev
+```
+
+`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open **http://localhost:5173**; never open `frontend/index.html` or downloaded app pages with `file://`.
+
+Required AI configuration:
+
+```dotenv
+AI_TEXT_PROVIDER=groq
+AI_EMBEDDING_PROVIDER=gemini
+AI_TEXT_FALLBACK_PROVIDER=none
+GROQ_API_KEY=your-private-key
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_FALLBACK_MODELS=openai/gpt-oss-20b,qwen/qwen3.8-27b
+GEMINI_API_KEY=your-private-key
+GEMINI_EMBEDDING_MODEL=gemini-embedding-2
+EMBEDDING_VERSION=2026-09
+```
+
+Also set MONGO_URI and a strong JWT_SECRET. Provider credentials stay in the backend. Text fallback to Gemini is opt-in (`AI_TEXT_FALLBACK_PROVIDER=gemini`, plus GEMINI_MODEL). Inference validates model availability at runtime and returns a distinct configuration/model error. The embedding model is unchanged; changing it requires re-embedding the ontology and updating the drift baseline. Existing completed reports are preserved.
+
+Checks on either platform:
+
+```powershell
+npm test
+npm run lint
+npm run build
+```
+
+Backend tests require the local MongoDB instance. If PowerShell blocks `npm.ps1`, invoke the same commands with `npm.cmd`; no execution-policy change is required. Dependencies must be installed on the target operating system: do not copy Linux `node_modules` to Windows. Native Windows execution has not been tested in this Linux workspace.
+
+---
+
 # Setup Guide
 
 ## Prerequisites
 
 - Node.js ≥ 20 (built against v24)
 - Docker (for local MongoDB) — `mongo:7`
-- A Google AI (Gemini) API key — covers both extraction (`gemini-3.5-flash`) and embeddings (`gemini-embedding-2`). Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
+- A Groq API key — covers text generation for extraction and the assistant (`openai/gpt-oss-120b` by default).
+- A Google AI (Gemini) API key for embeddings (`gemini-embedding-2`). Groq does not provide an embeddings endpoint. Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
 - Optional: a GitHub fine-grained PAT for the higher rate-limit tier (public-data read is enough).
 
 ## 1. MongoDB
@@ -33,9 +83,10 @@ Server control script (recommended for demos): `node scripts/server.js start|sto
 |---|---|---|
 | `MONGO_URI` | yes | |
 | `JWT_SECRET` | yes | |
-| `GEMINI_API_KEY` | yes (non-test) | |
-| `GEMINI_MODEL` | no | default `gemini-3.5-flash` — free-tier quota is per model (20 req/min), so overload/quota falls back to `GEMINI_FALLBACK_MODELS` |
-| `GEMINI_FALLBACK_MODELS` | no | comma-separated, default `gemini-flash-lite-latest,gemini-3-flash-preview` |
+| `GROQ_API_KEY` | yes (non-test) | Used for extraction and assistant responses; keep it in `.env` only |
+| `GROQ_MODEL` | no | default `openai/gpt-oss-120b` |
+| `GROQ_FALLBACK_MODELS` | no | comma-separated, default `openai/gpt-oss-20b,qwen/qwen3.8-27b` |
+| `GEMINI_API_KEY` | yes (non-test) | Used only for skill embeddings |
 | `EMBEDDING_MODEL` | no | default `gemini-embedding-2` — pinned; changing requires re-seeding + new drift baseline |
 | `EMBEDDING_VERSION` | no | default `2026-09` |
 | `GITHUB_TOKEN` | no | authenticated GitHub calls (5,000 req/hr) |
@@ -59,7 +110,7 @@ cd backend
 npx vitest run            # 34 tests against placement_skill_gap_test DB (dockerized Mongo must be up)
 ```
 
-Opt-in regression tests (need a real `GEMINI_API_KEY`):
+Opt-in regression tests (need a real `GEMINI_API_KEY` for embedding drift):
 
 ```bash
 npm run drift-baseline    # records tests/fixtures/drift-baseline.json (only after model/library upgrades)
@@ -141,3 +192,13 @@ npm run dev                         # Vite on :5173, proxies /api -> :5000
 - **Env vars in PowerShell:** use `$env:ADMIN_PASSWORD='...'` instead of inline `ADMIN_PASSWORD=...` for `node scripts/create-admin.js`.
 - **Stopping the API:** `node scripts/server.js stop` (the pidfile + log live in `backend/`; `.server.pid` is gitignored).
 - **Tests and build:** identical to Linux — `npm test` (backend), `npx vitest run` (frontend), `npm run build` (frontend).
+
+### Seed demo applications
+
+After demo jobs exist and an admin account is available:
+
+```bash
+node scripts/seed-applications.js --admin=admin@example.com
+```
+
+This is development/demo data only. It creates up to eight demo students and applications across the newest four jobs, covering every application status. It is safe to run repeatedly.

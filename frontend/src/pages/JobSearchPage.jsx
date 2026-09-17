@@ -3,10 +3,15 @@ import { motion } from 'motion/react';
 import NavBar from '../components/NavBar';
 import JobFilters from '../components/JobFilters';
 import JobCard from '../components/JobCard';
+import ApplyButton from '../components/ApplyButton';
+import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 
 export default function JobSearchPage() {
+  const { user } = useAuth();
+  const isStudent = user?.role === 'student';
   const [jobs, setJobs] = useState([]);
+  const [appliedIds, setAppliedIds] = useState(new Set());
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [filters, setFilters] = useState({});
@@ -42,6 +47,17 @@ export default function JobSearchPage() {
     load({}, 1);
   }, [load]);
 
+  // Preload which jobs the student has already applied to, so cards can show "Applied".
+  useEffect(() => {
+    if (!isStudent) return;
+    api
+      .get('/applications/me')
+      .then((res) => {
+        setAppliedIds(new Set((res.data.applications ?? []).map((a) => a.job.id)));
+      })
+      .catch(() => {});
+  }, [isStudent]);
+
   function handleSearch(f) {
     setFilters(f);
     load(f, 1);
@@ -53,7 +69,7 @@ export default function JobSearchPage() {
   }
 
   return (
-    <div className="page">
+    <div className="page jobs-page">
       <NavBar />
 
       <motion.section
@@ -62,11 +78,9 @@ export default function JobSearchPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <div className="hero-orbit" aria-hidden="true" />
-        <p className="hero-kicker">JOBS / DIRECTORY</p>
+        <p className="hero-kicker">YOUR NEXT CHAPTER</p>
         <h1>Find your next <em>opportunity.</em></h1>
-        <p className="hero-copy">Search roles by the skills you are building, the city you want, and the experience you already own.</p>
-        <div className="hero-meta"><span>01</span><span>Skills-first search</span><span>Any authenticated student can browse</span></div>
+        <p className="hero-copy">Discover roles that fit your skills, experience, and ambitions.</p>
       </motion.section>
 
       <JobFilters onSearch={handleSearch} onClear={handleClear} loading={loading} />
@@ -89,10 +103,24 @@ export default function JobSearchPage() {
 
       {!loading && jobs.length > 0 && (
         <>
-          <p className="muted small">{jobs.length} jobs shown</p>
+          <div className="results-heading"><h2>Open opportunities</h2><span className="muted small">{jobs.length} jobs on this page</span></div>
+          <div className="jobs-grid">
           {jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
+            <JobCard
+              key={job.id}
+              job={job}
+              actions={
+                isStudent ? (
+                  appliedIds.has(job.id) ? (
+                    <span className="badge badge-applied" role="status">Applied</span>
+                  ) : (
+                    <ApplyButton jobId={job.id} />
+                  )
+                ) : undefined
+              }
+            />
           ))}
+          </div>
           {totalPages > 1 && (
             <div className="pagination">
               <button className="primary" disabled={page <= 1} onClick={() => load(filters, page - 1)}>

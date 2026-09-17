@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
@@ -7,6 +8,8 @@ import JobSearchPage from './pages/JobSearchPage';
 import AdminJobsPage from './pages/AdminJobsPage';
 import AssistantPage from './pages/AssistantPage';
 import LandingPage from './pages/LandingPage';
+import MyApplicationsPage from './pages/MyApplicationsPage';
+const AdminApplicationsPage = lazy(() => import('./pages/AdminApplicationsPage'));
 
 export default function App() {
   return (
@@ -43,6 +46,14 @@ export default function App() {
         }
       />
       <Route
+        path="/analysis/new"
+        element={
+          <ProtectedRoute>
+            <UploadPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/assistant"
         element={
           <ProtectedRoute>
@@ -55,6 +66,24 @@ export default function App() {
         element={
           <ProtectedRoute requiredRole="admin">
             <AdminJobsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/applications"
+        element={
+          <ProtectedRoute>
+            <MyApplicationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/applications"
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <Suspense fallback={<div className="page center" role="status">Loading applications…</div>}>
+              <AdminApplicationsPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />

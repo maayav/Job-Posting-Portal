@@ -30,6 +30,11 @@ const studyPlanItemSchema = new mongoose.Schema(
       },
     ],
     done: { type: Boolean, default: false },
+    reason: String,
+    learningObjectives: [String],
+    practiceProblems: [String],
+    projectRecommendations: [String],
+    estimatedEffortHours: Number,
   },
   { _id: true }
 );

@@ -1,144 +1,242 @@
-import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
+import Icon from '../components/Icon';
 
-const reveal = {
-  initial: { opacity: 0, y: 42 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: false, amount: 0.22 },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-};
-
-const partners = ['STUDENT COMMUNITIES', 'PLACEMENT OFFICES', 'CAREER MENTORS', 'HIRING TEAMS', 'CAMPUS NETWORKS'];
-
-function Reveal({ children, className = '' }) {
-  return (
-    <motion.div className={className} {...reveal}>
-      {children}
-    </motion.div>
-  );
-}
+const steps = [
+  {
+    icon: 'search',
+    title: 'Find your fit',
+    copy: 'Discover roles that match your skills, experience, and preferred city.',
+  },
+  {
+    icon: 'chart',
+    title: 'Know where you stand',
+    copy: 'Turn your resume and project experience into a clear picture of your strengths and skill gaps.',
+  },
+  {
+    icon: 'file',
+    title: 'Build your next chapter',
+    copy: 'Follow a focused study plan and track your applications as you move forward.',
+  },
+];
 
 export default function LandingPage() {
   const { user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const primaryHref = user ? '/jobs' : '/login';
   const secondaryHref = user ? '/dashboard' : '/login';
 
   return (
     <main className="landing-page">
       <header className="landing-nav">
-        <Link className="brand-lockup" to={user ? '/dashboard' : '/'}>
+        <Link
+          className="brand-lockup"
+          to={user ? '/dashboard' : '/'}
+          aria-label="Vortex home"
+        >
           <span className="brand-mark">V</span>
-          <span>Vortex</span>
+          <span>
+            Vortex<span className="brand-period">.</span>
+          </span>
         </Link>
         <nav aria-label="Landing navigation">
           <a href="#how-it-works">How it works</a>
-          <a href="#for-you">For your next move</a>
-          <button className="theme-toggle" onClick={toggleTheme}>
-            {theme === 'dark' ? 'Light' : 'Dark'}
-          </button>
-          <Link className="landing-login" to={primaryHref}>{user ? 'Open workspace' : 'Log in'}</Link>
+          <a href="#for-you">For students & teams</a>
+          <ThemeToggle />
+          <Link className="landing-login" to={primaryHref}>
+            {user ? 'Open workspace' : 'Log in'}
+            <Icon name="arrow" size={16} />
+          </Link>
         </nav>
       </header>
 
       <section className="landing-hero">
         <div className="landing-hero-copy">
-          <motion.p className="hero-kicker" {...reveal}>
-            VORTEX / CAREER MOVEMENT
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Your next role is closer than your <em>current signal.</em>
-          </motion.h1>
-          <motion.p
-            className="landing-lede"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            Vortex connects the work you have done with the work you want next — jobs, skills, evidence,
-            and a practical route forward.
-          </motion.p>
-          <motion.div
-            className="landing-actions"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.32 }}
-          >
-            <Link className="primary landing-cta" to={primaryHref}>Explore opportunities <span>↗</span></Link>
-            <Link className="landing-text-link" to={secondaryHref}>See your readiness <span>→</span></Link>
-          </motion.div>
+          <p className="hero-kicker">
+            <span className="signal-dot" /> AI-ASSISTED CAREER CLARITY
+          </p>
+          <h1>
+            Let AI turn your <br />
+            experience into a{' '}
+            <em>
+              clearer next step.
+            </em>
+          </h1>
+          <p className="landing-lede">
+            Upload your profile, discover roles that fit, and get an evidence-backed plan for the skills that move you forward.
+          </p>
+          <div className="landing-actions">
+            <Link className="primary landing-cta" to={primaryHref}>
+              Explore opportunities
+              <Icon name="arrow" />
+            </Link>
+            <Link className="landing-text-link" to={secondaryHref}>
+              See your readiness
+              <Icon name="arrow" size={16} />
+            </Link>
+          </div>
+          <p className="hero-footnote">
+            <Icon name="check" size={15} /> Your skills. Your progress. One
+            place.
+          </p>
         </div>
 
-        <motion.div
-          className="landing-visual"
-          initial={{ opacity: 0, scale: 0.92, rotate: 2 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+        <div
+          className="workspace-preview"
+          aria-label="Illustrative career overview with sample data"
         >
-          <div className="landing-visual-grid" />
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="visual-card visual-score">
-            <span className="visual-label">ROLE READINESS</span>
-            <strong>84</strong>
-            <small>/100 · Data Scientist</small>
+          <div className="preview-topbar">
+            <span>
+              <span className="preview-dot" /> Your career, in focus
+            </span>
+            <span className="preview-label">PREVIEW</span>
           </div>
-          <div className="visual-card visual-skill">
-            <span className="visual-label">SKILL SIGNAL</span>
-            <strong>Python</strong>
-            <span className="visual-bar"><i /></span>
-            <small>evidence-backed</small>
+          <div className="preview-body">
+            <div className="preview-greeting">
+              <div>
+                <p className="section-kicker">YOUR NEXT CHAPTER</p>
+                <h2>A little more ready.</h2>
+              </div>
+              <span className="preview-avatar">V</span>
+            </div>
+            <div className="preview-readiness">
+              <div>
+                <span>Role readiness</span>
+                <h3>Data Scientist</h3>
+                <p>A strong foundation to build on.</p>
+                <span className="preview-score-label">
+                  <Icon name="chart" size={14} /> Sample skill analysis
+                </span>
+              </div>
+              <div className="preview-score">
+                <strong>
+                  84<span>/100</span>
+                </strong>
+              </div>
+            </div>
+            <div className="preview-skills">
+              <div className="preview-row-heading">
+                <strong>Your skill snapshot</strong>
+                <span>Strength</span>
+              </div>
+              {[
+                { name: 'Python', value: 90 },
+                { name: 'Data analysis', value: 78 },
+                { name: 'Machine learning', value: 62 },
+              ].map(({ name, value }) => (
+                <div className="preview-skill" key={name}>
+                  <span>{name}</span>
+                  <div>
+                    <i style={{ width: `${value}%` }} />
+                  </div>
+                  <small>{value}%</small>
+                </div>
+              ))}
+            </div>
+            <div className="preview-next">
+              <span className="preview-next-icon">
+                <Icon name="file" />
+              </span>
+              <div>
+                <strong>One step forward</strong>
+                <span>Explore your personalized study plan</span>
+              </div>
+              <Icon name="arrow" size={17} />
+            </div>
           </div>
-          <div className="visual-stamp">MOVE<br />WITH<br />PROOF</div>
-        </motion.div>
-      </section>
-
-      <div className="landing-scroll-note"><span /> Scroll to explore</div>
-
-      <section className="marquee-section" aria-label="Vortex is designed for">
-        <p className="section-kicker">TRUSTED BY</p>
-        <div className="marquee-window">
-          <div className="marquee-track">
-            {[...partners, ...partners].map((partner, index) => (
-              <span key={`${partner}-${index}`}>{partner}<b>✳</b></span>
-            ))}
+          <div className="preview-footer">
+            <span className="signal-dot" /> Built around your potential
           </div>
         </div>
       </section>
+
+      <div className="landing-feature-strip">
+        <span>FROM POSSIBILITY TO PROGRESS</span>
+        <p>
+          <Icon name="briefcase" /> Relevant opportunities
+        </p>
+        <p>
+          <Icon name="chart" /> Skill insights
+        </p>
+        <p>
+          <Icon name="file" /> Practical study plans
+        </p>
+      </div>
 
       <section className="landing-section" id="how-it-works">
-        <Reveal className="section-intro">
-          <p className="section-kicker">01 / HOW IT WORKS</p>
-          <h2>Less guessing.<br /><em>More direction.</em></h2>
-          <p>Vortex turns scattered career information into a sequence you can actually act on.</p>
-        </Reveal>
+        <div className="section-intro">
+          <p className="section-kicker">A CLEARER WAY FORWARD</p>
+          <h2>
+            Big ambitions.
+            <br />
+            <em>Simple next steps.</em>
+          </h2>
+          <p>
+            Everything you need to move from “what next?” to a plan you can act
+            on.
+          </p>
+        </div>
         <div className="steps-grid">
-          <Reveal className="step-card"><span>01</span><h3>Find the right room</h3><p>Search live roles by the skills, place, and experience you already have.</p></Reveal>
-          <Reveal className="step-card"><span>02</span><h3>Read your signal</h3><p>Upload your profile and see what your evidence says about a target role.</p></Reveal>
-          <Reveal className="step-card"><span>03</span><h3>Close the distance</h3><p>Use a prioritized study plan to turn gaps into your next credible proof point.</p></Reveal>
+          {steps.map((step, index) => (
+            <article className="step-card" key={step.title}>
+              <div className="step-top">
+                <span className="step-icon">
+                  <Icon name={step.icon} size={22} />
+                </span>
+                <span>0{index + 1}</span>
+              </div>
+              <h3>{step.title}</h3>
+              <p>{step.copy}</p>
+            </article>
+          ))}
         </div>
       </section>
 
       <section className="landing-section split-section" id="for-you">
-        <Reveal className="split-statement"><p className="section-kicker">02 / FOR YOUR NEXT MOVE</p><h2>Not another dashboard.<br /><em>A clearer starting point.</em></h2></Reveal>
-        <Reveal className="split-copy"><p>For students, Vortex gives the search and the self-knowledge the search needs. For placement teams, it creates a shared language around readiness without turning people into a single number.</p><Link className="landing-text-link" to={primaryHref}>Enter Vortex <span>↗</span></Link></Reveal>
+        <div className="split-statement">
+          <p className="section-kicker">MADE FOR YOUR NEXT MOVE</p>
+          <h2>
+            Individual ambition.
+            <br />
+            <em>Shared progress.</em>
+          </h2>
+        </div>
+        <div className="split-copy">
+          <p>
+            For students, a clearer path from skills to opportunities. For
+            placement teams, one place to manage roles, review applications, and
+            keep candidates moving.
+          </p>
+          <Link className="landing-text-link" to={primaryHref}>
+            Find your starting point
+            <Icon name="arrow" size={16} />
+          </Link>
+        </div>
       </section>
 
       <section className="landing-endcap">
-        <Reveal>
-          <p className="section-kicker">03 / START HERE</p>
-          <h2>Make the next move<br /><em>visible.</em></h2>
-          <Link className="primary landing-cta" to={primaryHref}>Open Vortex <span>↗</span></Link>
-        </Reveal>
+        <div>
+          <p className="section-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
+          <h2>
+            Give your potential
+            <br />a place to go.
+          </h2>
+        </div>
+        <Link className="primary landing-cta" to={primaryHref}>
+          Get started
+          <Icon name="arrow" />
+        </Link>
       </section>
-
-      <footer className="landing-footer"><span>Vortex / placement intelligence</span><span>Built for the next chapter</span></footer>
+      <footer className="landing-footer">
+        <Link className="brand-lockup" to="/">
+          <span className="brand-mark">V</span>Vortex.
+        </Link>
+        <span>A clearer path to your next role.</span>
+        <a href="#how-it-works">
+          How it works
+          <Icon name="arrow" size={14} />
+        </a>
+      </footer>
     </main>
   );
 }

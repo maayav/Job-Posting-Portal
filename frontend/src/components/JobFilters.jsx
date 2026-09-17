@@ -32,7 +32,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
 
   return (
     <motion.form
-      className="card"
+      className="card job-filters"
       onSubmit={submit}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
@@ -41,7 +41,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
       <h2>Find jobs</h2>
       <div className="filters">
         <label>
-          Skills (comma-separated, any match)
+          Skills
           <input
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
@@ -49,7 +49,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
           />
         </label>
         <label>
-          Your experience (years)
+          Experience (years)
           <input
             type="number"
             min="0"
@@ -69,8 +69,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
         </label>
       </div>
       <p className="muted small field-hint">
-        Skills match any of the listed values (synonyms are normalized). Experience shows jobs
-        requiring up to your years. City is an exact, case-insensitive match.
+        Separate skills with commas. We’ll show roles requiring up to your experience level in your chosen city.
       </p>
       {error && <p className="error">{error}</p>}
       <div className="filters-actions">

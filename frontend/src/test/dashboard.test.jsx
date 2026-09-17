@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import DashboardPage from '../pages/DashboardPage';
 import { AuthProvider } from '../context/AuthContext';
@@ -72,5 +72,59 @@ describe('Dashboard layout', () => {
     await screen.findByRole('heading', { name: /ats score/i });
     expect(screen.queryByText(/score trend/i)).toBeNull();
     expect(document.querySelector('.recharts-responsive-container')).toBeNull();
+  });
+
+  it('renders the candidate review dashboard for admins from application data', async () => {
+    localStorage.setItem('user', JSON.stringify({ id: 'a1', name: 'Admin', role: 'admin' }));
+    api.get.mockImplementation((url) => {
+      if (url === '/admin/dashboard') {
+        return Promise.resolve({ data: {
+          totalApplications: 2,
+          roles: [{ jobId: 'j1', title: 'Frontend Developer', applicationCount: 2 }],
+          applications: [{
+            applicationId: 'a1',
+            applicant: { name: 'Candidate A', email: 'candidate@example.com' },
+            job: { title: 'Frontend Developer', company: 'Acme', city: 'Chennai', experienceLevel: 1 },
+            appliedAt: '2026-09-16',
+            status: 'under_review',
+            reviewStage: 'under_review',
+            reviewStageLabel: 'Under Review',
+            atsScore: 82,
+            roleReadinessScore: 82,
+          }],
+        } });
+      }
+      if (url === '/admin/applications/a1') {
+        return Promise.resolve({ data: {
+          application: {
+            id: 'a1', status: 'under_review', appliedAt: '2026-09-16',
+            applicant: { name: 'Candidate A', email: 'candidate@example.com' },
+            job: { title: 'Frontend Developer', company: 'Acme', city: 'Chennai', experienceLevel: 1 },
+          },
+          review: { atsScore: 82, roleReadinessScore: 82, strongSkills: [{ skill: 'React', percent: 90 }], missingSkills: [], studyPlan: [] },
+        } });
+      }
+      return Promise.resolve({ data: {} });
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <ThemeProvider>
+            <DashboardPage />
+          </ThemeProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('heading', { name: /review the people/i })).toBeTruthy();
+    expect(await screen.findByText('2')).toBeTruthy();
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual(['Total1', 'Applied0', 'Review1']);
+    fireEvent.click(screen.getByRole('tab', { name: /Applied\s*0/ }));
+    expect(screen.queryByRole('button', { name: 'View' })).toBeNull();
+    fireEvent.click(screen.getByRole('tab', { name: /Review\s*1/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'View' }));
+    expect(await screen.findByRole('heading', { name: 'Candidate A' })).toBeTruthy();
+    expect(screen.getByText('ATS score')).toBeTruthy();
   });
 });

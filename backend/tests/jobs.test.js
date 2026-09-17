@@ -280,7 +280,7 @@ describe('Job posting portal', () => {
       const res = await request(app).get('/api/jobs?skills=react').set(authHeader(studentToken));
       const job = res.body.jobs[0];
       expect(Object.keys(job).sort()).toEqual(
-        ['city', 'createdAt', 'createdBy', 'description', 'experienceLevel', 'id', 'skills', 'title', 'updatedAt']
+        ['city', 'company', 'createdAt', 'createdBy', 'description', 'experienceLevel', 'id', 'skills', 'title', 'updatedAt']
       );
     });
   });

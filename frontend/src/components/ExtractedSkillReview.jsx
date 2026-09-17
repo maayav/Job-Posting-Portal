@@ -4,8 +4,7 @@ export default function ExtractedSkillReview({ skills, extractionError }) {
       <div className="card">
         <h2>Skill extraction</h2>
         <p className="error">
-          Skills could not be extracted: {extractionError}. You can still analyze if skills were
-          cached, otherwise re-upload.
+          Skills could not be extracted yet. Use Retry skill extraction below to try again with your saved resume.
         </p>
       </div>
     );

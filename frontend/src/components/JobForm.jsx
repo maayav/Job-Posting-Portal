@@ -3,6 +3,7 @@ import { parseSkillsInput, duplicateNormalizedSkills } from '../utils/skills';
 
 export default function JobForm({ initial, onSubmit, onCancel, saving }) {
   const [title, setTitle] = useState(initial?.title ?? '');
+  const [company, setCompany] = useState(initial?.company ?? '');
   const [skills, setSkills] = useState(initial?.skills?.join(', ') ?? '');
   const [experienceLevel, setExperienceLevel] = useState(initial?.experienceLevel ?? '');
   const [city, setCity] = useState(initial?.city ?? '');
@@ -28,6 +29,7 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
     setError('');
     onSubmit({
       title: title.trim(),
+      company: company.trim(),
       skills: skillList,
       experienceLevel: exp,
       city: city.trim(),
@@ -42,6 +44,10 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
         <label>
           Title
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Frontend Developer" />
+        </label>
+        <label>
+          Company <span className="optional">(optional)</span>
+          <input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Example Company" />
         </label>
         <label>
           Skills (comma-separated)

@@ -4,8 +4,9 @@ import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
 import { SkillOntology } from '../models/skillOntology.js';
 import { processExtraction } from './skillService.js';
-import { embedSkillsBatch } from './embeddingService.js';
-import { generateReport } from './scoringService.js';
+import { generateEmbeddings as embedSkillsBatch } from './ai/embeddingProvider.js';
+import { generateReport, buildStudyPlan } from './scoringService.js';
+import { enrichStudyPlan } from './ai/studyPlanService.js';
 
 function logTransition(report, to, extra = {}) {
   console.log(JSON.stringify({
@@ -49,10 +50,23 @@ export async function runAnalysis(reportId) {
       return { ...skill, weight: role?.weight ?? 0 };
     });
 
+    if (rawOntology.some((skill) => skill.embedding_model !== env.EMBEDDING_MODEL || skill.embedding_version !== env.EMBEDDING_VERSION)) {
+      const error = new Error('Stored ontology uses another embedding model. Re-embed the ontology before analysis.');
+      error.code = 'embedding_model_mismatch';
+      throw error;
+    }
+
     const vectors = await embedSkillsBatch(skillProfile.skills.map((s) => s.name));
-    const candidateVectors = skillProfile.skills.map((skill, i) => ({ name: skill.name, vector: vectors[i] }));
+    if (vectors.some((vector) => rawOntology.some((skill) => skill.embedding_vector.length !== vector.length))) {
+      const error = new Error('Stored vector dimensions do not match the configured embedding model.');
+      error.code = 'embedding_dimension_mismatch';
+      throw error;
+    }
+    const candidateVectors = skillProfile.skills.map((skill, i) => ({ ...skill.toObject(), vector: vectors[i] }));
 
     const result = await generateReport(ontologySkills, candidateVectors);
+    const developingPlan = await buildStudyPlan(result.developing_areas.map((area) => ({ ...area, priority: 0.4 })));
+    result.study_plan = await enrichStudyPlan([...result.study_plan, ...developingPlan], report.target_role, skillProfile.skills.map((skill) => skill.name));
 
     if (!Number.isFinite(result.score)) {
       throw new Error('scoring_failed');
@@ -66,6 +80,7 @@ export async function runAnalysis(reportId) {
     report.embedding_model = env.EMBEDDING_MODEL;
     report.embedding_version = env.EMBEDDING_VERSION;
     report.status = 'completed';
+    report.errorCode = null;
     report.completedAt = new Date();
     report.generated_at = new Date();
     await report.save();

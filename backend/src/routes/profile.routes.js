@@ -21,6 +21,7 @@ router.get(
   requireOwnership(ProfileSubmission),
   profileController.getProfile
 );
+router.post('/:id/retry-extraction', requireOwnership(ProfileSubmission), profileController.retryExtraction);
 
 router.delete(
   '/:id',

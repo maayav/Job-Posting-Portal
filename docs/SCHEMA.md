@@ -21,6 +21,7 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 | `resume_text` | string | **sensitive** — never returned by the API, never logged |
 | `github_username` | string | canonical (lowercase, URL-normalized) |
 | `github_status` | enum `ok` / `unavailable` / `not_found` / `none` | partial-results flag |
+| `leetcode_username` | string | normalized optional username/profile value; no password or private activity is stored |
 | `target_role` | enum `SDE` / `ML Engineer` | |
 | `submitted_at` | date | |
 | `extraction_status` | enum `pending` / `completed` / `failed` | |
@@ -121,3 +122,20 @@ No cascade deletion: if an admin account is removed, existing jobs keep the `cre
 - `experience` — seeker's years; matches `experienceLevel <= experience`.
 - `city` — case-insensitive exact match on `cityLower` (no partial matching).
 - Combined filters AND together; within `skills` it is OR; results sorted `createdAt` desc; `page` default 1, `limit` default 20 (max 50, clamped).
+
+## Application (`applications`)
+
+| Field | Type | Notes |
+|---|---|---|
+| `applicant` | ObjectId ref `User` | required; always server-derived from JWT |
+| `job` | ObjectId ref `Job` | required |
+| `status` | enum | `applied`, `under_review`, `shortlisted`, `interview_scheduled`, `rejected`, `selected`; new records start at `applied` |
+| `appliedAt` | date | default now |
+| `updatedAt` | date | Mongoose timestamp |
+| `coverLetter` | string | optional, max 3000 |
+| `resumeUrl` | string | optional, max 500 |
+| `statusHistory` | array | `{ status, changedAt, changedBy }`; initial application and every admin transition are recorded |
+
+Indexes: unique compound `{ applicant: 1, job: 1 }` (prevents duplicate applications), `{ appliedAt: -1 }`, `{ status: 1 }`, `{ job: 1 }`.
+
+Students can read only their own applications and cannot change statuses. Admins can list, filter, and transition every application.

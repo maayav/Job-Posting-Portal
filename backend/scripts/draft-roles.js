@@ -1,9 +1,9 @@
 import 'dotenv/config';
-import axios from 'axios';
+import { z } from 'zod';
+import { textProvider } from '../src/services/ai/aiProviderFactory.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { env } from '../src/config/env.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const OUT_FILE = path.join(ROOT, 'ontology', 'drafts', 'new-roles-draft.json');
@@ -24,47 +24,13 @@ const VALID_CATEGORIES = [
   'core-cs', 'ml', 'data', 'tools', 'architecture', 'security', 'testing',
 ];
 
-function modelChain() {
-  // Lighter/less-loaded models first — drafting does not need the strongest model.
-  const chain = ['gemini-flash-lite-latest', 'gemini-3-flash-preview', env.GEMINI_MODEL];
-  return [...new Set(chain.filter(Boolean))];
-}
-
-async function generate(prompt, model) {
-  const res = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-    {
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.4, responseMimeType: 'application/json' },
-    },
-    { timeout: 30000 }
-  );
-  return res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-}
-
 async function generateWithFallback(prompt) {
-  let lastError;
-  for (const model of modelChain()) {
-    try {
-      const text = await generate(prompt, model);
-      const parsed = JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''));
-      if (!Array.isArray(parsed.skills) || parsed.skills.length === 0) {
-        throw new Error('missing skills array');
-      }
-      return { skills: parsed.skills, model };
-    } catch (err) {
-      lastError = err;
-      const status = err.response?.status;
-      console.error(`  [${model}] failed: HTTP ${status ?? 'n/a'} ${err.response?.data?.error?.message?.slice(0, 80) ?? err.message}`);
-      if (status === 429) {
-        const m = err.response?.data?.error?.message?.match(/retry in ([\d.]+)s/i);
-        const wait = Math.min(20, Math.ceil(Number(m?.[1] ?? 3)));
-        console.error(`  waiting ${wait}s for quota...`);
-        await new Promise((r) => setTimeout(r, wait * 1000));
-      }
-    }
-  }
-  throw lastError;
+  const { data, model } = await textProvider.generateStructuredJson({
+    systemPrompt: 'Draft technical role requirements as JSON. Do not include candidate data.', userPrompt: prompt,
+    schema: z.object({ skills: z.array(z.object({ name: z.string(), category: z.enum(VALID_CATEGORIES), weight: z.number().int().min(1).max(5), note: z.string() })).min(1) }),
+    schemaName: 'role_requirements', temperature: 0.2, maxTokens: 4096,
+  });
+  return { skills: data.skills, model };
 }
 
 function rolePrompt(role) {

@@ -9,11 +9,15 @@ export default function JobCard({ job, actions }) {
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
       <div className="job-head">
-        <div className="job-head-info">
-          <h3>{job.title}</h3>
-          <p className="muted small">
-            {job.city} · {job.experienceLevel} yr{job.experienceLevel === 1 ? '' : 's'} experience
-          </p>
+        <div className="job-identity">
+          <span className="company-mark" aria-hidden="true">{(job.company || job.title).slice(0, 1).toUpperCase()}</span>
+          <div className="job-head-info">
+            {job.company && <p className="job-company">{job.company}</p>}
+            <h3>{job.title}</h3>
+            <p className="muted small">
+              {job.city} · {job.experienceLevel} yr{job.experienceLevel === 1 ? '' : 's'} experience
+            </p>
+          </div>
         </div>
         {actions}
       </div>
@@ -25,7 +29,7 @@ export default function JobCard({ job, actions }) {
         ))}
       </div>
       <p className="job-desc">{job.description}</p>
-      <p className="muted small">Posted {new Date(job.createdAt).toLocaleDateString()}</p>
+      <p className="job-posted muted small">Posted {new Date(job.createdAt).toLocaleDateString()}</p>
     </motion.article>
   );
 }

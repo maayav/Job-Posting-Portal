@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vortex</title>
+    <meta name="description" content="Find relevant jobs, understand your skill gaps, and plan your next career move with Vortex." />
+    <title>Vortex — Your next chapter</title>
+    <script>
+      try {
+        const theme = localStorage.getItem('theme');
+        document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : 'light';
+      } catch (_) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

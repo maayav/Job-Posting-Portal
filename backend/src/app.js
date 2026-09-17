@@ -8,6 +8,9 @@ import reportRoutes from './routes/report.routes.js';
 import userRoutes from './routes/user.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import roleRoutes from './routes/role.routes.js';
+import applicationRoutes from './routes/application.routes.js';
+import adminRoutes from './routes/admin.routes.js';
+import assistantRoutes from './routes/assistant.routes.js';
 
 const app = express();
 
@@ -26,6 +29,9 @@ app.use('/api/report', reportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/assistant', assistantRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
