@@ -74,6 +74,23 @@ describe('Dashboard layout', () => {
     expect(document.querySelector('.recharts-responsive-container')).toBeNull();
   });
 
+  it('clears an inaccessible stale report and shows the empty state', async () => {
+    api.get.mockRejectedValue({ response: { status: 403 } });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <ThemeProvider>
+            <DashboardPage />
+          </ThemeProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText(/no report yet/i)).toBeTruthy();
+    expect(localStorage.getItem('report_id')).toBeNull();
+  });
+
   it('renders the candidate review dashboard for admins from application data', async () => {
     localStorage.setItem('user', JSON.stringify({ id: 'a1', name: 'Admin', role: 'admin' }));
     api.get.mockImplementation((url) => {

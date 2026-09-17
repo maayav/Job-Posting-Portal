@@ -23,7 +23,17 @@ function StudentDashboard() {
     api
       .get(`/report/${reportId}`)
       .then((res) => setReport(res.data))
-      .catch((err) => setError(errorMessage(err)))
+      .catch((err) => {
+        // A report id can survive a logout/account switch. Treat an inaccessible
+        // old report as no current report rather than surfacing a misleading 403.
+        if ([403, 404].includes(err.response?.status)) {
+          localStorage.removeItem('report_id');
+          setReport(null);
+          setError('');
+          return;
+        }
+        setError(errorMessage(err));
+      })
       .finally(() => setLoading(false));
   }, []);
 
