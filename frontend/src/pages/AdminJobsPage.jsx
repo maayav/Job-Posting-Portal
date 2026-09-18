@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import NavBar from '../components/NavBar';
 import JobForm from '../components/JobForm';
 import { api, errorMessage } from '../api/client';
+import '../styles/admin-experience.css';
 
 export default function AdminJobsPage() {
+  const reduceMotion = useReducedMotion();
   const [jobs, setJobs] = useState([]);
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -76,24 +79,24 @@ export default function AdminJobsPage() {
   }
 
   return (
-    <div className="page">
+    <div className="page admin-jobs-page">
       <NavBar />
       <div className="page-title-row"><div><p className="section-kicker">HIRING WORKSPACE</p><h1>Manage opportunities.</h1><p className="muted">Keep your job postings up to date and ready for the right candidates.</p></div></div>
 
       {notice && <p className="notice">{notice}</p>}
       {error && <p className="error card-error">{error}</p>}
 
-      <div className="card">
-        <div className="job-head">
-          <h2>Job postings ({jobs.length})</h2>
+      <section className="card admin-jobs-toolbar" aria-label="Job posting tools">
+        <div>
+          <h2>Job postings <span>({jobs.length})</span></h2>
+          <p className="muted">Manage the roles candidates can discover and apply for.</p>
+        </div>
           {!editing && (
             <button className="primary" onClick={startCreate}>
               + Add a job
             </button>
           )}
-        </div>
-        <p className="muted small">Admins can edit or delete any posting.</p>
-      </div>
+      </section>
 
       {editing && (
         <JobForm
@@ -104,7 +107,7 @@ export default function AdminJobsPage() {
         />
       )}
 
-      {loading && <p className="muted">Loading jobs…</p>}
+      {loading && <p className="muted" role="status">Loading job postings…</p>}
 
       {!loading && !error && jobs.length === 0 && !editing && (
         <div className="card center">
@@ -112,14 +115,25 @@ export default function AdminJobsPage() {
         </div>
       )}
 
-      {!loading && jobs.map((job) => (
-        <div className="card job-card" key={job.id}>
+      {!loading && jobs.length > 0 && <section className="admin-job-list" aria-label="Job postings">
+      {jobs.map((job, index) => (
+        <motion.article
+          layout={!reduceMotion}
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={reduceMotion ? undefined : { y: -2 }}
+          transition={{ duration: reduceMotion ? 0 : 0.18, delay: reduceMotion ? 0 : Math.min(index * 0.025, 0.15), ease: 'easeOut' }}
+          className="card job-card admin-job-card"
+          key={job.id}
+        >
           <div className="job-head">
             <div className="job-head-info">
+              {job.company && <p className="admin-job-company">{job.company}</p>}
               <h3>{job.title}</h3>
-              <p className="muted small">
-                {job.city} · {job.experienceLevel} yr{job.experienceLevel === 1 ? '' : 's'} experience · posted{' '}
-                {new Date(job.createdAt).toLocaleDateString()}
+              <p className="admin-job-meta">
+                <span>{job.city}</span>
+                <span>{job.experienceLevel} yr{job.experienceLevel === 1 ? '' : 's'} experience</span>
+                <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
               </p>
             </div>
             <div className="job-actions">
@@ -151,8 +165,9 @@ export default function AdminJobsPage() {
               </div>
             </div>
           )}
-        </div>
+        </motion.article>
       ))}
+      </section>}
     </div>
   );
 }

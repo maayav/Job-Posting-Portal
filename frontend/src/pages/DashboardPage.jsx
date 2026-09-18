@@ -8,6 +8,8 @@ import ScoreCard from '../components/ScoreCard';
 import GapList from '../components/GapList';
 import StudyPlan from '../components/StudyPlan';
 import { api, errorMessage } from '../api/client';
+import Icon from '../components/Icon';
+import '../styles/student-experience.css';
 
 function StudentDashboard() {
   const [report, setReport] = useState(null);
@@ -46,18 +48,18 @@ function StudentDashboard() {
 
   return (
     <>
-      {loading && <p className="muted">Loading report…</p>}
+      {loading && <div className="student-loading-state" role="status"><span className="student-loading-mark" /><span>Bringing your latest report into focus…</span></div>}
 
       {error && <p className="error card-error">{error}</p>}
 
       <motion.section
-        className="dashboard-intro"
+        className="dashboard-intro student-dashboard-intro"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
         <div>
-          <p className="hero-kicker">YOUR WORKSPACE</p>
+          <p className="hero-kicker"><span className="signal-dot" /> YOUR WORKSPACE</p>
           <h1>A clearer view of <em>what’s next.</em></h1>
           <p className="hero-copy">Your readiness score, skill map, and next learning moves in one place.</p>
         </div>
@@ -68,11 +70,19 @@ function StudentDashboard() {
         </div>
       </motion.section>
 
+      <nav className="student-dashboard-actions" aria-label="Workspace shortcuts">
+        <Link to="/jobs" className="student-shortcut student-shortcut-primary"><span className="student-shortcut-icon"><Icon name="search" size={17} /></span><span><strong>Explore roles</strong><small>Find a position that fits</small></span><Icon name="arrow" size={16} /></Link>
+        <Link to="/analyze" className="student-shortcut"><span className="student-shortcut-icon"><Icon name="chart" size={17} /></span><span><strong>New analysis</strong><small>Refresh your readiness</small></span><Icon name="arrow" size={16} /></Link>
+        <Link to="/assistant" className="student-shortcut"><span className="student-shortcut-icon"><Icon name="users" size={17} /></span><span><strong>Ask Vortex AI</strong><small>Plan your next move</small></span><Icon name="arrow" size={16} /></Link>
+      </nav>
+
       {!loading && !report && !error && (
-        <div className="card center">
+        <div className="card center student-empty-report">
+          <span className="student-empty-index">YOUR NEXT STEP · 01</span>
+          <span className="student-empty-mark"><Icon name="file" size={23} /></span>
           <h2>No report yet</h2>
-          <p className="muted">Upload a resume to get your readiness score.</p>
-          <Link to="/analyze" className="primary inline">Start a new analysis</Link>
+          <p className="muted">Upload a resume to turn your experience into a role-specific readiness score and practical plan.</p>
+          <Link to="/analyze" className="primary inline">Start a new analysis <Icon name="arrow" size={16} /></Link>
         </div>
       )}
 
@@ -112,10 +122,11 @@ function StudentDashboard() {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   return (
-    <div className="page">
+    <div className={`page${isAdmin ? '' : ' student-experience student-dashboard-page'}`}>
       <NavBar />
-      {user?.role === 'admin' ? <AdminCandidateDashboard /> : <StudentDashboard />}
+      {isAdmin ? <AdminCandidateDashboard /> : <StudentDashboard />}
     </div>
   );
 }

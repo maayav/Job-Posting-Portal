@@ -17,7 +17,7 @@ npm --prefix backend run seed
 npm run dev
 ```
 
-`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open **http://localhost:5173**; never open `frontend/index.html` or downloaded app pages with `file://`.
+`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open the URL printed by Vite (normally **http://localhost:5173**); if the port is occupied, Vite automatically selects another. Never open `frontend/index.html` or downloaded app pages with `file://`.
 
 Required AI configuration:
 
@@ -51,7 +51,7 @@ Backend tests require the local MongoDB instance. If PowerShell blocks `npm.ps1`
 
 ## Prerequisites
 
-- Node.js ≥ 20 (built against v24)
+- Node.js ≥ 22.12 (Node 24 LTS recommended)
 - Docker (for local MongoDB) — `mongo:7`
 - A Groq API key — covers text generation for extraction and the assistant (`openai/gpt-oss-120b` by default).
 - A Google AI (Gemini) API key for embeddings (`gemini-embedding-2`). Groq does not provide an embeddings endpoint. Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
@@ -74,6 +74,8 @@ npm install
 npm run seed              # embeds the skill ontology + loads the resource catalog
 npm run dev               # API on :5000 (or: npm start)
 ```
+
+On PowerShell use `Copy-Item .env.example .env` in place of `cp`. The root workflow at the top of this guide is recommended when you want one command to start both servers.
 
 Server control script (recommended for demos): `node scripts/server.js start|stop` (pidfile + `server.log`).
 
@@ -101,13 +103,17 @@ npm install
 npm run dev               # Vite on :5173, proxies /api → :5000
 ```
 
+If port 5173 is already in use, Vite automatically chooses the next free port. Use the URL printed in the terminal, or stop the previous Vite process with Ctrl+C.
+
 Open http://localhost:5173, register, upload a PDF resume (+ optional GitHub username), review extracted skills, then analyze to see the readiness score and study plan.
 
 ## 4. Tests
 
 ```bash
-cd backend
-npx vitest run            # 34 tests against placement_skill_gap_test DB (dockerized Mongo must be up)
+npm --prefix backend test    # requires MongoDB
+npm --prefix frontend test
+npm run build
+npm run lint
 ```
 
 Opt-in regression tests (need a real `GEMINI_API_KEY` for embedding drift):
@@ -159,7 +165,7 @@ The project is cross-platform (Node ESM, no Unix-only tooling). Everything below
 
 ### Prerequisites
 
-- **Node.js 20+ (LTS)** — from nodejs.org or via nvm-windows. Verify with `node --version`.
+- **Node.js 22.12+ (LTS)** — from nodejs.org or via nvm-windows. Verify with `node --version`.
 - **Docker Desktop for Windows** — must be running (WSL2 backend recommended) before `docker compose up -d mongo`.
 - **Git for Windows** — for cloning and commits.
 - Optionally **Visual Studio Build Tools** ("Desktop development with C++") + Python — only needed if a native module fails to build.
@@ -191,7 +197,7 @@ npm run dev                         # Vite on :5173, proxies /api -> :5000
 - **localhost resolution:** if the app can't reach Mongo or the API, prefer `127.0.0.1` over `localhost` in `MONGO_URI` and the Vite proxy (`vite.config.js`).
 - **Env vars in PowerShell:** use `$env:ADMIN_PASSWORD='...'` instead of inline `ADMIN_PASSWORD=...` for `node scripts/create-admin.js`.
 - **Stopping the API:** `node scripts/server.js stop` (the pidfile + log live in `backend/`; `.server.pid` is gitignored).
-- **Tests and build:** identical to Linux — `npm test` (backend), `npx vitest run` (frontend), `npm run build` (frontend).
+- **Tests and build:** from the repository root, `npm test` runs both suites, `npm run build` builds the frontend, and `npm run lint` runs the frontend linter. Backend tests require MongoDB.
 
 ### Seed demo applications
 

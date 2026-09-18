@@ -26,6 +26,17 @@ describe('Assistant ownership and grounding', () => {
     expect(r.status).toBe(200); expect(r.body.reply).toBeTruthy();
     const prompt=generateAssistantReply.mock.calls[0][0];expect(prompt).toContain('System Design');expect(prompt).toContain('"atsScore":42');expect(prompt).not.toContain('"atsScore":100');
   });
+  it('asks for scan-friendly Markdown without weakening grounding or safety',async()=>{
+    const r=await chat(token,{message:'What next?',analysisId:String(report._id)});
+    expect(r.status).toBe(200);
+    const systemPrompt=generateAssistantReply.mock.calls[0][1];
+    expect(systemPrompt).toContain('concise, practical Markdown that is easy to scan');
+    expect(systemPrompt).toContain('Use bullets for a few parallel points');
+    expect(systemPrompt).toContain('Do not force headings or sections for a simple question');
+    expect(systemPrompt).toContain('Never invent skills, projects, scores, certifications, experience, or other data');
+    expect(systemPrompt).toContain('Do not make hiring decisions');
+    expect(systemPrompt).toContain('Only cite resource URLs supplied in the study plan');
+  });
   it('rejects access to another student analysis',async()=>expect((await chat(otherToken,{message:'What next?',analysisId:String(report._id)})).status).toBe(403));
   it('handles missing analysis',async()=>expect((await chat(otherToken,{message:'What next?'})).status).toBe(409));
   it('rejects oversized messages',async()=>expect((await chat(token,{message:'a'.repeat(1201)})).status).toBe(400));

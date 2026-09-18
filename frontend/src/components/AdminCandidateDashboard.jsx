@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { api, errorMessage } from '../api/client';
 import { APPLICATION_STATUSES, STATUS_LABELS } from '../utils/statuses';
 import { safeExternalUrl } from '../utils/links';
+import '../styles/admin-experience.css';
 
 const STAGE_LABELS = {
   applied: 'Applied',
@@ -34,31 +36,40 @@ function SkillGroup({ label, items, tone = '' }) {
   </div>;
 }
 
-function CandidateFlowCard({ application, changing, selected, onView, onStatusChange }) {
+function CandidateFlowCard({ application, changing, selected, onView, onStatusChange, reduceMotion }) {
   const name = application.applicant.name || 'Unknown applicant';
   return (
-    <article className={'candidate-flow-card' + (selected ? ' selected-card' : '')}>
-      <div className="candidate-flow-card-top">
-        <div className="application-avatar">{name.slice(0, 1).toUpperCase()}</div>
-        <button className="link candidate-flow-view" onClick={onView}>View</button>
+    <motion.article
+      layout={!reduceMotion}
+      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={reduceMotion ? undefined : { y: -2 }}
+      transition={{ duration: reduceMotion ? 0 : 0.18, ease: 'easeOut' }}
+      className={'candidate-flow-card' + (selected ? ' selected-card' : '')}
+    >
+      <div className="application-avatar candidate-flow-avatar">{name.slice(0, 1).toUpperCase()}</div>
+      <div className="candidate-flow-person">
+        <strong>{name}</strong>
+        <span>{application.applicant.email}</span>
       </div>
-      <strong>{name}</strong>
-      <span>{application.applicant.email}</span>
-      <small>{application.job.title}</small>
-      <small>Applied {new Date(application.appliedAt).toLocaleDateString()}</small>
+      <div className="candidate-flow-role"><span>ROLE</span><strong>{application.job.title}</strong></div>
+      <div className="candidate-flow-applied"><span>APPLIED</span><time dateTime={application.appliedAt}>{new Date(application.appliedAt).toLocaleDateString()}</time></div>
       <div className="candidate-flow-scores">
-        <span>ATS <b>{application.atsScore == null ? '—' : application.atsScore}</b></span>
-        <span>Ready <b>{application.roleReadinessScore == null ? '—' : application.roleReadinessScore}</b></span>
+        <span><small>ATS</small><b>{application.atsScore == null ? '—' : application.atsScore}</b></span>
+        <span><small>READY</small><b>{application.roleReadinessScore == null ? '—' : application.roleReadinessScore}</b></span>
       </div>
-      <select
-        aria-label={`Change review stage for ${name}`}
-        value={application.reviewStage}
-        disabled={changing}
-        onChange={(event) => onStatusChange(event.target.value)}
-      >
-        {REVIEW_STAGES.map((stage) => <option key={stage} value={stage}>{REVIEW_STAGE_LABELS[stage]}</option>)}
-      </select>
-    </article>
+      <div className="candidate-flow-actions">
+        <button type="button" className="link candidate-flow-view" aria-pressed={selected} title={`View ${name}'s profile`} onClick={onView}>View</button>
+        <select
+          aria-label={`Change review stage for ${name}`}
+          value={application.reviewStage}
+          disabled={changing}
+          onChange={(event) => onStatusChange(event.target.value)}
+        >
+          {REVIEW_STAGES.map((stage) => <option key={stage} value={stage}>{REVIEW_STAGE_LABELS[stage]}</option>)}
+        </select>
+      </div>
+    </motion.article>
   );
 }
 
@@ -108,6 +119,7 @@ function DetailPanel({ application, review, loading, onStatusChange, changing })
 }
 
 export default function AdminCandidateDashboard() {
+  const reduceMotion = useReducedMotion();
   const [data, setData] = useState({ totalApplications: 0, roles: [], applications: [] });
   const [filters, setFilters] = useState({ jobId: '', search: '' });
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
@@ -179,14 +191,14 @@ export default function AdminCandidateDashboard() {
 
   return <div className="admin-candidate-dashboard">
     <div className="page-title-row dashboard-admin-heading"><div><p className="section-kicker">ADMIN / CANDIDATE REVIEW</p><h1>Review the people behind the applications.</h1><p className="muted">One focused view for finding, comparing, and moving candidates forward.</p></div></div>
-    {error && <p className="error card-error">{error}</p>}
-    <section className="candidate-dashboard-toolbar card">
+    {error && <p className="error card-error" role="alert">{error}</p>}
+    <section className="candidate-dashboard-toolbar card" aria-label="Candidate filters and totals">
       <div className="candidate-total"><span>Total applications received</span><strong>{loading ? '—' : data.totalApplications}</strong></div>
       <label>Role<select aria-label="Filter applications by role" value={filters.jobId} onChange={(event) => updateFilter('jobId', event.target.value)}><option value="">All roles</option>{data.roles.map((role) => <option key={role.jobId} value={role.jobId}>{role.title} · {role.applicationCount}</option>)}</select></label>
       <label className="candidate-search">Candidate<input aria-label="Search candidates" placeholder="Search name or email" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} onKeyDown={(event) => { if (event.key === 'Enter') loadDashboard(filters); }} /></label>
     </section>
     <div className="candidate-dashboard-grid">
-      <section ref={listRef} className="card candidate-list-panel">
+      <section ref={listRef} className="card candidate-list-panel" aria-label="Candidate applications">
         <div className="section-heading"><div><p className="section-kicker">02 / CANDIDATE FLOW</p><h2>{filters.jobId ? 'Filtered candidates' : 'All candidates'}</h2></div><span className="section-note">{loading ? 'Loading…' : `${data.total ?? data.applications.length} total records`}</span></div>
         {loading && <p className="muted">Loading applications…</p>}
         {!loading && !data.applications.length && <div className="candidate-empty-list"><h3>No candidates found</h3><p className="muted">Try another role or search term.</p></div>}
@@ -215,6 +227,7 @@ export default function AdminCandidateDashboard() {
                   application={application}
                   changing={changing}
                   selected={selectedApplicationId === application.applicationId}
+                  reduceMotion={reduceMotion}
                   onView={() => { setSelectedApplicationId(application.applicationId); if (window.matchMedia?.('(max-width: 950px)')?.matches) detailRef.current?.scrollIntoView({ block: 'start' }); }}
                   onStatusChange={(nextStage) => changeStatus(application.applicationId, nextStage)}
                 />

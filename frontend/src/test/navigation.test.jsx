@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
 import { AuthProvider } from '../context/AuthContext';
@@ -66,6 +66,29 @@ describe('App routing and navigation order', () => {
   it('renders the landing page for unauthenticated users', async () => {
     renderApp('/');
     expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
+  });
+
+  it('provides section navigation for the public landing page', async () => {
+    renderApp('/');
+    const nav = await screen.findByRole('navigation', { name: /landing page navigation/i });
+    expect(Array.from(nav.querySelectorAll('a')).map((link) => link.getAttribute('href'))).toEqual([
+      '#home',
+      '#product-tour',
+      '#how-it-works',
+      '#for-you',
+      '/login',
+    ]);
+    expect(nav.querySelector('[aria-current="location"]')?.getAttribute('href')).toBe('#home');
+    expect(await screen.findByRole('heading', { name: /every part of your next move/i })).toBeTruthy();
+    expect(document.querySelector('.landing-endcap a')?.getAttribute('href')).toBe('/login');
+  });
+
+  it('takes a visitor from landing-page Get started to login and sign-up choices', async () => {
+    renderApp('/');
+    const nav = await screen.findByRole('navigation', { name: /landing page navigation/i });
+    fireEvent.click(within(nav).getByRole('link', { name: 'Get started' }));
+    expect(await screen.findByRole('heading', { name: /welcome back/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Sign up' })).toBeTruthy();
   });
 
   it('keeps deep links working (/dashboard, /analyze, /assistant)', async () => {

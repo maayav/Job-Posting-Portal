@@ -53,12 +53,12 @@ export default function UploadForm({ onSubmit, loading }) {
   }
 
   return (
-    <form className="card" onSubmit={handleSubmit}>
-      <h2>Upload your profile</h2>
+    <form className="card student-upload-form" onSubmit={handleSubmit}>
+      <div className="student-upload-heading"><span className="student-upload-icon" aria-hidden="true">01</span><div><p className="section-kicker">START WITH WHAT YOU HAVE</p><h2>Upload your profile</h2><p className="muted small">Your resume is the foundation. Add public profiles for more context.</p></div></div>
 
-      <label>
+      <label className="student-file-field">
         Resume (PDF)
-        <input type="file" accept=".pdf,application/pdf" onChange={handleFile} />
+        <input className="student-file-input" type="file" accept=".pdf,application/pdf" onChange={handleFile} />
       </label>
 
       <label>

@@ -32,7 +32,7 @@ export default function JobFilters({ onSearch, onClear, loading }) {
 
   return (
     <motion.form
-      className="card job-filters"
+      className="card job-filters student-job-filters"
       onSubmit={submit}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}

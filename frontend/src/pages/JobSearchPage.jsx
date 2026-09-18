@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import Icon from '../components/Icon';
 import NavBar from '../components/NavBar';
 import JobFilters from '../components/JobFilters';
 import JobCard from '../components/JobCard';
 import ApplyButton from '../components/ApplyButton';
 import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
+import '../styles/student-experience.css';
 
 export default function JobSearchPage() {
   const { user } = useAuth();
@@ -69,18 +72,26 @@ export default function JobSearchPage() {
   }
 
   return (
-    <div className="page jobs-page">
+    <div className="page jobs-page student-experience student-jobs-page">
       <NavBar />
 
       <motion.section
-        className="page-hero"
+        className="page-hero student-page-hero"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <p className="hero-kicker">YOUR NEXT CHAPTER</p>
-        <h1>Find your next <em>opportunity.</em></h1>
-        <p className="hero-copy">Discover roles that fit your skills, experience, and ambitions.</p>
+        <div className="student-page-hero-copy">
+          <p className="hero-kicker"><span className="signal-dot" /> YOUR NEXT CHAPTER</p>
+          <h1>Find your next <em>opportunity.</em></h1>
+          <p className="hero-copy">Discover roles that fit your skills, experience, and ambitions.</p>
+        </div>
+        <Link className="student-hero-note" to="/analyze">
+          <span className="student-hero-note-index">01 / PROFILE</span>
+          <strong>Make every skill count</strong>
+          <span>Refresh your analysis to see where you are strongest.</span>
+          <span className="student-hero-note-link">Update your profile <Icon name="arrow" size={15} /></span>
+        </Link>
       </motion.section>
 
       <JobFilters onSearch={handleSearch} onClear={handleClear} loading={loading} />
@@ -103,7 +114,7 @@ export default function JobSearchPage() {
 
       {!loading && jobs.length > 0 && (
         <>
-          <div className="results-heading"><h2>Open opportunities</h2><span className="muted small">{jobs.length} jobs on this page</span></div>
+          <div className="results-heading student-results-heading"><div><p className="section-kicker">CURATED FOR YOUR SEARCH</p><h2>Open opportunities</h2></div><span className="muted small">{jobs.length} jobs on this page</span></div>
           <div className="jobs-grid">
           {jobs.map((job) => (
             <JobCard

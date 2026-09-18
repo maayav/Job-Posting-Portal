@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    strictPort: true,
+    // Automatically use the next available port when another Vite server is running.
+    strictPort: false,
     proxy: {
       '/api': { target: 'http://localhost:5000', changeOrigin: true },
     },

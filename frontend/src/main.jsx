@@ -14,8 +14,7 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <ThemeProvider>
           <SmoothScroll />
-          {/* Keep local previews animated for design review; production still follows the OS preference. */}
-          <MotionConfig reducedMotion={import.meta.env.PROD ? 'user' : 'never'}><App /></MotionConfig>
+          <MotionConfig reducedMotion="user"><App /></MotionConfig>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -4,6 +4,19 @@ const paths = {
       <path d="M5 12h14M13 6l6 6-6 6" />
     </>
   ),
+  home: (
+    <>
+      <path d="m3 10 9-7 9 7" />
+      <path d="M5 9v11h14V9M9 20v-6h6v6" />
+    </>
+  ),
+  users: (
+    <>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="10" cy="7" r="4" />
+      <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </>
+  ),
   search: (
     <>
       <circle cx="10.5" cy="10.5" r="6.5" />

@@ -1,20 +1,30 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import NavBar from '../components/NavBar';
 import { api, errorMessage } from '../api/client';
 import { APPLICATION_STATUSES, PIPELINE_ORDER, STATUS_LABELS } from '../utils/statuses';
+import '../styles/admin-experience.css';
 
 const LIMIT = 20;
 
-function SummaryCard({ label, value, tone = '' }) {
+function SummaryCard({ label, value, tone = '', reduceMotion, index }) {
   return (
-    <div className={`summary-card ${tone}`}>
+    <motion.div
+      layout={!reduceMotion}
+      initial={reduceMotion ? false : { opacity: 0, y: 7 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={reduceMotion ? undefined : { y: -1 }}
+      transition={{ duration: reduceMotion ? 0 : 0.16, delay: reduceMotion ? 0 : index * 0.025, ease: 'easeOut' }}
+      className={`summary-card ${tone}`}
+    >
       <span>{label}</span>
       <strong>{value ?? 0}</strong>
-    </div>
+    </motion.div>
   );
 }
 
 export default function AdminApplicationsPage() {
+  const reduceMotion = useReducedMotion();
   const [summary, setSummary] = useState(null);
   const [applications, setApplications] = useState([]);
   const [filters, setFilters] = useState({ search: '', jobId: '', status: '' });
@@ -116,16 +126,16 @@ export default function AdminApplicationsPage() {
         </div>
       </div>
 
-      {error && <p className="error card-error">{error}</p>}
-      {actionError && <p className="error card-error">{actionError}</p>}
+      {error && <p className="error card-error" role="alert">{error}</p>}
+      {actionError && <p className="error card-error" role="alert">{actionError}</p>}
 
       <section className="application-summary-grid" aria-label="Application summary">
-        <SummaryCard label="Total applications" value={summaryLoading ? '—' : totals.totalApplications} tone="summary-total" />
-        <SummaryCard label="Under review" value={summaryLoading ? '—' : totals.underReview} />
-        <SummaryCard label="Shortlisted" value={summaryLoading ? '—' : totals.shortlisted} />
-        <SummaryCard label="Interview scheduled" value={summaryLoading ? '—' : totals.interviewScheduled} />
-        <SummaryCard label="Selected" value={summaryLoading ? '—' : totals.selected} />
-        <SummaryCard label="Rejected" value={summaryLoading ? '—' : totals.rejected} />
+        <SummaryCard label="Total applications" value={summaryLoading ? '—' : totals.totalApplications} tone="summary-total" reduceMotion={reduceMotion} index={0} />
+        <SummaryCard label="Under review" value={summaryLoading ? '—' : totals.underReview} reduceMotion={reduceMotion} index={1} />
+        <SummaryCard label="Shortlisted" value={summaryLoading ? '—' : totals.shortlisted} reduceMotion={reduceMotion} index={2} />
+        <SummaryCard label="Interview scheduled" value={summaryLoading ? '—' : totals.interviewScheduled} reduceMotion={reduceMotion} index={3} />
+        <SummaryCard label="Selected" value={summaryLoading ? '—' : totals.selected} reduceMotion={reduceMotion} index={4} />
+        <SummaryCard label="Rejected" value={summaryLoading ? '—' : totals.rejected} reduceMotion={reduceMotion} index={5} />
       </section>
 
       <section className="card applications-by-job">
@@ -136,7 +146,7 @@ export default function AdminApplicationsPage() {
           </div>
           <span className="section-note">{jobs.length} roles</span>
         </div>
-        {summaryLoading ? <p className="muted">Loading role totals…</p> : (
+        {summaryLoading ? <p className="muted" role="status">Loading role totals…</p> : (
           <div className="table-scroll">
             <table className="applications-table">
               <thead>
@@ -158,6 +168,7 @@ export default function AdminApplicationsPage() {
                     <td><button className="link" onClick={() => applyFilters({ jobId: job.jobId })}>View</button></td>
                   </tr>
                 ))}
+                {jobs.length === 0 && <tr><td colSpan="9"><span className="muted">No applications by role yet.</span></td></tr>}
               </tbody>
             </table>
           </div>
@@ -192,8 +203,8 @@ export default function AdminApplicationsPage() {
           <button className="link" onClick={clearFilters}>Clear</button>
         </div>
 
-        {loading && <p className="muted">Loading applications…</p>}
-        {!loading && applications.length === 0 && <p className="muted">No applications match these filters.</p>}
+        {loading && <p className="muted" role="status">Loading applications…</p>}
+        {!loading && applications.length === 0 && <div className="admin-applications-empty"><strong>No applications found</strong><p className="muted">Adjust the filters or clear them to see the full candidate flow.</p></div>}
 
         {!loading && applications.length > 0 && (
           <div className="pipeline-board">
@@ -201,9 +212,17 @@ export default function AdminApplicationsPage() {
               <div className={`pipeline-column pipeline-${status}`} key={status}>
                 <div className="pipeline-column-header"><span>{STATUS_LABELS[status]}</span><strong>{grouped[status].length}</strong></div>
                 <div className="pipeline-cards">
-                  {grouped[status].map((application) => (
-                    <article className="application-card" key={application.id}>
-                      <div className="application-avatar">{(application.applicant.name || '?').slice(0, 1).toUpperCase()}</div>
+                  {grouped[status].map((application, index) => (
+                    <motion.article
+                      layout={!reduceMotion}
+                      initial={reduceMotion ? false : { opacity: 0, y: 7 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      whileHover={reduceMotion ? undefined : { y: -1 }}
+                      transition={{ duration: reduceMotion ? 0 : 0.16, delay: reduceMotion ? 0 : Math.min(index * 0.02, 0.1), ease: 'easeOut' }}
+                      className="application-card"
+                      key={application.id}
+                    >
+                      <div className="application-avatar" aria-hidden="true">{(application.applicant.name || '?').slice(0, 1).toUpperCase()}</div>
                       <strong>{application.applicant.name || 'Unknown applicant'}</strong>
                       <span>{application.applicant.email}</span>
                       <small>{application.job.title}</small>
@@ -217,7 +236,7 @@ export default function AdminApplicationsPage() {
                       >
                         {APPLICATION_STATUSES.map((option) => <option key={option} value={option}>{STATUS_LABELS[option]}</option>)}
                       </select>
-                    </article>
+                    </motion.article>
                   ))}
                 </div>
               </div>

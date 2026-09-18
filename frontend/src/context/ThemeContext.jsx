@@ -13,6 +13,8 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = theme === 'dark' ? '#171716' : '#f5f1e9';
     try {
       localStorage.setItem('theme', theme);
     } catch {

@@ -1,188 +1,140 @@
-# Vortex — AI-Assisted Placement & Skill-Gap Tracker + Job Posting Portal
+# Vortex
 
-Vortex is a MERN application for college placement cells and students:
+Vortex is a placement and career-readiness workspace for students and campus placement teams. Students can explore jobs, understand their role readiness, and build a practical skill plan. Administrators can manage openings and review candidates in one place.
 
-1. **Skill-Gap Tracker** — students upload a resume (+ GitHub profile); AI extracts demonstrated skills with evidence; skills are matched against a role's skill ontology via embedding similarity; a deterministic Role-Readiness Score and a prioritized study plan are produced; re-uploads over time track progress.
-2. **Job Posting Portal** — a shared job board where students (job seekers) search and filter postings by skills, experience, and city, and admins create, edit, and delete job postings.
-3. **Vortex landing page** — a public marketing page (`/`) with scroll-reveal sections, product story, and a light/dark monochrome theme toggle available throughout the app.
+## What you can do
 
-## Features
+- **Explore opportunities:** search jobs by skills, experience, and city; apply and track each application.
+- **Understand your readiness:** upload a resume and optional GitHub/LeetCode profile; review extracted evidence, skill matches, gaps, and a prioritized study plan.
+- **Get grounded AI help:** ask questions about your latest analysis and receive recommendations tied to its verified skills and gaps.
+- **Review candidates:** see application totals, filter by role or candidate, inspect a candidate’s profile and evaluation, and move an application through review stages.
+- **Manage the job board:** administrators can create, edit, and remove postings.
+- **Choose your theme:** a persistent monochrome light/dark theme is available throughout the app.
 
-**Placement tracker**
+## Technology
 
-- JWT authentication with bcrypt-hashed passwords (`student` / `admin` roles)
-- PDF resume upload with magic-byte validation, 5 MB cap, server-generated filenames
-- Bounded GitHub profile collection (10 newest repos, 800-char README excerpts, 24 h cache)
-- Groq skill extraction with per-skill evidence and schema-validated output
-- Deterministic readiness scoring: `score = 100 × Σ(wᵢ·mᵢ) / Σwᵢ` (Gemini never decides the score)
-- Gap analysis with a prioritized study plan built from a curated, human-verified resource catalog
-- Async analysis jobs with idempotency, cooldown, and lifecycle status (`queued → processing → completed/failed`)
-- Report history, score-trend chart, and per-item study-plan tracking
-- Admin-only endpoints for viewing any user's reports
-
-**Job portal**
-
-- Shared login for students and admins (same auth system, no separate accounts)
-- `GET /api/jobs` — authenticated search by skills (ANY-match), experience, and city, with pagination
-- Admin-only `POST /api/jobs`, `PUT /api/jobs/:id`, `DELETE /api/jobs/:id`
-- React pages for job search (filters, results, pagination) and admin job management (create/edit/delete with confirmation)
-
-## Tech stack
-
-The project is **cross-platform** (Windows, macOS, Linux) — plain Node ESM, no Unix-only tooling. Windows setup notes, including PowerShell commands, Docker Desktop, firewall, and bcrypt build tips, are in `docs/SETUP.md` §7.
-
-| Layer | Technology |
+| Area | Stack |
 |---|---|
-| Backend | Node.js 24, Express 5 (plain ESM JavaScript), Mongoose 9 |
-| Database | MongoDB 7 (Docker locally, Atlas for production) |
-| Frontend | React 19, Vite 8, React Router 7, Recharts, Axios, Lenis, Motion |
-| Auth | JWT (`jsonwebtoken`) + `bcrypt` |
-| Validation | Zod |
-| AI | Groq — `openai/gpt-oss-120b` (extraction and assistant); Google Gemini `gemini-embedding-2` (embeddings) |
-| Uploads | `multer` + `file-type` (magic-byte checks), `pdf-parse` |
-| Tests | Vitest + Supertest (backend) |
-| Rate limiting | `express-rate-limit` |
-
-## Repository structure
-
-```
-backend/    Express API — routes, controllers, services, Mongoose models, seed scripts, tests
-frontend/   React app — pages, components, AuthContext, Axios client, CSS design system
-docs/       API reference, schema, setup guide, development log, audits
-```
+| Frontend | React 19, Vite 8, React Router 7, Motion, Lenis, Recharts, Axios |
+| Backend | Node.js ESM, Express 5, Mongoose 9, Zod |
+| Data | MongoDB 7 |
+| Authentication | JWT and bcrypt; public registration creates student accounts |
+| AI | Groq for text generation; Gemini for skill embeddings |
+| Tests | Vitest and Supertest |
 
 ## Quick start
 
-Cross-platform shortcut: `npm run setup`, `npm run install:all`, configure `backend/.env`, then `npm run dev`. See `docs/SETUP.md` for Windows PowerShell instructions.
-
 ### Prerequisites
 
-- Node.js 22.12+ (Node 24 LTS recommended)
-- Docker (for local MongoDB)
-- A Groq API key (for resume skill extraction and the AI assistant)
-- A Google AI (Gemini) API key (for skill embeddings)
+- Node.js **22.12 or later** and npm
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux), for local MongoDB
+- A Groq API key for resume extraction and the AI assistant
+- A Google AI / Gemini API key for embedding the skill ontology during setup
 - Optional: a GitHub token for higher GitHub API rate limits
 
-### 1. MongoDB
+### Install and configure
 
-```bash
-docker compose up -d mongo        # mongo:7 on localhost:27017
+Run these commands from the repository root:
+
+```sh
+npm run setup
+npm run install:all
+docker compose up -d mongo
 ```
 
-### 2. Backend
+Open `backend/.env` and set at least `MONGO_URI`, a strong `JWT_SECRET`, `GROQ_API_KEY`, and `GEMINI_API_KEY`. `npm run setup` creates this file from `backend/.env.example` only when it does not already exist. Keep real keys in this ignored local file; never commit them.
 
-```bash
-cd backend
-cp .env.example .env              # fill in real values
-npm install
-npm run seed                      # embed skill ontology + load the resource catalog
-node scripts/server.js start      # API on http://localhost:5000 (or: npm run dev)
+Seed the skill ontology and start both services:
+
+```sh
+npm --prefix backend run seed
+npm run dev
 ```
 
-### 3. Frontend
+Open the URL printed by Vite, usually <http://localhost:5173>. If that port is occupied, Vite automatically selects the next available port. The frontend proxies `/api` requests to the backend at `http://localhost:5000`.
 
-```bash
-cd frontend
-npm install
-npm run dev                       # Vite on http://localhost:5173, proxies /api → :5000
+Create a student account from the app. Public registration cannot create administrators. To promote an existing account or create an administrator, use the backend CLI:
+
+```sh
+# Promote an existing account
+node backend/scripts/create-admin.js admin@example.com
+
+# Create an administrator after setting ADMIN_PASSWORD in your shell
+node backend/scripts/create-admin.js admin@example.com --name "Placement Admin"
 ```
 
-Open http://localhost:5173, register, and use the app.
+On PowerShell, set it for the current shell with `$env:ADMIN_PASSWORD = 'your-local-password'`; on Bash, use `export ADMIN_PASSWORD='your-local-password'`. Clear it after creating the account (`Remove-Item Env:ADMIN_PASSWORD` in PowerShell, `unset ADMIN_PASSWORD` in Bash).
 
-### 4. Tests
+### Demo data
 
-```bash
-cd backend
-npx vitest run                    # requires the Dockerized MongoDB
+For a local walkthrough, create an administrator first, then seed sample jobs and applications:
+
+```sh
+node backend/scripts/seed-jobs.js --admin=admin@example.com
+node backend/scripts/seed-applications.js --admin=admin@example.com
 ```
+
+On a fresh local database, the application seed creates demo students `demo.student1@vortex.dev` through `demo.student8@vortex.dev`, each with the development-only password `demo-pass-123`, plus sample reviews and applications. These accounts and this password are for a disposable local development database only. Never use them in production.
 
 ## Environment variables
 
-Backend (`backend/.env`, never committed — see `backend/.env.example`):
+The backend reads configuration from `backend/.env`. Important settings:
 
+| Variable | Purpose |
+|---|---|
+| `MONGO_URI` | MongoDB connection string; local default is `mongodb://127.0.0.1:27017/placement_skill_gap` |
+| `JWT_SECRET` | Long, random secret used to sign sessions |
+| `GROQ_API_KEY` | Groq text generation for extraction and assistant responses |
+| `GROQ_MODEL` | Text model; defaults to `openai/gpt-oss-120b` |
+| `GEMINI_API_KEY` | Gemini embedding requests for the skill ontology |
+| `GEMINI_EMBEDDING_MODEL` | Embedding model; defaults to `gemini-embedding-2` |
+| `GITHUB_TOKEN` | Optional token for GitHub profile collection |
+| `PORT` | Backend port; defaults to `5000` |
+
+The text and embedding providers are configured separately. Changing the embedding model requires re-seeding the ontology and updating its embedding-version baseline. See `backend/.env.example` for all supported settings.
+
+## Useful commands
+
+Run from the repository root:
+
+| Command | Description |
+|---|---|
+| `npm run setup` | Create `backend/.env` from the example if missing |
+| `npm run install:all` | Install backend and frontend dependencies |
+| `npm run dev` | Start the API and Vite development servers |
+| `npm test` | Run backend and frontend test suites (MongoDB must be available for backend tests) |
+| `npm run lint` | Run the frontend linter |
+| `npm run build` | Build the production frontend |
+
+Stop a development server with **Ctrl+C** in the terminal that started it. If port 5173 is already serving Vortex, keep using that browser tab; starting another frontend will select the next free port.
+
+## Windows setup
+
+The app uses Node scripts and cross-platform npm commands; WSL is not required. Install Node.js 22.12+, Git for Windows, and Docker Desktop, then run the same Quick start commands from PowerShell. If PowerShell blocks `npm.ps1`, use `npm.cmd` in its place. Docker Desktop must be running before `docker compose up -d mongo`.
+
+Install dependencies on the Windows machine itself; do not copy `node_modules` from Linux or macOS. If `bcrypt` needs to compile, install Visual Studio Build Tools with the C++ workload and Python, then run `npm rebuild bcrypt`. More Windows notes are in [`docs/SETUP.md`](docs/SETUP.md#7-windows-setup-notes).
+
+## Repository layout
+
+```text
+backend/    Express API, MongoDB models, AI services, seed scripts, and tests
+frontend/   React application, pages, components, and shared design system
+docs/       Setup guide, API reference, schemas, and development notes
+scripts/    Cross-platform root setup and development launchers
 ```
-NODE_ENV, PORT, MONGO_URI, JWT_SECRET, JWT_EXPIRES_IN,
-AI_TEXT_PROVIDER, AI_EMBEDDING_PROVIDER, AI_TEXT_FALLBACK_PROVIDER,
-GROQ_API_KEY, GROQ_MODEL, GROQ_FALLBACK_MODELS, GEMINI_API_KEY, GEMINI_EMBEDDING_MODEL,
-EMBEDDING_MODEL, EMBEDDING_VERSION, GITHUB_TOKEN
-```
-
-Frontend: no variables required for local development (Vite proxies `/api`).
-
-## Roles
-
-| Role | Description | Capabilities |
-|---|---|---|
-| `student` | Job seeker / placement student | Upload resumes, run analyses, view reports, search jobs |
-| `admin` | Placement cell administrator | Everything a student can do, plus view any user's reports and manage job postings |
-
-Public registration always creates a `student`. Privileged roles are never self-assignable; admins are created or promoted with an explicit CLI script:
-
-```bash
-# promote an existing account
-node scripts/create-admin.js admin@example.com
-
-# create a new admin (password via env so it never lands in shell history or logs)
-ADMIN_PASSWORD='...' node scripts/create-admin.js admin@example.com --name "Placement Admin"
-```
-
-Optional demo data (development only, idempotent, requires an existing admin):
-
-```bash
-node scripts/seed-jobs.js --admin=admin@example.com
-```
-
-## API overview
-
-| Method | Endpoint | Auth | Purpose |
-|---|---|---|---|
-| GET | `/api/health` | Public | Liveness check (canonical shape) |
-| POST | `/api/auth/register` | Public | Create a student account |
-| POST | `/api/auth/login` | Public | Obtain a JWT |
-| POST | `/api/profile` | Student | Upload resume + GitHub + target role |
-| GET | `/api/profile/:id` | Owner/Admin | Submission + extracted skills (no raw resume text) |
-| DELETE | `/api/profile/:id` | Owner/Admin | Delete submission, file, and related reports |
-| POST | `/api/analyze` | Owner | Queue the analysis pipeline (idempotent, cooldown) |
-| GET | `/api/analyze/:id/status` | Owner/Admin | Poll job status |
-| GET | `/api/report/:id` | Owner/Admin | Readiness report (score, gaps, study plan) |
-| PATCH | `/api/report/:id/study-plan/:itemId` | Owner | Toggle a study-plan item |
-| GET | `/api/report/history` | Student | Own report history |
-| GET | `/api/users/:userId/reports` | Admin | Any user's report history |
-| GET | `/api/roles` | Authenticated | Available target roles (live from the skill ontology) |
-| GET | `/api/jobs` | Authenticated | Search jobs (skills, experience, city, pagination) |
-| POST | `/api/applications` | Student | Apply to a job (one application per job) |
-| GET | `/api/applications/me` | Authenticated | Current user's applications |
-| GET | `/api/admin/applications` | Admin | Filtered paginated application list |
-| PATCH | `/api/admin/applications/:applicationId/status` | Admin | Move an application through the pipeline |
-| GET | `/api/admin/dashboard/application-summary` | Admin | Aggregated totals, job breakdown, pipeline |
-| GET | `/api/admin/dashboard` | Admin | Candidate-focused dashboard data with role/search filters and review stages |
-| GET | `/api/assistant/context` | Authenticated | Latest owned analysis context for the AI Assistant |
-| POST | `/api/assistant/chat` | Authenticated | Grounded assistant response for the owned analysis |
-| POST | `/api/jobs` | Admin | Create a job posting |
-| PUT | `/api/jobs/:id` | Admin | Update a job posting |
-| DELETE | `/api/jobs/:id` | Admin | Delete a job posting |
-
-Full request/response details: `docs/API.md`. Data models: `docs/SCHEMA.md`.
 
 ## Documentation
 
-- `docs/SETUP.md` — setup, scripts, admin creation, deployment notes
-- `docs/API.md` — endpoint reference
-- `docs/SCHEMA.md` — MongoDB schemas and indexes
-- `docs/DEVELOPMENT.md` — development log, decisions, incident history
-- `docs/JOB_PORTAL_INTEGRATION_AUDIT.md` — job portal integration audit
-- `EXECUTION_PLAN.md` — original build specification
+- [`docs/SETUP.md`](docs/SETUP.md) — detailed setup, environment, admin, and Windows notes
+- [`docs/API.md`](docs/API.md) — endpoint reference
+- [`docs/SCHEMA.md`](docs/SCHEMA.md) — MongoDB models and indexes
+- [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) — implementation decisions and development history
+- [`docs/JOB_PORTAL_INTEGRATION_AUDIT.md`](docs/JOB_PORTAL_INTEGRATION_AUDIT.md) — job portal integration notes
 
 ## Security notes
 
-- Secrets live only in `.env` (gitignored); `.env.example` ships with blank values.
-- Uploads are magic-byte validated, size-capped, and stored outside any web-served directory.
-- Resume text is treated as sensitive: never returned in full by the API, never logged.
-- Every owner-scoped route enforces ownership or admin role server-side.
-- Auth and analysis endpoints are rate-limited.
-
-**Applications**
-
-- Students can apply once per job and track their own application status.
-- Admins get `/admin/applications` with totals, applications grouped by job, filters, pagination, and a status pipeline.
-- Status history records every admin transition from Applied through Selected/Rejected.
+- Keep API keys and `JWT_SECRET` in `backend/.env`; it is excluded from Git.
+- Resume files are validated, size-limited, and stored outside the web-served frontend.
+- Resume text and password hashes are not returned by the API.
+- Ownership and administrator access are enforced by backend routes.
+- Demo credentials and generated records belong only in a local development database.

@@ -1,0 +1,1266 @@
+/* Focused admin surfaces. Keep these selectors inside their admin page roots. */
+.admin-candidate-dashboard,
+.admin-jobs-page,
+.admin-applications-page {
+  --admin-surface: var(--panel);
+  --admin-wash: var(--panel-2);
+}
+
+.admin-candidate-dashboard {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-candidate-dashboard .dashboard-admin-heading {
+  margin-bottom: 0;
+}
+
+.admin-candidate-dashboard .dashboard-admin-heading h1,
+.admin-jobs-page .page-title-row h1,
+.admin-applications-page .page-title-row h1 {
+  max-width: 760px;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  letter-spacing: -.055em;
+}
+
+.admin-candidate-dashboard .dashboard-admin-heading .muted,
+.admin-jobs-page .page-title-row .muted,
+.admin-applications-page .page-title-row .muted {
+  max-width: 600px;
+  font-size: .9rem;
+}
+
+.admin-candidate-dashboard .candidate-dashboard-toolbar {
+  grid-template-columns: minmax(170px, .7fr) minmax(200px, 1fr) minmax(260px, 1.25fr);
+  gap: 20px;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--panel), var(--panel-2));
+}
+
+.admin-candidate-dashboard .candidate-total {
+  min-height: 64px;
+  justify-content: center;
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+}
+
+.admin-candidate-dashboard .candidate-total span {
+  font-size: .7rem;
+  letter-spacing: .025em;
+}
+
+.admin-candidate-dashboard .candidate-total strong {
+  font-size: 2.25rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.065em;
+}
+
+.admin-candidate-dashboard .candidate-dashboard-toolbar label {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  color: var(--muted);
+  font-size: .7rem;
+  font-weight: 550;
+  letter-spacing: .02em;
+}
+
+.admin-candidate-dashboard .candidate-dashboard-toolbar input,
+.admin-candidate-dashboard .candidate-dashboard-toolbar select {
+  margin-top: 2px;
+  min-height: 46px;
+  border-radius: 10px;
+  background-color: var(--panel);
+  color: var(--text);
+  font-size: .84rem;
+}
+
+.admin-candidate-dashboard .candidate-dashboard-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(330px, .95fr);
+  align-items: start;
+  gap: 18px;
+}
+
+.admin-candidate-dashboard .candidate-list-panel,
+.admin-candidate-dashboard .candidate-detail-panel {
+  border-radius: 16px;
+}
+
+.admin-candidate-dashboard .candidate-list-panel {
+  overflow: clip;
+  padding: 22px;
+}
+
+.admin-candidate-dashboard .candidate-list-panel > .section-heading {
+  align-items: end;
+  margin-bottom: 17px;
+}
+
+.admin-candidate-dashboard .candidate-list-panel > .section-heading h2 {
+  margin: 2px 0 0;
+  font-size: 1.22rem;
+  letter-spacing: -.04em;
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs {
+  position: sticky;
+  top: 96px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 0 12px;
+  padding: 5px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  box-shadow: 0 8px 22px #00000008;
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs button {
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-size: .77rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs button.active {
+  border-color: var(--line-bright);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line-bright) 28%, transparent);
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs button strong,
+.admin-candidate-dashboard .candidate-flow-column-header > strong {
+  min-width: 27px;
+  height: 27px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-candidate-dashboard .candidate-flow-column {
+  min-height: 370px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--panel-2) 72%, var(--panel));
+}
+
+.admin-candidate-dashboard .candidate-flow-column-header {
+  min-height: 58px;
+  padding: 12px 15px;
+  color: var(--text);
+}
+
+.admin-candidate-dashboard .candidate-flow-column-header > div > span {
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.admin-candidate-dashboard .candidate-flow-column-header small {
+  font-size: .67rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-cards {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 10px;
+  max-height: min(64vh, 760px);
+  padding: 12px;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--line-bright) transparent;
+}
+
+.admin-candidate-dashboard .candidate-flow-card {
+  gap: 7px;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px #00000008;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-candidate-dashboard .candidate-flow-card:hover {
+  border-color: var(--line-bright);
+  box-shadow: 0 8px 20px #0000000b;
+}
+
+.admin-candidate-dashboard .candidate-flow-card.selected-card {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 20px #0000000b;
+}
+
+.admin-candidate-dashboard .candidate-flow-card-top {
+  margin-bottom: 4px;
+}
+
+.admin-candidate-dashboard .candidate-flow-card > strong {
+  font-size: .88rem;
+  letter-spacing: -.015em;
+}
+
+.admin-candidate-dashboard .candidate-flow-card > span,
+.admin-candidate-dashboard .candidate-flow-card > small {
+  font-size: .73rem;
+  line-height: 1.45;
+}
+
+.admin-candidate-dashboard .candidate-flow-card > span {
+  margin-bottom: 2px;
+}
+
+.admin-candidate-dashboard .candidate-flow-card > small:first-of-type {
+  width: fit-content;
+  max-width: 100%;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: .66rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-scores {
+  justify-content: space-between;
+  gap: 12px;
+  margin: 5px 0 1px;
+  padding-top: 10px;
+  font-size: .7rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-card select {
+  min-height: 42px;
+  margin-top: 5px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: .78rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-view {
+  min-height: 36px;
+  padding-inline: 9px;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.admin-candidate-dashboard .candidate-flow-view:hover {
+  background: var(--accent-soft);
+}
+
+.admin-candidate-dashboard .candidate-detail-anchor {
+  min-width: 0;
+}
+
+.admin-candidate-dashboard .candidate-detail-panel {
+  padding: 22px;
+  box-shadow: 0 12px 36px #0000000a;
+}
+
+.admin-candidate-dashboard .candidate-detail-heading {
+  align-items: flex-start;
+}
+
+.admin-candidate-dashboard .candidate-detail-heading .section-kicker {
+  margin-bottom: 4px;
+  font-size: .58rem;
+}
+
+.admin-candidate-dashboard .candidate-detail-heading h2 {
+  overflow-wrap: anywhere;
+  font-size: 1.16rem;
+}
+
+.admin-candidate-dashboard .candidate-links {
+  gap: 8px;
+}
+
+.admin-candidate-dashboard .candidate-link {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  font-size: .7rem;
+  text-decoration: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.admin-candidate-dashboard a.candidate-link:hover {
+  border-color: var(--line-bright);
+  background: var(--accent-soft);
+}
+
+.admin-candidate-dashboard .candidate-application-meta {
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-candidate-dashboard .candidate-application-meta span {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 7px 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.admin-candidate-dashboard .candidate-application-meta b {
+  color: var(--muted);
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+.admin-candidate-dashboard .candidate-scores {
+  gap: 9px;
+  margin: 17px 0 20px;
+}
+
+.admin-candidate-dashboard .candidate-score {
+  border-radius: 11px;
+}
+
+.admin-candidate-dashboard .candidate-score strong {
+  font-size: 1.55rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-candidate-dashboard .candidate-detail-section {
+  padding-top: 16px;
+}
+
+.admin-candidate-dashboard .candidate-study-list li {
+  gap: 9px;
+  align-items: flex-start;
+}
+
+.admin-candidate-dashboard .candidate-study-list li a {
+  max-width: 58%;
+  overflow-wrap: anywhere;
+  text-align: right;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-candidate-dashboard .candidate-review-control select {
+  min-height: 46px;
+  border-radius: 10px;
+}
+
+.admin-jobs-page,
+.admin-applications-page {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.admin-jobs-page .page-title-row,
+.admin-applications-page .page-title-row {
+  margin-bottom: 2px;
+}
+
+.admin-jobs-page .admin-jobs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0;
+  padding: 20px 23px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--panel), var(--panel-2));
+}
+
+.admin-jobs-page .admin-jobs-toolbar h2 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.admin-jobs-page .admin-jobs-toolbar p {
+  margin: 4px 0 0;
+  font-size: .74rem;
+}
+
+.admin-jobs-page .admin-jobs-toolbar .primary {
+  min-width: 132px;
+  border-radius: 10px;
+}
+
+.admin-jobs-page .admin-job-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+
+.admin-jobs-page .admin-job-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 20px;
+  border-radius: 14px;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.admin-jobs-page .admin-job-card:hover {
+  border-color: var(--line-bright);
+  box-shadow: 0 10px 28px #0000000b;
+}
+
+.admin-jobs-page .admin-job-card .job-head {
+  align-items: flex-start;
+}
+
+.admin-jobs-page .admin-job-card .job-head-info h3 {
+  margin-bottom: 6px;
+  font-size: 1.08rem;
+}
+
+.admin-jobs-page .admin-job-company {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.admin-jobs-page .admin-job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+}
+
+.admin-jobs-page .admin-job-meta span {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: .66rem;
+}
+
+.admin-jobs-page .admin-job-card .job-actions {
+  gap: 6px;
+}
+
+.admin-jobs-page .admin-job-card .job-actions button {
+  min-width: 54px;
+  min-height: 40px;
+  padding-inline: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.admin-jobs-page .admin-job-card .job-actions button:hover {
+  background: var(--accent-soft);
+}
+
+.admin-jobs-page .admin-job-card .area-chips {
+  gap: 6px;
+}
+
+.admin-jobs-page .admin-job-card .chip {
+  border-radius: 999px;
+  font-size: .68rem;
+}
+
+.admin-jobs-page .admin-job-card .job-desc {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .79rem;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.admin-jobs-page .job-form {
+  margin: 0;
+  padding: 25px;
+  border-radius: 15px;
+}
+
+.admin-jobs-page .job-form > h2 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.admin-jobs-page .job-form .filters {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.admin-jobs-page .job-form .field-hint {
+  grid-column: 1 / -1;
+  margin: -5px 0 2px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--line-bright);
+  background: var(--panel-2);
+  line-height: 1.6;
+}
+
+.admin-jobs-page .job-form textarea {
+  min-height: 125px;
+}
+
+.admin-jobs-page .job-form .filters-actions {
+  gap: 10px;
+}
+
+.admin-jobs-page .confirm-delete {
+  margin-top: auto;
+  border-color: var(--line-bright);
+  border-radius: 11px;
+  background: var(--panel-2);
+}
+
+.admin-jobs-page .confirm-delete .danger-btn {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.admin-jobs-page .notice,
+.admin-applications-page .card-error,
+.admin-jobs-page .card-error {
+  margin: 0;
+  border-radius: 10px;
+}
+
+.admin-applications-page .application-summary-grid {
+  gap: 10px;
+  margin: 0;
+}
+
+.admin-applications-page .summary-card {
+  min-height: 112px;
+  padding: 16px 17px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px #00000006;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-applications-page .summary-card:hover {
+  border-color: var(--line-bright);
+  box-shadow: 0 8px 18px #0000000a;
+}
+
+.admin-applications-page .summary-card span {
+  min-height: auto;
+  font-size: .68rem;
+}
+
+.admin-applications-page .summary-card strong {
+  margin-top: 17px;
+  font-size: 1.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-applications-page .applications-by-job,
+.admin-applications-page .application-pipeline-section {
+  margin: 0;
+  padding: 22px;
+  border-radius: 15px;
+}
+
+.admin-applications-page .applications-by-job .section-heading,
+.admin-applications-page .application-pipeline-section > .section-heading {
+  margin-bottom: 17px;
+}
+
+.admin-applications-page .applications-table {
+  min-width: 800px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-applications-page .applications-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-block: 12px;
+  background: var(--panel-2);
+}
+
+.admin-applications-page .applications-table tbody tr:hover {
+  background: var(--panel-2);
+}
+
+.admin-applications-page .applications-table td:first-child strong {
+  font-size: .82rem;
+}
+
+.admin-applications-page .applications-table td:first-child small {
+  font-size: .69rem;
+}
+
+.admin-applications-page .applications-table td:last-child .link {
+  min-height: 38px;
+  padding-inline: 10px;
+  border-radius: 7px;
+}
+
+.admin-applications-page .application-filters {
+  grid-template-columns: minmax(230px, 1.5fr) minmax(170px, 1fr) minmax(170px, 1fr) auto;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-2);
+}
+
+.admin-applications-page .application-filters input,
+.admin-applications-page .application-filters select {
+  min-height: 44px;
+  border-color: var(--line);
+  border-radius: 9px;
+  background-color: var(--panel);
+}
+
+.admin-applications-page .application-filters .link {
+  min-width: 45px;
+  min-height: 44px;
+  padding-inline: 8px;
+  border-radius: 8px;
+}
+
+.admin-applications-page .application-filters .link:hover {
+  background: var(--accent-soft);
+}
+
+.admin-applications-page .pipeline-board {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 11px;
+  overflow: visible;
+  padding: 0;
+}
+
+.admin-applications-page .pipeline-column {
+  min-width: 0;
+  min-height: 190px;
+  border-radius: 12px;
+}
+
+.admin-applications-page .pipeline-column-header {
+  min-height: 52px;
+  padding: 11px 13px;
+  color: var(--text);
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.admin-applications-page .pipeline-column-header strong {
+  min-width: 25px;
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  text-align: center;
+}
+
+.admin-applications-page .pipeline-cards {
+  gap: 8px;
+  padding: 9px;
+}
+
+.admin-applications-page .table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-bright) transparent;
+}
+
+.admin-applications-page .admin-applications-empty {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 32px 16px;
+  border: 1px dashed var(--line-bright);
+  border-radius: 11px;
+  background: var(--panel-2);
+  text-align: center;
+}
+
+.admin-applications-page .admin-applications-empty strong {
+  font-size: .9rem;
+}
+
+.admin-applications-page .admin-applications-empty p {
+  margin: 0;
+  font-size: .77rem;
+}
+
+.admin-applications-page .application-card {
+  position: relative;
+  gap: 6px;
+  padding: 13px;
+  border-radius: 10px;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.admin-applications-page .application-card:hover {
+  border-color: var(--line-bright);
+  box-shadow: 0 6px 16px #0000000a;
+}
+
+.admin-applications-page .application-card .application-avatar {
+  margin-bottom: 3px;
+}
+
+.admin-applications-page .application-card strong {
+  font-size: .83rem;
+}
+
+.admin-applications-page .application-card select {
+  min-height: 42px;
+  margin-top: 7px;
+  border-radius: 8px;
+  font-size: .76rem;
+}
+
+.admin-applications-page .pagination {
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-applications-page .pagination .primary {
+  min-height: 40px;
+  padding: 8px 13px;
+}
+
+@media (max-width: 1120px) {
+  .admin-candidate-dashboard .candidate-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, .88fr);
+  }
+
+  .admin-candidate-dashboard .candidate-list-panel {
+    padding: 18px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 950px) {
+  .admin-candidate-dashboard .candidate-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-candidate-dashboard .candidate-detail-anchor {
+    scroll-margin-top: 190px;
+  }
+
+  .admin-candidate-dashboard .candidate-detail-panel {
+    max-height: none;
+  }
+
+  .admin-applications-page .pipeline-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-candidate-dashboard {
+    gap: 14px;
+  }
+
+  .admin-candidate-dashboard .candidate-dashboard-toolbar {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+    padding: 16px;
+  }
+
+  .admin-candidate-dashboard .candidate-total,
+  .admin-candidate-dashboard .candidate-search {
+    grid-column: 1 / -1;
+  }
+
+  .admin-candidate-dashboard .candidate-total {
+    min-height: 52px;
+  }
+
+  .admin-candidate-dashboard .candidate-total strong {
+    font-size: 1.9rem;
+  }
+
+  .admin-candidate-dashboard .candidate-list-panel {
+    padding: 14px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-tabs {
+    top: 188px;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-tabs button {
+    min-height: 46px;
+    padding: 6px 8px;
+    font-size: .72rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-column {
+    min-height: 230px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-cards {
+    grid-template-columns: 1fr;
+    max-height: none;
+    overflow: visible;
+    padding: 9px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card {
+    padding: 14px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card > strong {
+    font-size: .95rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card select {
+    font-size: 16px;
+  }
+
+  .admin-candidate-dashboard .candidate-application-meta {
+    gap: 0 10px;
+  }
+
+  .admin-candidate-dashboard .candidate-detail-panel {
+    padding: 17px;
+  }
+
+  .admin-jobs-page .admin-jobs-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+    padding: 17px;
+  }
+
+  .admin-jobs-page .admin-jobs-toolbar .primary {
+    width: 100%;
+  }
+
+  .admin-jobs-page .admin-job-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-jobs-page .admin-job-card {
+    padding: 17px;
+  }
+
+  .admin-jobs-page .job-form {
+    padding: 18px;
+  }
+
+  .admin-jobs-page .job-form .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-jobs-page .job-form .field-hint {
+    grid-column: auto;
+  }
+
+  .admin-applications-page .application-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .admin-applications-page .summary-card {
+    min-height: 96px;
+    padding: 13px;
+  }
+
+  .admin-applications-page .summary-card strong {
+    margin-top: 11px;
+    font-size: 1.65rem;
+  }
+
+  .admin-applications-page .applications-by-job,
+  .admin-applications-page .application-pipeline-section {
+    padding: 16px;
+  }
+
+  .admin-applications-page .application-filters {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .admin-applications-page .application-filters .link {
+    justify-self: start;
+  }
+
+  .admin-applications-page .pipeline-board {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-applications-page .pipeline-column {
+    min-height: 120px;
+  }
+
+  .admin-applications-page .pipeline-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-applications-page .pagination {
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-candidate-dashboard *,
+  .admin-jobs-page *,
+  .admin-applications-page * {
+    scroll-behavior: auto;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Candidate flow stays scannable while its stage tabs remain close at hand. */
+.admin-candidate-dashboard {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.admin-candidate-dashboard .candidate-dashboard-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(310px, .92fr);
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs {
+  top: 96px;
+  z-index: 5;
+  margin-bottom: 10px;
+}
+
+.admin-candidate-dashboard .candidate-flow-tabs button {
+  min-width: 0;
+}
+
+.admin-candidate-dashboard .candidate-flow-column {
+  min-height: 0;
+}
+
+.admin-candidate-dashboard .candidate-flow-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 8px;
+  max-height: min(58svh, 650px);
+  min-height: 160px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 10px;
+  scrollbar-gutter: stable;
+}
+
+.admin-candidate-dashboard .candidate-flow-card {
+  display: grid;
+  grid-template-columns: 36px minmax(100px, 1.2fr) minmax(76px, .8fr) minmax(98px, .9fr) minmax(122px, 1fr);
+  grid-template-areas:
+    "avatar person role scores actions"
+    "avatar person applied scores actions";
+  align-items: center;
+  gap: 5px 11px;
+  min-width: 0;
+  padding: 11px 12px;
+}
+
+.admin-candidate-dashboard .candidate-flow-avatar {
+  grid-area: avatar;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+}
+
+.admin-candidate-dashboard .candidate-flow-person {
+  display: grid;
+  grid-area: person;
+  min-width: 0;
+  gap: 3px;
+}
+
+.admin-candidate-dashboard .candidate-flow-person strong {
+  overflow: hidden;
+  font-size: .8rem;
+  letter-spacing: -.015em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-candidate-dashboard .candidate-flow-person span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .67rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-candidate-dashboard .candidate-flow-role,
+.admin-candidate-dashboard .candidate-flow-applied {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  gap: 3px;
+  overflow: hidden;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+
+.admin-candidate-dashboard .candidate-flow-role {
+  grid-area: role;
+}
+
+.admin-candidate-dashboard .candidate-flow-applied {
+  grid-area: applied;
+}
+
+.admin-candidate-dashboard .candidate-flow-role > span,
+.admin-candidate-dashboard .candidate-flow-applied > span {
+  color: var(--muted);
+  font-size: .53rem;
+  letter-spacing: .08em;
+}
+
+.admin-candidate-dashboard .candidate-flow-role > strong,
+.admin-candidate-dashboard .candidate-flow-applied > time {
+  overflow: hidden;
+  color: var(--text);
+  font-size: .68rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-candidate-dashboard .candidate-flow-scores {
+  display: grid;
+  grid-area: scores;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 2px 0 2px 10px;
+  border-left: 1px solid var(--line);
+  font-size: .65rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-scores span {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  min-width: 0;
+  color: var(--muted);
+}
+
+.admin-candidate-dashboard .candidate-flow-scores small {
+  color: var(--muted);
+  font-size: .52rem;
+  letter-spacing: .06em;
+}
+
+.admin-candidate-dashboard .candidate-flow-scores b {
+  color: var(--text);
+  font-size: .72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-candidate-dashboard .candidate-flow-actions {
+  display: grid;
+  grid-area: actions;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+
+.admin-candidate-dashboard .candidate-flow-view {
+  justify-self: start;
+  min-height: 30px;
+  padding-inline: 5px;
+  color: var(--text);
+  font-size: .66rem;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.admin-candidate-dashboard .candidate-flow-actions select {
+  width: 100%;
+  min-width: 0;
+  min-height: 35px;
+  margin: 0;
+  padding: 5px 24px 5px 8px;
+  font-size: .67rem;
+}
+
+.admin-candidate-dashboard .candidate-flow-card:focus-within {
+  border-color: var(--line-bright);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+@media (max-width: 1180px) {
+  .admin-candidate-dashboard .candidate-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(290px, .88fr);
+  }
+
+  .admin-candidate-dashboard .candidate-flow-tabs {
+    top: 176px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card {
+    grid-template-columns: 34px minmax(0, 1.2fr) minmax(0, .8fr) minmax(112px, .9fr);
+    grid-template-areas:
+      "avatar person role actions"
+      "avatar applied scores actions";
+    gap: 7px 9px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-cards {
+    max-height: min(55svh, 560px);
+  }
+}
+
+@media (max-width: 950px) {
+  .admin-candidate-dashboard .candidate-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-candidate-dashboard .candidate-detail-anchor {
+    scroll-margin-top: 190px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card {
+    grid-template-columns: 36px minmax(0, 1.25fr) minmax(0, .85fr) minmax(112px, .9fr);
+    grid-template-areas:
+      "avatar person role actions"
+      "avatar applied scores actions";
+    gap: 8px 12px;
+    padding: 12px 14px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-cards {
+    max-height: min(56svh, 620px);
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-candidate-dashboard .candidate-flow-tabs {
+    top: 198px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-tabs button {
+    min-height: 48px;
+    padding: 7px 10px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-column-header {
+    padding: 11px 12px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-cards {
+    max-height: min(52svh, 460px);
+    min-height: 130px;
+    overflow: auto;
+    padding: 8px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-card {
+    grid-template-columns: 36px minmax(0, 1fr) 40px;
+    grid-template-areas:
+      "avatar person person"
+      "role role role"
+      "applied applied applied"
+      "scores scores scores"
+      "actions actions actions";
+    gap: 9px 10px;
+    padding: 13px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-person strong {
+    font-size: .88rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-role,
+  .admin-candidate-dashboard .candidate-flow-applied {
+    grid-template-columns: 64px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-role > strong,
+  .admin-candidate-dashboard .candidate-flow-applied > time {
+    font-size: .74rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-scores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 8px 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .admin-candidate-dashboard .candidate-flow-scores span {
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-scores small {
+    font-size: .58rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-scores b {
+    font-size: .78rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-actions {
+    grid-template-columns: minmax(90px, .65fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 9px;
+    padding: 8px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .admin-candidate-dashboard .candidate-flow-view {
+    min-height: 44px;
+    padding-inline: 9px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-actions select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .admin-candidate-dashboard .candidate-flow-tabs button {
+    gap: 5px;
+    padding-inline: 7px;
+    font-size: .68rem;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-tabs button strong {
+    min-width: 23px;
+    height: 23px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-actions {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .admin-candidate-dashboard .candidate-flow-view {
+    justify-self: stretch;
+  }
+}

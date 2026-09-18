@@ -1,241 +1,343 @@
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import Icon from '../components/Icon';
+import TubelightNavbar from '../components/TubelightNavbar';
+import ExplodedProductView from '../components/ExplodedProductView';
+import '../styles/landing-page.css';
+import { loadGsap } from '../utils/gsapRuntime';
+
+const landingNavItems = [
+  { name: 'Home', url: '#home', icon: 'home' },
+  { name: 'Product tour', url: '#product-tour', icon: 'chart' },
+  { name: 'How it works', url: '#how-it-works', icon: 'chart' },
+  { name: 'For you', url: '#for-you', icon: 'users' },
+  { name: 'Get started', url: '/login', icon: 'arrow' },
+];
+
+function Reveal({ as = 'div', delay = 0, stagger = false, children, ...props }) {
+  const revealRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const element = revealRef.current;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!element || !('IntersectionObserver' in window) || media.matches) return undefined;
+    if (element.getBoundingClientRect().bottom < 0) return undefined;
+
+    const targets = stagger ? Array.from(element.children) : [element];
+    let cancelled = false;
+    let started = false;
+    let skipAnimation = false;
+    let context;
+    let gsapInstance;
+    // Prepare before observing so a visible element never disappears on entry.
+    targets.forEach(target => target.setAttribute('data-reveal-pending', ''));
+    const clearPending = () => targets.forEach(target => target.removeAttribute('data-reveal-pending'));
+    const finish = () => {
+      skipAnimation = true;
+      observer.disconnect();
+      gsapInstance?.killTweensOf(targets);
+      gsapInstance?.set(targets, { clearProps: 'opacity,visibility,transform' });
+      clearPending();
+    };
+    const observer = new IntersectionObserver((entries) => {
+      if (started || !entries.some(entry => entry.isIntersecting)) return;
+      started = true;
+      observer.disconnect();
+      loadGsap().then(({ gsap }) => {
+        if (cancelled || skipAnimation) return;
+        gsapInstance = gsap;
+        context = gsap.context(() => {
+          gsap.fromTo(targets, { opacity: 0, y: 30 }, {
+            opacity: 1, y: 0, duration: .85, delay,
+            stagger: stagger ? .085 : 0, ease: 'power3.out',
+            onComplete: clearPending, clearProps: 'opacity,transform',
+          });
+        }, element);
+      }).catch(clearPending);
+    }, { rootMargin: '0px 0px -32px 0px', threshold: .08 });
+    observer.observe(element);
+    element.addEventListener('focusin', finish);
+    const onMotionChange = () => { if (media.matches) finish(); };
+    media.addEventListener('change', onMotionChange);
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+      element.removeEventListener('focusin', finish);
+      media.removeEventListener('change', onMotionChange);
+      context?.revert();
+      clearPending();
+    };
+  }, [delay, stagger]);
+
+  const Tag = as;
+  return <Tag {...props} ref={revealRef}>{children}</Tag>;
+}
+
+const startOptions = [
+  { icon: 'briefcase', label: 'Explore opportunities', detail: 'Find roles that fit', to: '/jobs' },
+  { icon: 'chart', label: 'Understand my skills', detail: 'Get a clearer profile', to: '/analysis/new' },
+  { icon: 'file', label: 'Build a focused plan', detail: 'See what to do next', to: '/assistant' },
+];
+
+const features = [
+  {
+    number: '01', icon: 'briefcase', label: 'ROLE DISCOVERY', title: 'Opportunities with context.',
+    copy: 'Search roles by the skills you bring, the experience you have, and the place you want to work.', to: '/jobs',
+  },
+  {
+    number: '02', icon: 'file', label: 'PROFILE ANALYSIS', title: 'Make your experience visible.',
+    copy: 'Turn your resume and projects into a useful view of your strengths and areas to build.', to: '/analysis/new',
+  },
+  {
+    number: '03', icon: 'chart', label: 'AI CAREER SUPPORT', title: 'Move forward with a plan.',
+    copy: 'Ask career questions and get practical guidance connected to your goals and skills.', to: '/assistant',
+  },
+  {
+    number: '04', icon: 'check', label: 'APPLICATIONS', title: 'Keep each step in view.',
+    copy: 'Track the roles you apply for and see where each opportunity stands.', to: '/applications',
+  },
+];
 
 const steps = [
   {
-    icon: 'search',
-    title: 'Find your fit',
-    copy: 'Discover roles that match your skills, experience, and preferred city.',
+    icon: 'file', title: 'Bring your experience',
+    copy: 'Upload a resume or add project and skill details to build a starting profile.',
   },
   {
-    icon: 'chart',
-    title: 'Know where you stand',
-    copy: 'Turn your resume and project experience into a clear picture of your strengths and skill gaps.',
+    icon: 'search', title: 'See your options clearly',
+    copy: 'Explore roles and understand how your existing experience connects to them.',
   },
   {
-    icon: 'file',
-    title: 'Build your next chapter',
-    copy: 'Follow a focused study plan and track your applications as you move forward.',
+    icon: 'chart', title: 'Take the next useful step',
+    copy: 'Use readiness insights, focused guidance, and application tracking to keep momentum.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'What can I do with Vortex?',
+    answer: 'Explore job opportunities, analyze your experience, ask the AI career assistant for guidance, and track your applications in one workspace.',
+  },
+  {
+    question: 'Do I need to know my next role already?',
+    answer: 'No. You can start by reviewing your skills, browsing opportunities, or asking the assistant to help you think through possible next steps.',
+  },
+  {
+    question: 'Can placement teams use Vortex too?',
+    answer: 'Yes. Admin workspaces include job management and an application review flow for keeping candidate progress organized.',
   },
 ];
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const progressRef = useRef(null);
   const primaryHref = user ? '/jobs' : '/login';
-  const secondaryHref = user ? '/dashboard' : '/login';
+
+  useEffect(() => {
+    const progressBar = progressRef.current;
+    if (!progressBar) return undefined;
+    let cancelled = false;
+    let trigger;
+    loadGsap().then(({ gsap, ScrollTrigger }) => {
+      if (cancelled) return;
+      trigger = ScrollTrigger.create({
+        start: 0,
+        end: () => Math.max(1, ScrollTrigger.maxScroll(window)),
+        onUpdate: ({ progress }) => gsap.set(progressBar, { scaleX: progress }),
+        onRefresh: ({ progress }) => gsap.set(progressBar, { scaleX: progress }),
+      });
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+      trigger?.kill();
+    };
+  }, []);
 
   return (
-    <main className="landing-page">
-      <header className="landing-nav">
-        <Link
-          className="brand-lockup"
-          to={user ? '/dashboard' : '/'}
-          aria-label="Vortex home"
-        >
+    <main className="landing-page vortex-site">
+      <div
+        className="landing-scroll-progress"
+        ref={progressRef}
+        aria-hidden="true"
+      />
+
+      <header className="landing-header">
+        <Link className="brand-lockup" to="/" aria-label="Vortex home">
           <span className="brand-mark">V</span>
-          <span>
-            Vortex<span className="brand-period">.</span>
-          </span>
+          <span>Vortex<span className="brand-period">.</span></span>
         </Link>
-        <nav aria-label="Landing navigation">
-          <a href="#how-it-works">How it works</a>
-          <a href="#for-you">For students & teams</a>
+        <TubelightNavbar items={landingNavItems} />
+        <div className="landing-header-actions">
           <ThemeToggle />
           <Link className="landing-login" to={primaryHref}>
             {user ? 'Open workspace' : 'Log in'}
             <Icon name="arrow" size={16} />
           </Link>
-        </nav>
+        </div>
       </header>
 
-      <section className="landing-hero">
-        <div className="landing-hero-copy">
-          <p className="hero-kicker">
-            <span className="signal-dot" /> AI-ASSISTED CAREER CLARITY
-          </p>
-          <h1>
-            Let AI turn your <br />
-            experience into a{' '}
-            <em>
-              clearer next step.
-            </em>
+      <section className="vortex-hero" id="home" aria-labelledby="vortex-hero-title">
+        <div className="vortex-hero-glow" aria-hidden="true" />
+        <Reveal className="vortex-hero-content" stagger>
+          <p className="vortex-eyebrow"><span className="vortex-eyebrow-dot" /> YOUR NEXT MOVE, IN FOCUS</p>
+          <h1 id="vortex-hero-title">
+            Let AI turn your experience into a <em>clearer next step.</em>
           </h1>
-          <p className="landing-lede">
-            Upload your profile, discover roles that fit, and get an evidence-backed plan for the skills that move you forward.
+          <p className="vortex-hero-copy">
+            Find roles that fit, understand what you bring, and make a practical plan for what comes next.
           </p>
-          <div className="landing-actions">
-            <Link className="primary landing-cta" to={primaryHref}>
-              Explore opportunities
-              <Icon name="arrow" />
+          <div className="vortex-hero-actions">
+            <Link className="vortex-primary-action" to={primaryHref}>
+              Get started <Icon name="arrow" size={17} />
             </Link>
-            <Link className="landing-text-link" to={secondaryHref}>
-              See your readiness
-              <Icon name="arrow" size={16} />
-            </Link>
+            <a className="vortex-quiet-action" href="#product-tour">
+              Explore the product <Icon name="arrow" size={16} />
+            </a>
           </div>
-          <p className="hero-footnote">
-            <Icon name="check" size={15} /> Your skills. Your progress. One
-            place.
+          <p className="vortex-hero-note">
+            <Icon name="check" size={15} /> Your skills, opportunities, and progress — together.
           </p>
-        </div>
+        </Reveal>
 
-        <div
-          className="workspace-preview"
-          aria-label="Illustrative career overview with sample data"
-        >
-          <div className="preview-topbar">
-            <span>
-              <span className="preview-dot" /> Your career, in focus
-            </span>
-            <span className="preview-label">PREVIEW</span>
-          </div>
-          <div className="preview-body">
-            <div className="preview-greeting">
-              <div>
-                <p className="section-kicker">YOUR NEXT CHAPTER</p>
-                <h2>A little more ready.</h2>
-              </div>
-              <span className="preview-avatar">V</span>
+        <Reveal className="vortex-start-panel" delay={0.08}>
+          <div className="vortex-start-heading">
+            <div>
+              <span className="vortex-start-label">A GOOD PLACE TO BEGIN</span>
+              <h2>What would you like to work on?</h2>
             </div>
-            <div className="preview-readiness">
-              <div>
-                <span>Role readiness</span>
-                <h3>Data Scientist</h3>
-                <p>A strong foundation to build on.</p>
-                <span className="preview-score-label">
-                  <Icon name="chart" size={14} /> Sample skill analysis
+            <span className="vortex-start-index">01 <i /> 03</span>
+          </div>
+          <div className="vortex-start-options">
+            {startOptions.map((option) => (
+              <Link className="vortex-start-option" to={user ? option.to : '/login'} key={option.label}>
+                <span className="vortex-start-icon"><Icon name={option.icon} size={18} /></span>
+                <span className="vortex-start-option-copy">
+                  <strong>{option.label}</strong>
+                  <small>{option.detail}</small>
                 </span>
-              </div>
-              <div className="preview-score">
-                <strong>
-                  84<span>/100</span>
-                </strong>
-              </div>
-            </div>
-            <div className="preview-skills">
-              <div className="preview-row-heading">
-                <strong>Your skill snapshot</strong>
-                <span>Strength</span>
-              </div>
-              {[
-                { name: 'Python', value: 90 },
-                { name: 'Data analysis', value: 78 },
-                { name: 'Machine learning', value: 62 },
-              ].map(({ name, value }) => (
-                <div className="preview-skill" key={name}>
-                  <span>{name}</span>
-                  <div>
-                    <i style={{ width: `${value}%` }} />
-                  </div>
-                  <small>{value}%</small>
-                </div>
-              ))}
-            </div>
-            <div className="preview-next">
-              <span className="preview-next-icon">
-                <Icon name="file" />
-              </span>
-              <div>
-                <strong>One step forward</strong>
-                <span>Explore your personalized study plan</span>
-              </div>
-              <Icon name="arrow" size={17} />
-            </div>
+                <Icon name="arrow" size={16} />
+              </Link>
+            ))}
           </div>
-          <div className="preview-footer">
-            <span className="signal-dot" /> Built around your potential
+          <div className="vortex-start-footer">
+            <span><i /> VORTEX CAREER WORKSPACE</span>
+            <span>MADE FOR YOUR NEXT MOVE</span>
           </div>
-        </div>
+        </Reveal>
+        <a className="vortex-scroll-cue" href="#capabilities" aria-label="Scroll to explore Vortex">
+          <span>SCROLL TO EXPLORE</span><i />
+        </a>
       </section>
 
-      <div className="landing-feature-strip">
-        <span>FROM POSSIBILITY TO PROGRESS</span>
-        <p>
-          <Icon name="briefcase" /> Relevant opportunities
-        </p>
-        <p>
-          <Icon name="chart" /> Skill insights
-        </p>
-        <p>
-          <Icon name="file" /> Practical study plans
-        </p>
-      </div>
-
-      <section className="landing-section" id="how-it-works">
-        <div className="section-intro">
-          <p className="section-kicker">A CLEARER WAY FORWARD</p>
-          <h2>
-            Big ambitions.
-            <br />
-            <em>Simple next steps.</em>
-          </h2>
-          <p>
-            Everything you need to move from “what next?” to a plan you can act
-            on.
-          </p>
+      <section className="vortex-capabilities" id="capabilities" aria-labelledby="capabilities-title">
+        <Reveal className="vortex-section-heading">
+          <div>
+            <p className="vortex-section-kicker">ONE SPACE. A CLEARER WAY FORWARD.</p>
+            <h2 id="capabilities-title">Everything for your <em>next move.</em></h2>
+          </div>
+          <span className="vortex-section-count">01 — 04</span>
+        </Reveal>
+        <div className="vortex-feature-rail" aria-label="Vortex features">
+          {features.map((feature, index) => (
+            <Reveal className="vortex-feature-reveal" delay={index * 0.07} key={feature.number}>
+              <Link className="vortex-feature-card" to={user ? feature.to : '/login'}>
+                <div className="vortex-feature-top">
+                  <span className="vortex-feature-icon"><Icon name={feature.icon} size={19} /></span>
+                  <span>{feature.number}</span>
+                </div>
+                <p className="vortex-feature-label">{feature.label}</p>
+                <h3>{feature.title}</h3>
+                <p className="vortex-feature-copy">{feature.copy}</p>
+                <span className="vortex-feature-link">Explore <Icon name="arrow" size={15} /></span>
+              </Link>
+            </Reveal>
+          ))}
         </div>
-        <div className="steps-grid">
+        <p className="vortex-rail-hint"><span /> One profile. A more connected journey. <span /></p>
+      </section>
+
+      <ExplodedProductView />
+
+      <section className="vortex-process-section" id="how-it-works" aria-labelledby="process-title">
+        <Reveal className="vortex-section-heading">
+          <div>
+            <p className="vortex-section-kicker">FROM POSSIBILITY TO PROGRESS</p>
+            <h2 id="process-title">A big goal, made <em>actionable.</em></h2>
+            <p className="vortex-section-copy">A few connected steps help you move from “what next?” to a plan you can act on.</p>
+          </div>
+          <span className="vortex-section-count">THREE SIMPLE STEPS</span>
+        </Reveal>
+        <div className="vortex-steps-grid">
           {steps.map((step, index) => (
-            <article className="step-card" key={step.title}>
-              <div className="step-top">
-                <span className="step-icon">
-                  <Icon name={step.icon} size={22} />
-                </span>
+            <Reveal as="article" className="vortex-step-card" key={step.title} delay={index * 0.07}>
+              <div className="vortex-step-top">
+                <span className="vortex-step-icon"><Icon name={step.icon} size={20} /></span>
                 <span>0{index + 1}</span>
               </div>
               <h3>{step.title}</h3>
               <p>{step.copy}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="landing-section split-section" id="for-you">
-        <div className="split-statement">
-          <p className="section-kicker">MADE FOR YOUR NEXT MOVE</p>
-          <h2>
-            Individual ambition.
-            <br />
-            <em>Shared progress.</em>
-          </h2>
+      <Reveal as="section" stagger className="vortex-audience-section" id="for-you" aria-labelledby="audience-title">
+        <div className="vortex-audience-heading">
+          <p className="vortex-section-kicker">MADE FOR YOUR NEXT MOVE</p>
+          <h2 id="audience-title">Individual ambition.<br /><em>Shared progress.</em></h2>
+          <p>Useful for the person building a path and the teams helping them take the next step.</p>
         </div>
-        <div className="split-copy">
-          <p>
-            For students, a clearer path from skills to opportunities. For
-            placement teams, one place to manage roles, review applications, and
-            keep candidates moving.
-          </p>
-          <Link className="landing-text-link" to={primaryHref}>
-            Find your starting point
-            <Icon name="arrow" size={16} />
-          </Link>
+        <div className="vortex-audience-cards">
+          <article className="vortex-audience-card">
+            <span className="vortex-audience-number">01 / STUDENTS</span>
+            <span className="vortex-audience-icon"><Icon name="users" size={20} /></span>
+            <h3>Make your potential easier to act on.</h3>
+            <p>Connect your skills to opportunities, get a grounded view of your readiness, and keep your applications organized.</p>
+            <Link to={primaryHref}>Explore your workspace <Icon name="arrow" size={15} /></Link>
+          </article>
+          <article className="vortex-audience-card">
+            <span className="vortex-audience-number">02 / PLACEMENT TEAMS</span>
+            <span className="vortex-audience-icon"><Icon name="briefcase" size={20} /></span>
+            <h3>Keep candidate progress in view.</h3>
+            <p>Manage roles and review applications through a focused candidate flow designed for placement teams.</p>
+            <Link to="/login">Open the team workspace <Icon name="arrow" size={15} /></Link>
+          </article>
         </div>
-      </section>
+      </Reveal>
 
-      <section className="landing-endcap">
-        <div>
-          <p className="section-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
-          <h2>
-            Give your potential
-            <br />a place to go.
-          </h2>
+      <Reveal as="section" className="vortex-faq-section" aria-labelledby="faq-title">
+        <div className="vortex-faq-intro">
+          <p className="vortex-section-kicker">A FEW USEFUL DETAILS</p>
+          <h2 id="faq-title">Questions, <em>answered.</em></h2>
         </div>
-        <Link className="primary landing-cta" to={primaryHref}>
-          Get started
-          <Icon name="arrow" />
-        </Link>
-      </section>
-      <footer className="landing-footer">
-        <Link className="brand-lockup" to="/">
-          <span className="brand-mark">V</span>Vortex.
+        <div className="vortex-faq-list">
+          {faqs.map((faq, index) => (
+            <details className="vortex-faq-item" key={faq.question} open={index === 0}>
+              <summary><span>{faq.question}</span><i aria-hidden="true" /></summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </Reveal>
+
+      <Reveal as="section" className="landing-endcap vortex-endcap" id="get-started">
+        <div className="vortex-endcap-orbit" aria-hidden="true" />
+        <div className="vortex-endcap-copy">
+          <p className="vortex-section-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
+          <h2>Turn what you have into <em>what’s next.</em></h2>
+          <p>Start with your profile, explore your options, and build momentum one useful step at a time.</p>
+        </div>
+        <Link className="vortex-primary-action" to="/login">Get started <Icon name="arrow" size={17} /></Link>
+      </Reveal>
+
+      <footer className="vortex-footer">
+        <Link className="brand-lockup" to="/" aria-label="Vortex home">
+          <span className="brand-mark">V</span><span>Vortex<span className="brand-period">.</span></span>
         </Link>
         <span>A clearer path to your next role.</span>
-        <a href="#how-it-works">
-          How it works
-          <Icon name="arrow" size={14} />
-        </a>
+        <a href="#home">Back to top <Icon name="arrow" size={14} /></a>
       </footer>
     </main>
   );
