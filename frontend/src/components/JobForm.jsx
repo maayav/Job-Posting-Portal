@@ -8,6 +8,7 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
   const [experienceLevel, setExperienceLevel] = useState(initial?.experienceLevel ?? '');
   const [city, setCity] = useState(initial?.city ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
+  const [status, setStatus] = useState(initial?.status ?? 'open');
   const [error, setError] = useState('');
 
   function submit(e) {
@@ -34,6 +35,7 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
       experienceLevel: exp,
       city: city.trim(),
       description: description.trim(),
+      ...(initial?.id ? { status } : {}),
     });
   }
 
@@ -72,6 +74,14 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
           City
           <input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Chennai" />
         </label>
+        {initial?.id && <label>
+          Posting status
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="open">Open — accepting applications</option>
+            <option value="closed">Closed — keep history, stop applications</option>
+            <option value="archived">Archived — hide from candidates</option>
+          </select>
+        </label>}
       </div>
       <label>
         Description

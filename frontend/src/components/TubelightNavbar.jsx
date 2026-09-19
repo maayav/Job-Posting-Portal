@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useReducedMotion } from 'motion/react';
 import Icon from './Icon';
 
 /** A monochrome, section-aware navigation dock for the public landing page. */
 export default function TubelightNavbar({ items, className = '' }) {
   const [activeTab, setActiveTab] = useState(items[0]?.url ?? '');
-  const prefersReducedMotion = useReducedMotion();
-
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return undefined;
 
@@ -48,14 +45,9 @@ export default function TubelightNavbar({ items, className = '' }) {
             onClick={() => setActiveTab(item.url)}
           >
             {isActive && (
-              <motion.span
-                layoutId="vortex-tubelight-active"
-                className="tubelight-active"
-                initial={false}
-                transition={prefersReducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 340, damping: 32 }}
-              >
+              <span className="tubelight-active">
                 <span className="tubelight-emitter" />
-              </motion.span>
+              </span>
             )}
             <span className="tubelight-nav-icon"><Icon name={item.icon} size={17} /></span>
             <span className="tubelight-nav-label">{item.name}</span>

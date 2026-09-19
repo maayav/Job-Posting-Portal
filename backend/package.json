@@ -9,6 +9,8 @@
     "start": "node server.js",
     "test": "vitest run",
     "seed": "node scripts/seed-ontology.js",
+    "seed:resources": "node scripts/seed-resources.js",
+    "check:resources": "node scripts/check-resource-links.js",
     "refresh-ontology": "node scripts/refresh-ontology.js",
     "drift-baseline": "node scripts/record-drift-baseline.js",
     "gen-resumes": "node scripts/generate-sample-resumes.js"

@@ -5,6 +5,8 @@ import { User } from '../models/user.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
+import { readResume } from '../services/storageService.js';
+import { hydrateStudyPlan } from '../services/resourceService.js';
 import { AppError } from '../utils/errors.js';
 
 const MAX_LIMIT = 50;
@@ -108,7 +110,7 @@ async function latestReviewsForApplicants(applicantIds, { details = false } = {}
     };
 
     if (details) {
-      review.studyPlan = report?.study_plan ?? [];
+      review.studyPlan = await hydrateStudyPlan(report?.study_plan ?? []);
       review.evidence = (profile?.skills ?? []).flatMap((skill) => (skill.evidence ?? []).map((evidence) => ({
         skill: skill.name,
         confidence: skill.confidence,
@@ -179,6 +181,9 @@ export async function applyToJob(req, res) {
   const job = await Job.findById(data.jobId);
   if (!job) {
     throw new AppError('Job not found', 404, 'not_found');
+  }
+  if (job.status && job.status !== 'open') {
+    throw new AppError('This job is no longer accepting applications', 409, 'job_closed');
   }
 
   const existing = await Application.findOne({ applicant: req.user.id, job: data.jobId });
@@ -272,7 +277,7 @@ export async function adminDashboard(req, res) {
     filter.applicant = { $in: users.map((user) => user._id) };
   }
 
-  const [applications, totalApplications, filteredTotal, roleRows] = await Promise.all([
+  const [applications, totalApplications, filteredTotal, roleRows, filteredStatusRows] = await Promise.all([
     Application.find(filter)
       .sort({ appliedAt: -1 })
       .skip((page - 1) * limit)
@@ -289,7 +294,14 @@ export async function adminDashboard(req, res) {
       { $project: { _id: 0, jobId: { $toString: '$_id' }, title: '$job.title', applicationCount: 1 } },
       { $sort: { title: 1 } },
     ]),
+    Application.aggregate([
+      { $match: filter },
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+    ]),
   ]);
+
+  const stageCounts = Object.fromEntries(APPLICATION_STATUSES.map((status) => [status, 0]));
+  for (const row of filteredStatusRows) stageCounts[row._id] = row.count;
 
   const reviews = await latestReviewsForApplicants(
     applications.map((application) => application.applicant?._id).filter(Boolean),
@@ -306,6 +318,7 @@ export async function adminDashboard(req, res) {
     limit,
     total: filteredTotal,
     totalPages: Math.ceil(filteredTotal / limit),
+    stageCounts,
   });
 }
 
@@ -328,6 +341,41 @@ export async function getApplicationDetails(req, res) {
     candidate: toDashboardApplication(application, review),
     review,
   });
+}
+
+// GET /api/admin/applications/:applicationId/resume — authorized resume preview.
+// Resume files stay outside the public web root and are streamed only after the
+// admin route has verified access to the application.
+export async function getApplicationResume(req, res) {
+  const id = objectIdSchema.parse(req.params.applicationId);
+  const application = await Application.findById(id).select('applicant').lean();
+  if (!application) {
+    throw new AppError('Application not found', 404, 'not_found');
+  }
+  if (!application.applicant) {
+    throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
+  }
+
+  const submission = await ProfileSubmission.findOne({ user_id: application.applicant })
+    .sort({ submitted_at: -1 })
+    .select('resume_file_ref')
+    .lean();
+  if (!submission?.resume_file_ref) {
+    throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
+  }
+
+  let buffer;
+  try {
+    buffer = await readResume(submission.resume_file_ref);
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
+      throw new AppError('The saved resume file is no longer available', 404, 'resume_missing');
+    }
+    throw error;
+  }
+  res.type('application/pdf');
+  res.set('Content-Disposition', `inline; filename="vortex-resume-${id}.pdf"`);
+  res.send(buffer);
 }
 
 // PATCH /api/admin/applications/:applicationId/status — admin moves a candidate through the pipeline.

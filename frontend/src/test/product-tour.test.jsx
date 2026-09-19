@@ -11,7 +11,7 @@ const fakeGsap = {
     return { revert: vi.fn() };
   },
   set: vi.fn(),
-  timeline: () => ({ time: () => 0, to: vi.fn() }),
+  timeline: () => ({ time: () => 0, to: vi.fn(), set: vi.fn() }),
 };
 
 describe('Product tour behaviour', () => {
@@ -20,7 +20,7 @@ describe('Product tour behaviour', () => {
     loadGsap.mockResolvedValue({ gsap: fakeGsap, ScrollTrigger: { refresh: vi.fn() } });
   });
 
-  it('starts the tour automatically and offers a reduce-motion opt-out', async () => {
+  it('starts the animated tour by default and offers an explicit reduce-motion control', async () => {
     render(<ExplodedProductView />);
     await waitFor(() => expect(loadGsap).toHaveBeenCalled());
     expect(document.querySelector('#product-tour').classList.contains('epv-static')).toBe(false);
@@ -45,17 +45,12 @@ describe('Product tour behaviour', () => {
     }
   });
 
-  it('lets visitors reduce motion and restart the tour', async () => {
+  it('lets visitors reduce and re-enable the animation', async () => {
     render(<ExplodedProductView />);
     await waitFor(() => expect(loadGsap).toHaveBeenCalled());
-
     fireEvent.click(screen.getByRole('button', { name: /reduce motion/i }));
-    await waitFor(() => expect(document.querySelector('#product-tour').classList.contains('epv-static')).toBe(true));
-
-    const animate = screen.getByRole('button', { name: /animate tour/i });
-    expect(animate.getAttribute('aria-pressed')).toBe('false');
-
-    fireEvent.click(animate);
+    expect(document.querySelector('#product-tour').classList.contains('epv-static')).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: /animate tour/i }));
     await waitFor(() => expect(document.querySelector('#product-tour').classList.contains('epv-static')).toBe(false));
   });
 

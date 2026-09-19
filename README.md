@@ -74,6 +74,12 @@ node backend/scripts/seed-jobs.js --admin=admin@example.com
 node backend/scripts/seed-applications.js --admin=admin@example.com
 ```
 
+The job seed is idempotent and includes a broad 26-role demo catalog across frontend, backend, Python, Java, .NET, Go, mobile, data, ML, cloud, QA, security, design, and delivery. Skills such as FastAPI, Flask, Django, React Native, GraphQL, Kubernetes, Playwright, Power BI, Apache Spark, OpenCV, and Terraform are available in the skills filter; add comma-separated skills to combine them.
+
+Refresh curated learning resources independently of AI embeddings with `npm --prefix backend run seed:resources`. This covers every skill in the demo jobs and analysis ontology. Existing reports load the latest matching links while keeping their completion state. Run `npm --prefix backend run check:resources` to check external link availability; remote sites can occasionally block automated checks.
+
+The landing page uses cream/charcoal glass surfaces, animated neutral light trails, and directional scroll reveals. Animations play by default; the header's play/pause icon pauses those page effects. The interactive product tour retains its own motion control.
+
 On a fresh local database, the application seed creates demo students `demo.student1@vortex.dev` through `demo.student8@vortex.dev`, each with the development-only password `demo-pass-123`, plus sample reviews and applications. These accounts and this password are for a disposable local development database only. Never use them in production.
 
 ## Environment variables

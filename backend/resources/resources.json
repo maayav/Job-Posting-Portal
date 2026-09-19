@@ -121,9 +121,9 @@
     },
     {
       "skill_name": "Data Structures & Algorithms",
-      "title": "LeetCode",
-      "url": "https://leetcode.com/",
-      "type": "practice-set",
+      "title": "MIT Introduction to Algorithms",
+      "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/",
+      "type": "course",
       "verified": true
     },
     {
@@ -156,9 +156,9 @@
     },
     {
       "skill_name": "Python",
-      "title": "Real Python",
-      "url": "https://realpython.com/",
-      "type": "course",
+      "title": "Python official tutorial",
+      "url": "https://docs.python.org/3/tutorial/",
+      "type": "documentation",
       "verified": true
     },
     {
@@ -226,9 +226,9 @@
     },
     {
       "skill_name": "Computer Vision",
-      "title": "OpenCV Tutorials",
-      "url": "https://docs.opencv.org/4.x/d9/df8/tutorial_root.html",
-      "type": "course",
+      "title": "TorchVision computer vision documentation",
+      "url": "https://docs.pytorch.org/vision/stable/index.html",
+      "type": "documentation",
       "verified": true
     },
     {

@@ -71,7 +71,7 @@ async function checkOne(resource) {
 
 async function main() {
   await connectDB({ retry: false });
-  const resources = await ResourceCatalog.find({}).sort({ skill_name: 1, title: 1 }).lean();
+  const resources = await ResourceCatalog.find({ verified: { $ne: false } }).sort({ skill_name: 1, title: 1 }).lean();
   if (resources.length === 0) {
     console.log('No resources in the catalog — run `npm run seed` first.');
     await disconnectDB();

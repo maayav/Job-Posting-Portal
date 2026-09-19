@@ -1,5 +1,5 @@
 import { cosineSimilarity, normalizeName } from './embeddingService.js';
-import { ResourceCatalog } from '../models/resourceCatalog.js';
+import { hydrateStudyPlan } from './resourceService.js';
 
 const STRONG_MIN = 80;
 const DEVELOPING_MIN = 60;
@@ -69,29 +69,9 @@ export function categorize(perSkill) {
 }
 
 export async function buildStudyPlan(gaps) {
-  const plan = [];
-  for (const g of gaps) {
-    const resources = await ResourceCatalog.find({ skill_name: new RegExp(`^${escapeRegExp(g.skill)}$`, 'i') }).lean();
-    const mapped = resources.filter((r) => { try { const url = new URL(r.url); return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password; } catch { return false; } }).map((r) => ({
-      title: r.title,
-      url: r.url,
-      type: r.type,
-      verified: r.verified,
-    }));
-    plan.push({
-      skill: g.skill,
-      priority: g.priority,
-      resources: mapped,
-      done: false,
-    });
-  }
-
-  plan.sort((a, b) => b.priority - a.priority);
-  return plan;
-}
-
-function escapeRegExp(text) {
-  return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return hydrateStudyPlan(gaps.map((gap) => ({
+    skill: gap.skill, priority: gap.priority, done: false,
+  })).sort((a, b) => b.priority - a.priority));
 }
 
 export async function generateReport(ontologySkills, candidateVectors) {

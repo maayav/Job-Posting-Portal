@@ -2,6 +2,7 @@ import { ReadinessReport } from '../models/readinessReport.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import mongoose from 'mongoose';
 import { AppError } from '../utils/errors.js';
+import { hydrateStudyPlan } from '../services/resourceService.js';
 
 function toJson(report) {
   return {
@@ -28,7 +29,7 @@ export async function getReport(req, res) {
   if (report.status !== 'completed') {
     throw new AppError('Report is not ready yet', 409, 'report_not_ready');
   }
-  res.json(toJson(report));
+  res.json({ ...toJson(report), study_plan: await hydrateStudyPlan(report.study_plan) });
 }
 
 export async function markStudyPlanItemDone(req, res) {

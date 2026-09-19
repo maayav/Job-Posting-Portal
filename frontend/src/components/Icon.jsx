@@ -24,6 +24,12 @@ const paths = {
     </>
   ),
   check: <path d="m5 12 4 4L19 6" />,
+  alert: (
+    <>
+      <path d="M12 3 2.8 20h18.4L12 3Z" />
+      <path d="M12 9v4m0 3h.01" />
+    </>
+  ),
   sun: (
     <>
       <circle cx="12" cy="12" r="4" />

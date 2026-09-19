@@ -31,7 +31,7 @@
 }
 
 .admin-candidate-dashboard .candidate-dashboard-toolbar {
-  grid-template-columns: minmax(170px, .7fr) minmax(200px, 1fr) minmax(260px, 1.25fr);
+  grid-template-columns: minmax(170px, .7fr) minmax(200px, 1fr) minmax(260px, 1.25fr) auto;
   gap: 20px;
   padding: 20px 22px;
   border-radius: 16px;
@@ -634,8 +634,13 @@
 .admin-applications-page .pipeline-board {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 11px;
-  overflow: visible;
-  padding: 0;
+  max-height: min(68vh, 680px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0 6px 6px 0;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-bright) transparent;
 }
 
 .admin-applications-page .pipeline-column {
@@ -645,8 +650,12 @@
 }
 
 .admin-applications-page .pipeline-column-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   min-height: 52px;
   padding: 11px 13px;
+  background: var(--panel-2);
   color: var(--text);
   font-size: .75rem;
   font-weight: 600;
@@ -667,8 +676,11 @@
 
 .admin-applications-page .table-scroll {
   max-width: 100%;
-  overflow-x: auto;
+  max-height: clamp(230px, 42vh, 430px);
+  overflow: auto;
   overscroll-behavior-inline: contain;
+  overscroll-behavior-block: contain;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: var(--line-bright) transparent;
 }
@@ -777,7 +789,8 @@
   }
 
   .admin-candidate-dashboard .candidate-total,
-  .admin-candidate-dashboard .candidate-search {
+  .admin-candidate-dashboard .candidate-search,
+  .admin-candidate-dashboard .candidate-clear {
     grid-column: 1 / -1;
   }
 
@@ -899,6 +912,7 @@
 
   .admin-applications-page .pipeline-board {
     grid-template-columns: 1fr;
+    max-height: min(70vh, 620px);
   }
 
   .admin-applications-page .pipeline-column {

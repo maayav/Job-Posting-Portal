@@ -1,0 +1,669 @@
+{
+  "resources": [
+    {
+      "skill_name": ".NET",
+      "title": "Microsoft .NET introduction",
+      "url": "https://learn.microsoft.com/en-us/dotnet/core/introduction",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "ASP.NET Core",
+      "title": "Build web APIs with ASP.NET Core",
+      "url": "https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "C#",
+      "title": "Microsoft C# tour",
+      "url": "https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "C++",
+      "title": "Microsoft C++ language guide",
+      "url": "https://learn.microsoft.com/en-us/cpp/cpp/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Java",
+      "title": "Java learning guides",
+      "url": "https://dev.java/learn/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Go",
+      "title": "Go tutorials",
+      "url": "https://go.dev/doc/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Vue",
+      "title": "Vue interactive tutorial",
+      "url": "https://vuejs.org/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Angular",
+      "title": "Angular tutorials",
+      "url": "https://angular.dev/tutorials",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Next.js",
+      "title": "Next.js foundations course",
+      "url": "https://nextjs.org/learn",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "React Native",
+      "title": "React Native introduction",
+      "url": "https://reactnative.dev/docs/getting-started",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Vite",
+      "title": "Vite getting started",
+      "url": "https://vite.dev/guide/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "CSS",
+      "title": "MDN CSS learning guide",
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "HTML",
+      "title": "MDN HTML learning guide",
+      "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Django",
+      "title": "Build your first Django application",
+      "url": "https://docs.djangoproject.com/en/stable/intro/tutorial01/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Django REST Framework",
+      "title": "Django REST Framework quickstart",
+      "url": "https://www.django-rest-framework.org/tutorial/quickstart/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Flask",
+      "title": "Flask application tutorial",
+      "url": "https://flask.palletsprojects.com/en/stable/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Spring Boot",
+      "title": "Build an application with Spring Boot",
+      "url": "https://spring.io/guides/gs/spring-boot",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "SQLAlchemy",
+      "title": "SQLAlchemy unified tutorial",
+      "url": "https://docs.sqlalchemy.org/en/20/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Celery",
+      "title": "First steps with Celery",
+      "url": "https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "PostgreSQL",
+      "title": "PostgreSQL tutorial",
+      "url": "https://www.postgresql.org/docs/current/tutorial.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "MySQL",
+      "title": "MySQL tutorial",
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/tutorial.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "SQLite",
+      "title": "SQLite getting started",
+      "url": "https://www.sqlite.org/quickstart.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Redis",
+      "title": "Redis getting started",
+      "url": "https://redis.io/docs/latest/develop/get-started/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "SQL Server",
+      "title": "SQL Server tutorials",
+      "url": "https://learn.microsoft.com/en-us/sql/sql-server/tutorials-for-sql-server",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "GraphQL",
+      "title": "GraphQL fundamentals",
+      "url": "https://graphql.org/learn/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "gRPC",
+      "title": "gRPC introduction",
+      "url": "https://grpc.io/docs/what-is-grpc/introduction/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Firebase",
+      "title": "Firebase fundamentals",
+      "url": "https://firebase.google.com/docs/guides",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "OAuth",
+      "title": "OAuth 2.0 concepts and implementation",
+      "url": "https://oauth.net/2/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "NoSQL",
+      "title": "MongoDB data modeling guide",
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Modeling",
+      "title": "Microsoft dimensional modeling guidance",
+      "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Apache Spark",
+      "title": "Apache Spark quick start",
+      "url": "https://spark.apache.org/docs/latest/quick-start.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Airflow",
+      "title": "Airflow core concepts",
+      "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/overview.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Apache Airflow",
+      "title": "Airflow core concepts",
+      "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/overview.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Kafka",
+      "title": "Apache Kafka quickstart",
+      "url": "https://kafka.apache.org/quickstart",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "dbt",
+      "title": "dbt quickstart guides",
+      "url": "https://docs.getdbt.com/docs/get-started-dbt",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Snowflake",
+      "title": "Snowflake tutorials",
+      "url": "https://docs.snowflake.com/en/tutorials",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Pipelines",
+      "title": "Apache Beam programming guide",
+      "url": "https://beam.apache.org/documentation/programming-guide/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "ETL/ELT Design",
+      "title": "Microsoft data integration concepts",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/data-guide/relational-data/etl",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Power BI",
+      "title": "Power BI getting started",
+      "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-getting-started",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Tableau",
+      "title": "Tableau getting started tutorial",
+      "url": "https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-home.htm",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Excel",
+      "title": "Microsoft Excel help and learning",
+      "url": "https://support.microsoft.com/en-us/excel",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "A/B Testing",
+      "title": "Firebase A/B testing guide",
+      "url": "https://firebase.google.com/docs/ab-testing",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "OpenCV",
+      "title": "OpenCV official Python tutorial examples",
+      "url": "https://github.com/opencv/opencv/tree/4.x/samples/python/tutorial_code",
+      "type": "practice-set",
+      "verified": true
+    },
+    {
+      "skill_name": "Transformers",
+      "title": "Hugging Face Transformers quick tour",
+      "url": "https://huggingface.co/docs/transformers/quicktour",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Vector Databases",
+      "title": "Qdrant vector search quickstart",
+      "url": "https://qdrant.tech/documentation/quickstart/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Azure",
+      "title": "Azure fundamentals learning path",
+      "url": "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "GCP",
+      "title": "Google Cloud getting started",
+      "url": "https://cloud.google.com/docs/get-started",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Kubernetes",
+      "title": "Kubernetes basics tutorial",
+      "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Terraform",
+      "title": "HashiCorp Terraform tutorials",
+      "url": "https://developer.hashicorp.com/terraform/tutorials",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Ansible",
+      "title": "Ansible getting started",
+      "url": "https://docs.ansible.com/ansible/latest/getting_started/index.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Helm",
+      "title": "Helm quickstart guide",
+      "url": "https://helm.sh/docs/intro/quickstart/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "CI/CD Pipelines",
+      "title": "GitHub Actions quickstart",
+      "url": "https://docs.github.com/en/actions/get-started/quickstart",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Linux",
+      "title": "Linux Foundation introduction to Linux",
+      "url": "https://training.linuxfoundation.org/training/introduction-to-linux/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Bash",
+      "title": "Ubuntu command-line tutorial",
+      "url": "https://ubuntu.com/tutorials/command-line-for-beginners",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Shell",
+      "title": "Ubuntu command-line tutorial",
+      "url": "https://ubuntu.com/tutorials/command-line-for-beginners",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "PowerShell",
+      "title": "Microsoft PowerShell learning resources",
+      "url": "https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/00-introduction",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Prometheus",
+      "title": "Prometheus getting started",
+      "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Grafana",
+      "title": "Grafana fundamentals tutorial",
+      "url": "https://grafana.com/tutorials/grafana-fundamentals/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Networking",
+      "title": "Cisco networking basics",
+      "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Network Security",
+      "title": "NIST zero trust architecture",
+      "url": "https://csrc.nist.gov/pubs/sp/800/207/final",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Cloud Security",
+      "title": "AWS security best practices",
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "IAM",
+      "title": "AWS IAM introduction",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Compliance Frameworks",
+      "title": "NIST Cybersecurity Framework",
+      "url": "https://www.nist.gov/cyberframework",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Incident Response",
+      "title": "NIST incident response recommendations",
+      "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Endpoint Detection and Response",
+      "title": "Microsoft endpoint detection and response overview",
+      "url": "https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "SIEM Tools",
+      "title": "Microsoft Sentinel overview",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/overview",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Firewalls and VPNs",
+      "title": "Microsoft Azure network security overview",
+      "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "OWASP",
+      "title": "OWASP Top Ten",
+      "url": "https://owasp.org/www-project-top-ten/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Threat Modeling",
+      "title": "OWASP threat modeling guide",
+      "url": "https://owasp.org/www-community/Threat_Modeling",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Vulnerability Assessment",
+      "title": "OWASP security testing framework",
+      "url": "https://owasp.org/www-project-web-security-testing-guide/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Penetration Testing",
+      "title": "PortSwigger Web Security Academy",
+      "url": "https://portswigger.net/web-security",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Wireshark",
+      "title": "Wireshark user guide",
+      "url": "https://www.wireshark.org/docs/wsug_html_chunked/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Jest",
+      "title": "Jest getting started",
+      "url": "https://jestjs.io/docs/getting-started",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Cypress",
+      "title": "Cypress first end-to-end test",
+      "url": "https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Playwright",
+      "title": "Playwright getting started",
+      "url": "https://playwright.dev/docs/intro",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Selenium",
+      "title": "Selenium WebDriver first script",
+      "url": "https://www.selenium.dev/documentation/webdriver/getting_started/first_script/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "pytest",
+      "title": "pytest getting started",
+      "url": "https://docs.pytest.org/en/stable/getting-started.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Postman",
+      "title": "Postman first steps",
+      "url": "https://learning.postman.com/docs/getting-started/first-steps/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "API Testing",
+      "title": "Postman API test scripts",
+      "url": "https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-scripts/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Test Automation",
+      "title": "Playwright test-writing guide",
+      "url": "https://playwright.dev/docs/writing-tests",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Performance Testing",
+      "title": "Grafana k6 getting started",
+      "url": "https://grafana.com/docs/k6/latest/get-started/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "UI/UX",
+      "title": "Nielsen Norman Group UX fundamentals",
+      "url": "https://www.nngroup.com/articles/definition-user-experience/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "User Research",
+      "title": "GOV.UK user research guidance",
+      "url": "https://www.gov.uk/service-manual/user-research",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Accessibility",
+      "title": "W3C accessible web design tutorials",
+      "url": "https://www.w3.org/WAI/tutorials/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Design Systems",
+      "title": "GOV.UK Design System",
+      "url": "https://design-system.service.gov.uk/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Figma",
+      "title": "Figma design learning center",
+      "url": "https://help.figma.com/hc/en-us/categories/360002042553-Figma-Design",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Prototyping",
+      "title": "GOV.UK making prototypes",
+      "url": "https://www.gov.uk/service-manual/design/making-prototypes",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Documentation",
+      "title": "Google technical writing courses",
+      "url": "https://developers.google.com/tech-writing",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Agile",
+      "title": "Atlassian agile guides",
+      "url": "https://www.atlassian.com/agile",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Jira",
+      "title": "Atlassian Jira getting started guide",
+      "url": "https://www.atlassian.com/software/jira/guides/getting-started/introduction",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Project Planning",
+      "title": "Atlassian project planning guide",
+      "url": "https://www.atlassian.com/work-management/project-management/project-planning",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Stakeholder Management",
+      "title": "Atlassian stakeholder communication play",
+      "url": "https://www.atlassian.com/team-playbook/plays/stakeholder-communications-plan",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "MQTT",
+      "title": "MQTT getting started resources",
+      "url": "https://mqtt.org/getting-started/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Embedded Systems",
+      "title": "Arduino programming documentation",
+      "url": "https://docs.arduino.cc/learn/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Redux",
+      "title": "Redux essentials tutorial",
+      "url": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts",
+      "type": "documentation",
+      "verified": true
+    }
+  ]
+}

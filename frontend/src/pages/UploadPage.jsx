@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import UploadForm from '../components/UploadForm';
@@ -19,6 +19,53 @@ export default function UploadPage() {
   const [skills, setSkills] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const pollCancelled = useRef(false);
+
+  const poll = useCallback(async (id) => {
+    for (let i = 0; i < 40; i += 1) {
+      await new Promise((r) => setTimeout(r, POLL_MS));
+      if (pollCancelled.current) return;
+      const res = await api.get(`/analyze/${id}/status`);
+      const status = res.data.status;
+      if (status === 'completed') {
+        localStorage.setItem('report_id', id);
+        localStorage.removeItem('analysis_report_id');
+        localStorage.removeItem('analysis_submission_id');
+        navigate('/dashboard');
+        return;
+      }
+      if (status === 'failed') {
+        setError(`Analysis failed: ${res.data.errorCode ?? 'unknown error'}.`);
+        setPhase('review');
+        localStorage.removeItem('analysis_report_id');
+        return;
+      }
+    }
+    setError('Analysis is taking too long. Please refresh and try again.');
+    setPhase('review');
+    localStorage.removeItem('analysis_report_id');
+  }, [navigate]);
+
+  useEffect(() => {
+    pollCancelled.current = false;
+    const savedSubmissionId = localStorage.getItem('analysis_submission_id');
+    const savedReportId = localStorage.getItem('analysis_report_id');
+    if (savedSubmissionId) {
+      api.get(`/profile/${savedSubmissionId}`)
+        .then((res) => {
+          if (pollCancelled.current) return;
+          setSubmission(res.data);
+          setSkills(res.data.extracted_skills ?? []);
+          setPhase(res.data.extraction_status === 'completed' ? 'review' : 'review');
+        })
+        .catch(() => localStorage.removeItem('analysis_submission_id'));
+    }
+    if (savedReportId) {
+      setPhase('analyzing');
+      poll(savedReportId);
+    }
+    return () => { pollCancelled.current = true; };
+  }, [poll]);
 
   async function handleUpload(file, github, leetcode, role) {
     setError('');
@@ -33,6 +80,7 @@ export default function UploadPage() {
 
       const res = await api.post('/profile', form);
       const submissionId = res.data.id;
+      localStorage.setItem('analysis_submission_id', submissionId);
 
       const profile = await api.get(`/profile/${submissionId}`);
       setSubmission(profile.data);
@@ -63,9 +111,11 @@ export default function UploadPage() {
     try {
       const res = await api.post('/analyze', { submission_id: submission.id });
       const id = res.data.report_id;
+      localStorage.setItem('analysis_report_id', id);
 
       if (res.status === 202 && res.data.status === 'completed') {
         localStorage.setItem('report_id', id);
+        localStorage.removeItem('analysis_report_id');
         navigate('/dashboard');
         return;
       }
@@ -80,26 +130,6 @@ export default function UploadPage() {
       }
       setPhase('review');
     }
-  }
-
-  async function poll(id) {
-    for (let i = 0; i < 40; i += 1) {
-      await new Promise((r) => setTimeout(r, POLL_MS));
-      const res = await api.get(`/analyze/${id}/status`);
-      const status = res.data.status;
-      if (status === 'completed') {
-        localStorage.setItem('report_id', id);
-        navigate('/dashboard');
-        return;
-      }
-      if (status === 'failed') {
-        setError(`Analysis failed: ${res.data.errorCode ?? 'unknown error'}.`);
-        setPhase('review');
-        return;
-      }
-    }
-    setError('Analysis is taking too long. Please refresh and try again.');
-    setPhase('review');
   }
 
   return (
@@ -122,7 +152,7 @@ export default function UploadPage() {
           <motion.div
             key={phase}
             className="student-analysis-phase"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: 'easeOut' }}
           >

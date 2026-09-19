@@ -36,6 +36,9 @@ export default function UploadForm({ onSubmit, loading }) {
     if (f && !f.name.toLowerCase().endsWith('.pdf')) {
       setError('Only PDF resumes are accepted.');
     }
+    if (f && f.size > 5 * 1024 * 1024) {
+      setError('Resume must be 5MB or smaller.');
+    }
   }
 
   function handleSubmit(e) {
@@ -59,6 +62,7 @@ export default function UploadForm({ onSubmit, loading }) {
       <label className="student-file-field">
         Resume (PDF)
         <input className="student-file-input" type="file" accept=".pdf,application/pdf" onChange={handleFile} />
+        <span className="muted small">{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : 'PDF only · up to 5MB'}</span>
       </label>
 
       <label>

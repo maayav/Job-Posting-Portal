@@ -14,14 +14,20 @@ export default function AdminJobsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const LIMIT = 50;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+  const LIMIT = 20;
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (nextPage = 1) => {
     setLoading(true);
     setError('');
     try {
-      const res = await api.get('/jobs', { params: { page: 1, limit: LIMIT } });
-      setJobs(res.data.jobs);
+      const res = await api.get('/jobs', { params: { page: nextPage, limit: LIMIT, includeStatus: true } });
+      setJobs(res.data.jobs ?? []);
+      setPage(res.data.page ?? nextPage);
+      setTotalPages(res.data.totalPages ?? 0);
+      setTotal(res.data.total ?? res.data.jobs?.length ?? 0);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -30,7 +36,7 @@ export default function AdminJobsPage() {
   }, []);
 
   useEffect(() => {
-    load();
+    load(1);
   }, [load]);
 
   async function handleSubmit(payload) {
@@ -45,7 +51,7 @@ export default function AdminJobsPage() {
         setNotice('Job created.');
       }
       setEditing(null);
-      await load();
+      await load(page);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -58,9 +64,9 @@ export default function AdminJobsPage() {
     setError('');
     try {
       await api.delete(`/jobs/${id}`);
-      setNotice('Job deleted.');
+      setNotice('Posting removed or archived while preserving application history.');
       setConfirmDelete(null);
-      await load();
+      await load(page);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -88,7 +94,7 @@ export default function AdminJobsPage() {
 
       <section className="card admin-jobs-toolbar" aria-label="Job posting tools">
         <div>
-          <h2>Job postings <span>({jobs.length})</span></h2>
+          <h2>Job postings <span>({total})</span></h2>
           <p className="muted">Manage the roles candidates can discover and apply for.</p>
         </div>
           {!editing && (
@@ -100,6 +106,7 @@ export default function AdminJobsPage() {
 
       {editing && (
         <JobForm
+          key={editing.id || 'new-job'}
           initial={editing.id ? editing : null}
           onSubmit={handleSubmit}
           onCancel={() => setEditing(null)}
@@ -119,7 +126,7 @@ export default function AdminJobsPage() {
       {jobs.map((job, index) => (
         <motion.article
           layout={!reduceMotion}
-          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           whileHover={reduceMotion ? undefined : { y: -2 }}
           transition={{ duration: reduceMotion ? 0 : 0.18, delay: reduceMotion ? 0 : Math.min(index * 0.025, 0.15), ease: 'easeOut' }}
@@ -134,6 +141,7 @@ export default function AdminJobsPage() {
                 <span>{job.city}</span>
                 <span>{job.experienceLevel} yr{job.experienceLevel === 1 ? '' : 's'} experience</span>
                 <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
+                <span className={`status-badge status-${job.status || 'open'}`}>{job.status === 'archived' ? 'Archived' : job.status === 'closed' ? 'Closed' : 'Open'}</span>
               </p>
             </div>
             <div className="job-actions">
@@ -153,11 +161,11 @@ export default function AdminJobsPage() {
           {confirmDelete === job.id && (
             <div className="confirm-delete">
               <p>
-                <strong>Delete this job posting?</strong> This cannot be undone.
+                <strong>Remove this job posting?</strong> If it has applications, Vortex archives it so candidate history remains available; otherwise it is deleted.
               </p>
               <div className="filters-actions">
                 <button className="primary danger-btn" disabled={saving} onClick={() => handleDelete(job.id)}>
-                  {saving ? 'Deleting…' : 'Yes, delete'}
+                  {saving ? 'Removing…' : 'Yes, remove'}
                 </button>
                 <button type="button" className="link" disabled={saving} onClick={() => setConfirmDelete(null)}>
                   Cancel
@@ -168,6 +176,13 @@ export default function AdminJobsPage() {
         </motion.article>
       ))}
       </section>}
+      {!loading && totalPages > 1 && (
+        <div className="pagination" aria-label="Job posting pages">
+          <button className="primary" disabled={page <= 1} onClick={() => load(page - 1)}>← Previous</button>
+          <span className="muted">Page {page} of {totalPages}</span>
+          <button className="primary" disabled={page >= totalPages} onClick={() => load(page + 1)}>Next →</button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Icon from '../components/Icon';
 import NavBar from '../components/NavBar';
@@ -17,7 +17,8 @@ export default function JobSearchPage() {
   const [appliedIds, setAppliedIds] = useState(new Set());
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [filters, setFilters] = useState({});
+  const [total, setTotal] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const LIMIT = 20;
@@ -31,10 +32,13 @@ export default function JobSearchPage() {
         if (f.skills) params.skills = f.skills;
         if (f.experience !== '') params.experience = f.experience;
         if (f.city) params.city = f.city;
+        if (f.search) params.search = f.search;
+        if (f.sort) params.sort = f.sort;
         const res = await api.get('/jobs', { params });
         setJobs(res.data.jobs);
         setPage(res.data.page);
         setTotalPages(res.data.totalPages);
+        setTotal(res.data.total ?? res.data.jobs.length);
       } catch (err) {
         setError(errorMessage(err));
         setJobs([]);
@@ -46,9 +50,18 @@ export default function JobSearchPage() {
     []
   );
 
+  const urlFilters = useMemo(() => ({
+    skills: searchParams.get('skills') ?? '',
+    experience: searchParams.get('experience') ?? '',
+    city: searchParams.get('city') ?? '',
+    search: searchParams.get('search') ?? '',
+    sort: searchParams.get('sort') ?? 'newest',
+  }), [searchParams]);
+  const urlPage = Math.max(1, Number(searchParams.get('page') ?? 1) || 1);
+
   useEffect(() => {
-    load({}, 1);
-  }, [load]);
+    load(urlFilters, urlPage);
+  }, [load, urlFilters, urlPage]);
 
   // Preload which jobs the student has already applied to, so cards can show "Applied".
   useEffect(() => {
@@ -62,13 +75,17 @@ export default function JobSearchPage() {
   }, [isStudent]);
 
   function handleSearch(f) {
-    setFilters(f);
-    load(f, 1);
+    const next = Object.fromEntries(Object.entries({ ...f, page: 1 }).filter(([, value]) => value !== '' && value !== 'newest'));
+    setSearchParams(next);
   }
 
   function handleClear() {
-    setFilters({});
-    load({}, 1);
+    setSearchParams({});
+  }
+
+  function goToPage(nextPage) {
+    const next = Object.fromEntries(Object.entries({ ...urlFilters, page: nextPage }).filter(([, value]) => value !== '' && value !== 'newest'));
+    setSearchParams(next);
   }
 
   return (
@@ -77,7 +94,7 @@ export default function JobSearchPage() {
 
       <motion.section
         className="page-hero student-page-hero"
-        initial={{ opacity: 0, y: 18 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
@@ -94,7 +111,7 @@ export default function JobSearchPage() {
         </Link>
       </motion.section>
 
-      <JobFilters onSearch={handleSearch} onClear={handleClear} loading={loading} />
+      <JobFilters key={searchParams.toString()} initialFilters={urlFilters} onSearch={handleSearch} onClear={handleClear} loading={loading} />
 
       {error && <p className="error card-error">{error}</p>}
 
@@ -114,7 +131,7 @@ export default function JobSearchPage() {
 
       {!loading && jobs.length > 0 && (
         <>
-          <div className="results-heading student-results-heading"><div><p className="section-kicker">CURATED FOR YOUR SEARCH</p><h2>Open opportunities</h2></div><span className="muted small">{jobs.length} jobs on this page</span></div>
+          <div className="results-heading student-results-heading"><div><p className="section-kicker">CURATED FOR YOUR SEARCH</p><h2>Open opportunities</h2></div><span className="muted small">{total} matching {total === 1 ? 'role' : 'roles'}</span></div>
           <div className="jobs-grid">
           {jobs.map((job) => (
             <JobCard
@@ -134,13 +151,13 @@ export default function JobSearchPage() {
           </div>
           {totalPages > 1 && (
             <div className="pagination">
-              <button className="primary" disabled={page <= 1} onClick={() => load(filters, page - 1)}>
+              <button className="primary" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
                 ← Previous
               </button>
               <span className="muted">
                 Page {page} of {totalPages}
               </span>
-              <button className="primary" disabled={page >= totalPages} onClick={() => load(filters, page + 1)}>
+              <button className="primary" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}>
                 Next →
               </button>
             </div>

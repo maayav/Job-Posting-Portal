@@ -1,9 +1,17 @@
 .landing-page.vortex-site {
   width: min(1320px, calc(100% - 64px));
   padding-bottom: 28px;
+  animation: vortex-landing-fade-in .58s cubic-bezier(.22, .7, .2, 1) both;
 }
 
-[data-reveal-pending] { opacity: 0; transform: translate3d(0, 30px, 0); }
+@keyframes vortex-landing-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.vortex-landing-shell { position: relative; }
+.vortex-landing-shell > .tubelight-nav { top: 41px; z-index: 21; }
+
+[data-reveal-pending] { opacity: 1; transform: translate3d(0, 30px, 0); }
 
 .landing-page.vortex-site::before {
   opacity: .16;
@@ -13,15 +21,18 @@
 
 .vortex-site .landing-header {
   min-height: 82px;
-  margin-inline: -4px;
+  margin-inline: 0;
   border-color: var(--line);
 }
 
-.vortex-site .brand-lockup { font-size: 1.22rem; }
+.vortex-site .brand-lockup { flex-shrink: 0; font-size: 1.22rem; }
+.vortex-site .landing-header-actions { flex-shrink: 0; }
+.vortex-site .landing-login { overflow: visible; white-space: nowrap; }
 .vortex-site .brand-mark { border-radius: 8px 8px 8px 2px; }
-.vortex-site .tubelight-nav { gap: 1px; padding: 4px; border-radius: 999px; }
-.vortex-site .tubelight-nav-item { min-height: 38px; padding-inline: 13px; font-size: .69rem; }
-.vortex-site .tubelight-emitter { height: 2px; box-shadow: none; }
+.vortex-landing-shell > .tubelight-nav { gap: 1px; padding: 4px; border-radius: 999px; }
+.vortex-landing-shell .tubelight-nav-item { min-height: 38px; padding-inline: 13px; font-size: .69rem; }
+.vortex-landing-shell .tubelight-emitter { display: none; }
+.vortex-landing-shell .tubelight-active { background: color-mix(in srgb, var(--panel) 78%, transparent); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 12%, transparent); }
 .vortex-site .landing-login { min-height: 40px; border-radius: 999px; font-size: .72rem; }
 
 .vortex-hero {
@@ -47,9 +58,9 @@
   --hero-dot: #343633;
   position: relative;
   isolation: isolate;
-  min-height: 650px;
+  min-height: 610px;
   margin: 18px 0 0;
-  padding: clamp(64px, 7.5vw, 100px) clamp(24px, 6vw, 84px) 28px;
+  padding: clamp(48px, 5.5vw, 72px) clamp(24px, 6vw, 84px) 24px;
   overflow: hidden;
   border: 1px solid var(--hero-border);
   border-radius: 28px;
@@ -155,7 +166,7 @@
   max-width: 960px;
   margin: 0 auto;
   color: var(--hero-text);
-  font-size: clamp(3.2rem, 6.7vw, 6.4rem);
+  font-size: clamp(2.9rem, 6.1vw, 5.6rem);
   font-weight: 680;
   line-height: 1.04;
   letter-spacing: -.065em;
@@ -228,7 +239,7 @@
 .vortex-start-panel {
   position: relative;
   max-width: 940px;
-  margin: clamp(45px, 6vw, 72px) auto 0;
+  margin: clamp(30px, 4vw, 48px) auto 0;
   padding: 22px 23px 14px;
   border: 1px solid var(--hero-line);
   border-radius: 18px;
@@ -268,22 +279,6 @@
 .vortex-start-footer { display: flex; justify-content: space-between; gap: 15px; margin-top: 14px; color: var(--hero-muted); font-size: .49rem; font-weight: 600; letter-spacing: .12em; }
 .vortex-start-footer > span:first-child { display: inline-flex; align-items: center; gap: 7px; }
 .vortex-start-footer i { width: 5px; height: 5px; border-radius: 50%; background: var(--hero-dot); }
-
-.vortex-scroll-cue {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 11px;
-  width: fit-content;
-  margin: 28px auto 0;
-  color: var(--hero-muted);
-  font-size: .51rem;
-  font-weight: 600;
-  letter-spacing: .15em;
-}
-
-.vortex-scroll-cue i { position: relative; display: inline-block; width: 14px; height: 22px; border: 1px solid var(--hero-track); border-radius: 99px; }
-.vortex-scroll-cue i::after { position: absolute; top: 4px; left: 50%; width: 2px; height: 4px; border-radius: 2px; background: var(--hero-text); content: ''; transform: translateX(-50%); }
 
 .vortex-capabilities,
 .vortex-process-section,
@@ -468,14 +463,14 @@
 
 @media (max-width: 720px) {
   .landing-page.vortex-site { width: calc(100% - 32px); padding-bottom: 104px; }
-  .vortex-site .landing-header { min-height: 72px; margin-inline: 0; backdrop-filter: none; }
+  .vortex-site .landing-header { position: static; min-height: 72px; margin-inline: 0; padding-inline: 0; backdrop-filter: none; }
   .vortex-site .brand-lockup { gap: 7px; font-size: 1.08rem; }
   .vortex-site .brand-mark { width: 29px; height: 30px; font-size: .98rem; }
-  .vortex-site .landing-header-actions { gap: 7px; }
+.vortex-site .landing-header-actions { gap: 7px; }
   .vortex-site .landing-header-actions .theme-toggle { width: 34px; height: 34px; }
   .vortex-site .landing-login { min-height: 36px; gap: 7px; padding: 7px 10px; font-size: .66rem; }
-  .vortex-site .tubelight-nav { width: min(460px, calc(100vw - 24px)); }
-  .vortex-site .tubelight-nav-item { min-height: 47px; }
+  .vortex-landing-shell > .tubelight-nav { position: fixed; top: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); width: min(460px, calc(100vw - 24px)); transform: translateX(-50%); }
+  .vortex-landing-shell .tubelight-nav-item { min-height: 47px; }
   .vortex-hero { min-height: 0; margin-top: 12px; padding: 68px 17px 21px; border-radius: 20px; }
   .vortex-hero-content { max-width: 560px; }
   .vortex-eyebrow { margin-bottom: 17px; font-size: .55rem; }
@@ -497,7 +492,6 @@
   .vortex-start-option-copy strong { font-size: .65rem; }
   .vortex-start-option-copy small { font-size: .55rem; }
   .vortex-start-footer { margin-top: 11px; font-size: .42rem; letter-spacing: .08em; }
-  .vortex-scroll-cue { margin-top: 20px; font-size: .47rem; }
   .vortex-capabilities { padding-top: 70px; }
   .vortex-section-heading { align-items: flex-start; gap: 10px; margin-bottom: 19px; }
   .vortex-section-heading h2,
@@ -556,7 +550,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal-pending] { opacity: 1 !important; transform: none !important; }
+  .landing-page.vortex-site { animation: none; }
+  .vortex-site:not([data-motion='enabled']) [data-reveal-pending] { opacity: 1 !important; transform: none !important; }
   .vortex-primary-action,
   .vortex-start-option,
   .vortex-feature-card,

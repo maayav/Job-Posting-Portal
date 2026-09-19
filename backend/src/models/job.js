@@ -18,6 +18,7 @@ const jobSchema = new mongoose.Schema(
     city: { type: String, required: true, trim: true, maxlength: 100 },
     cityLower: { type: String, default: '' },
     description: { type: String, required: true, trim: true, maxlength: 5000 },
+    status: { type: String, enum: ['open', 'closed', 'archived'], default: 'open', index: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true }

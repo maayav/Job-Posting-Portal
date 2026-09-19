@@ -338,8 +338,8 @@
     },
     {
       "skill_name": "Computer Vision",
-      "title": "LearnOpenCV Tutorials",
-      "url": "https://learnopencv.com/",
+      "title": "PyTorch object detection tutorial",
+      "url": "https://docs.pytorch.org/tutorials/intermediate/torchvision_tutorial.html",
       "type": "course",
       "verified": true
     },

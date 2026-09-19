@@ -65,6 +65,12 @@
 }
 .student-assistant-page .assistant-answer pre code { padding: 0; border: 0; border-radius: 0; background: none; font-size: .9em; }
 .student-assistant-page .assistant-answer hr { margin: .9em 0; border: 0; border-top: 1px solid var(--line); }
+.student-assistant-page .assistant-table-wrap { max-width: 100%; margin: .75em 0 1em; overflow-x: auto; border: 1px solid var(--line); border-radius: 9px; }
+.student-assistant-page .assistant-answer table { width: 100%; min-width: 420px; border-collapse: collapse; font-size: .88em; }
+.student-assistant-page .assistant-answer th,
+.student-assistant-page .assistant-answer td { padding: .65em .75em; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.student-assistant-page .assistant-answer th { background: var(--panel-2); color: var(--muted); font-size: .8em; font-weight: 650; }
+.student-assistant-page .assistant-answer tr:last-child td { border-bottom: 0; }
 .student-assistant-page .assistant-user-copy { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 @media (max-width: 720px) {

@@ -68,6 +68,14 @@ describe('App routing and navigation order', () => {
     expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
   });
 
+  it('plays the landing atmosphere by default without exposing a pause control', async () => {
+    renderApp('/');
+    await screen.findByRole('heading', { name: /ai|clearer next step/i });
+    expect(document.querySelector('main').dataset.motion).toBe('enabled');
+    expect(document.querySelector('.vortex-atmosphere').dataset.paused).toBe('false');
+    expect(screen.queryByRole('button', { name: /page animations/i })).toBeNull();
+  });
+
   it('provides section navigation for the public landing page', async () => {
     renderApp('/');
     const nav = await screen.findByRole('navigation', { name: /landing page navigation/i });
@@ -81,6 +89,7 @@ describe('App routing and navigation order', () => {
     expect(nav.querySelector('[aria-current="location"]')?.getAttribute('href')).toBe('#home');
     expect(await screen.findByRole('heading', { name: /every part of your next move/i })).toBeTruthy();
     expect(document.querySelector('.landing-endcap a')?.getAttribute('href')).toBe('/login');
+    expect(document.querySelector('.vortex-scroll-cue')).toBeNull();
   });
 
   it('takes a visitor from landing-page Get started to login and sign-up choices', async () => {
@@ -95,6 +104,26 @@ describe('App routing and navigation order', () => {
     signIn('student');
     renderApp('/assistant');
     expect(await screen.findByRole('heading', { name: /ai assistant/i })).toBeTruthy();
+  });
+
+  it('shows the admin workspace assistant with live role totals', async () => {
+    signIn('admin');
+    api.get.mockImplementation((url) => {
+      if (url === '/assistant/context') {
+        return Promise.resolve({ data: {
+          role: 'admin',
+          stats: { openJobs: 2, totalApplications: 7, totalCandidates: 5 },
+          openRoles: [{ jobId: 'j1', title: 'FastAPI Engineer', city: 'Remote', skills: ['FastAPI', 'Python'], applicationCount: 4 }],
+          candidates: [],
+        } });
+      }
+      return Promise.resolve({ data: {} });
+    });
+    renderApp('/assistant');
+    expect(await screen.findByRole('heading', { name: /workspace assistant/i })).toBeTruthy();
+    expect(screen.getByText('FastAPI Engineer')).toBeTruthy();
+    expect(screen.getByText('7')).toBeTruthy();
+    expect(screen.getByPlaceholderText(/roles, applications, or candidates/i)).toBeTruthy();
   });
 
   it('redirects unauthenticated users to login', async () => {

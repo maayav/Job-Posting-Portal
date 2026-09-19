@@ -55,7 +55,8 @@ export default function ExplodedProductView() {
   const compact = useMediaQuery('(max-width: 720px)');
   const shortScreen = useMediaQuery('(max-height: 600px)');
   const [animationFailed, setAnimationFailed] = useState(false);
-  // The tour starts automatically; "Reduce motion" remains available as an opt-out.
+  // Start the product tour animated by default. Visitors can still reduce or
+  // re-enable motion with the explicit control in the tour footer.
   const motionEnabled = motionChoice ?? true;
   const animated = motionEnabled && !shortScreen && !animationFailed;
 
@@ -109,11 +110,11 @@ export default function ExplodedProductView() {
             duration: .66, ease: 'power2.inOut',
           }, start);
           cards.forEach((card, index) => {
+            timeline.set(card, { zIndex: index === focus ? 4 : 1 }, start);
             timeline.to(card, {
               scale: index === focus ? 1 : .84,
               rotation: index === focus ? 0 : scenePositions[index].rotation,
               opacity: index === focus ? 1 : .32,
-              zIndex: index === focus ? 4 : 1,
               duration: .66, ease: 'power2.inOut',
             }, start);
           });

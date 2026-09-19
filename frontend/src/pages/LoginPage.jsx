@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import { errorMessage } from '../api/client';
 
 export default function LoginPage() {
   const { login, register } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -24,7 +27,9 @@ export default function LoginPage() {
       } else {
         await register(name, email, password);
       }
-      window.location.href = '/dashboard';
+      const requested = new URLSearchParams(location.search).get('returnTo');
+      const returnTo = requested && requested.startsWith('/') && !requested.startsWith('//') ? requested : '/dashboard';
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -46,7 +51,7 @@ export default function LoginPage() {
       </header>
       <motion.div
         className="auth-layout"
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
@@ -136,7 +141,7 @@ export default function LoginPage() {
             Password
             <input
               placeholder="At least 6 characters"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -145,6 +150,9 @@ export default function LoginPage() {
                 mode === 'login' ? 'current-password' : 'new-password'
               }
             />
+            <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
           </label>
 
           {error && (

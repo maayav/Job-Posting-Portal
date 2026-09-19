@@ -1,11 +1,15 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import Icon from '../components/Icon';
 import TubelightNavbar from '../components/TubelightNavbar';
 import ExplodedProductView from '../components/ExplodedProductView';
+import Reveal from '../components/ScrollReveal';
+import EtherealBackground from '../components/EtherealBackground';
+import { LandingMotionContext } from '../context/LandingMotionContext';
 import '../styles/landing-page.css';
+import '../styles/landing-atmosphere.css';
 import { loadGsap } from '../utils/gsapRuntime';
 
 const landingNavItems = [
@@ -15,65 +19,6 @@ const landingNavItems = [
   { name: 'For you', url: '#for-you', icon: 'users' },
   { name: 'Get started', url: '/login', icon: 'arrow' },
 ];
-
-function Reveal({ as = 'div', delay = 0, stagger = false, children, ...props }) {
-  const revealRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const element = revealRef.current;
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!element || !('IntersectionObserver' in window) || media.matches) return undefined;
-    if (element.getBoundingClientRect().bottom < 0) return undefined;
-
-    const targets = stagger ? Array.from(element.children) : [element];
-    let cancelled = false;
-    let started = false;
-    let skipAnimation = false;
-    let context;
-    let gsapInstance;
-    // Prepare before observing so a visible element never disappears on entry.
-    targets.forEach(target => target.setAttribute('data-reveal-pending', ''));
-    const clearPending = () => targets.forEach(target => target.removeAttribute('data-reveal-pending'));
-    const finish = () => {
-      skipAnimation = true;
-      observer.disconnect();
-      gsapInstance?.killTweensOf(targets);
-      gsapInstance?.set(targets, { clearProps: 'opacity,visibility,transform' });
-      clearPending();
-    };
-    const observer = new IntersectionObserver((entries) => {
-      if (started || !entries.some(entry => entry.isIntersecting)) return;
-      started = true;
-      observer.disconnect();
-      loadGsap().then(({ gsap }) => {
-        if (cancelled || skipAnimation) return;
-        gsapInstance = gsap;
-        context = gsap.context(() => {
-          gsap.fromTo(targets, { opacity: 0, y: 30 }, {
-            opacity: 1, y: 0, duration: .85, delay,
-            stagger: stagger ? .085 : 0, ease: 'power3.out',
-            onComplete: clearPending, clearProps: 'opacity,transform',
-          });
-        }, element);
-      }).catch(clearPending);
-    }, { rootMargin: '0px 0px -32px 0px', threshold: .08 });
-    observer.observe(element);
-    element.addEventListener('focusin', finish);
-    const onMotionChange = () => { if (media.matches) finish(); };
-    media.addEventListener('change', onMotionChange);
-    return () => {
-      cancelled = true;
-      observer.disconnect();
-      element.removeEventListener('focusin', finish);
-      media.removeEventListener('change', onMotionChange);
-      context?.revert();
-      clearPending();
-    };
-  }, [delay, stagger]);
-
-  const Tag = as;
-  return <Tag {...props} ref={revealRef}>{children}</Tag>;
-}
 
 const startOptions = [
   { icon: 'briefcase', label: 'Explore opportunities', detail: 'Find roles that fit', to: '/jobs' },
@@ -132,8 +77,29 @@ const faqs = [
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const location = useLocation();
   const progressRef = useRef(null);
   const primaryHref = user ? '/jobs' : '/login';
+
+  useLayoutEffect(() => {
+    const previousRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+    // A fresh landing visit is a new starting point. Preserve intentional
+    // section links such as /#product-tour.
+    if (!window.location.hash && window.scrollY > 0) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+    return () => {
+      window.history.scrollRestoration = previousRestoration;
+    };
+  }, []);
+
+  function handleBrandClick(event) {
+    if (location.pathname !== '/') return;
+    event.preventDefault();
+    window.history.replaceState(null, '', '/#home');
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }
 
   useEffect(() => {
     const progressBar = progressRef.current;
@@ -156,7 +122,11 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="landing-page vortex-site">
+    <LandingMotionContext.Provider value={true}>
+    <div className="vortex-landing-shell">
+      <TubelightNavbar items={landingNavItems} />
+    <main className="landing-page vortex-site" data-motion="enabled">
+      <EtherealBackground />
       <div
         className="landing-scroll-progress"
         ref={progressRef}
@@ -164,11 +134,10 @@ export default function LandingPage() {
       />
 
       <header className="landing-header">
-        <Link className="brand-lockup" to="/" aria-label="Vortex home">
+        <Link className="brand-lockup" to="/" onClick={handleBrandClick} aria-label="Vortex home">
           <span className="brand-mark">V</span>
           <span>Vortex<span className="brand-period">.</span></span>
         </Link>
-        <TubelightNavbar items={landingNavItems} />
         <div className="landing-header-actions">
           <ThemeToggle />
           <Link className="landing-login" to={primaryHref}>
@@ -226,13 +195,10 @@ export default function LandingPage() {
             <span>MADE FOR YOUR NEXT MOVE</span>
           </div>
         </Reveal>
-        <a className="vortex-scroll-cue" href="#capabilities" aria-label="Scroll to explore Vortex">
-          <span>SCROLL TO EXPLORE</span><i />
-        </a>
       </section>
 
       <section className="vortex-capabilities" id="capabilities" aria-labelledby="capabilities-title">
-        <Reveal className="vortex-section-heading">
+        <Reveal className="vortex-section-heading" direction="left">
           <div>
             <p className="vortex-section-kicker">ONE SPACE. A CLEARER WAY FORWARD.</p>
             <h2 id="capabilities-title">Everything for your <em>next move.</em></h2>
@@ -241,7 +207,7 @@ export default function LandingPage() {
         </Reveal>
         <div className="vortex-feature-rail" aria-label="Vortex features">
           {features.map((feature, index) => (
-            <Reveal className="vortex-feature-reveal" delay={index * 0.07} key={feature.number}>
+            <Reveal className="vortex-feature-reveal" direction={index % 2 === 0 ? "left" : "right"} delay={index * 0.07} key={feature.number}>
               <Link className="vortex-feature-card" to={user ? feature.to : '/login'}>
                 <div className="vortex-feature-top">
                   <span className="vortex-feature-icon"><Icon name={feature.icon} size={19} /></span>
@@ -261,7 +227,7 @@ export default function LandingPage() {
       <ExplodedProductView />
 
       <section className="vortex-process-section" id="how-it-works" aria-labelledby="process-title">
-        <Reveal className="vortex-section-heading">
+        <Reveal className="vortex-section-heading" direction="left">
           <div>
             <p className="vortex-section-kicker">FROM POSSIBILITY TO PROGRESS</p>
             <h2 id="process-title">A big goal, made <em>actionable.</em></h2>
@@ -271,7 +237,7 @@ export default function LandingPage() {
         </Reveal>
         <div className="vortex-steps-grid">
           {steps.map((step, index) => (
-            <Reveal as="article" className="vortex-step-card" key={step.title} delay={index * 0.07}>
+            <Reveal as="article" direction={["left", "up", "right"][index]} className="vortex-step-card" key={step.title} delay={index * 0.07}>
               <div className="vortex-step-top">
                 <span className="vortex-step-icon"><Icon name={step.icon} size={20} /></span>
                 <span>0{index + 1}</span>
@@ -283,13 +249,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Reveal as="section" stagger className="vortex-audience-section" id="for-you" aria-labelledby="audience-title">
-        <div className="vortex-audience-heading">
+      <section className="vortex-audience-section" id="for-you" aria-labelledby="audience-title">
+        <Reveal className="vortex-audience-heading" direction="left">
           <p className="vortex-section-kicker">MADE FOR YOUR NEXT MOVE</p>
           <h2 id="audience-title">Individual ambition.<br /><em>Shared progress.</em></h2>
           <p>Useful for the person building a path and the teams helping them take the next step.</p>
-        </div>
-        <div className="vortex-audience-cards">
+        </Reveal>
+        <Reveal className="vortex-audience-cards" direction="right" stagger>
           <article className="vortex-audience-card">
             <span className="vortex-audience-number">01 / STUDENTS</span>
             <span className="vortex-audience-icon"><Icon name="users" size={20} /></span>
@@ -304,10 +270,10 @@ export default function LandingPage() {
             <p>Manage roles and review applications through a focused candidate flow designed for placement teams.</p>
             <Link to="/login">Open the team workspace <Icon name="arrow" size={15} /></Link>
           </article>
-        </div>
-      </Reveal>
+        </Reveal>
+      </section>
 
-      <Reveal as="section" className="vortex-faq-section" aria-labelledby="faq-title">
+      <Reveal as="section" direction="right" className="vortex-faq-section" aria-labelledby="faq-title">
         <div className="vortex-faq-intro">
           <p className="vortex-section-kicker">A FEW USEFUL DETAILS</p>
           <h2 id="faq-title">Questions, <em>answered.</em></h2>
@@ -322,7 +288,7 @@ export default function LandingPage() {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="landing-endcap vortex-endcap" id="get-started">
+      <Reveal as="section" direction="up" className="landing-endcap vortex-endcap" id="get-started">
         <div className="vortex-endcap-orbit" aria-hidden="true" />
         <div className="vortex-endcap-copy">
           <p className="vortex-section-kicker">YOUR NEXT CHAPTER STARTS HERE</p>
@@ -333,12 +299,14 @@ export default function LandingPage() {
       </Reveal>
 
       <footer className="vortex-footer">
-        <Link className="brand-lockup" to="/" aria-label="Vortex home">
+        <Link className="brand-lockup" to="/" onClick={handleBrandClick} aria-label="Vortex home">
           <span className="brand-mark">V</span><span>Vortex<span className="brand-period">.</span></span>
         </Link>
         <span>A clearer path to your next role.</span>
         <a href="#home">Back to top <Icon name="arrow" size={14} /></a>
       </footer>
     </main>
+    </div>
+    </LandingMotionContext.Provider>
   );
 }

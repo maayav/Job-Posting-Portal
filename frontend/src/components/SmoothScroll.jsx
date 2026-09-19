@@ -12,6 +12,22 @@ export default function SmoothScroll() {
       syncTouch: false,
     });
 
+    // Keep in-page navigation in the same motion system as wheel scrolling.
+    // Lenis otherwise leaves hash links to the browser's instant jump.
+    const onAnchorClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest?.('a[href^="#"]');
+      if (!link) return;
+      const hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const target = document.querySelector(hash);
+      if (!target) return;
+      event.preventDefault();
+      history.replaceState(null, '', hash);
+      lenis.scrollTo(target, { offset: -88 });
+    };
+    document.addEventListener('click', onAnchorClick);
+
     let frame;
     const raf = (time) => {
       lenis.raf(time);
@@ -22,6 +38,7 @@ export default function SmoothScroll() {
     function stopForReducedMotion(event) {
       if (event.matches) {
         cancelAnimationFrame(frame);
+        document.removeEventListener('click', onAnchorClick);
         lenis.destroy();
       }
     }
@@ -29,6 +46,7 @@ export default function SmoothScroll() {
 
     return () => {
       cancelAnimationFrame(frame);
+      document.removeEventListener('click', onAnchorClick);
       lenis.destroy();
       preference.removeEventListener('change', stopForReducedMotion);
     };

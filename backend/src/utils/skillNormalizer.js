@@ -38,6 +38,12 @@ const SYNONYMS = {
   fastapi: 'FastAPI',
   django: 'Django',
   'spring boot': 'Spring Boot',
+  flask: 'Flask',
+  'react native': 'React Native',
+  '.net': '.NET',
+  dotnet: '.NET',
+  'asp.net': 'ASP.NET Core',
+  'asp.net core': 'ASP.NET Core',
 
   // databases
   mongo: 'MongoDB',
@@ -85,6 +91,8 @@ const SYNONYMS = {
   selenium: 'Selenium',
   cypress: 'Cypress',
   postman: 'Postman',
+  pytest: 'pytest',
+  playwright: 'Playwright',
 
   // languages / web basics
   javascript: 'JavaScript',
@@ -111,6 +119,24 @@ const SYNONYMS = {
   'rest api': 'REST APIs',
   'rest apis': 'REST APIs',
   graphql: 'GraphQL',
+  grpc: 'gRPC',
+
+  // data, observability, and product tooling
+  'power bi': 'Power BI',
+  'apache spark': 'Apache Spark',
+  spark: 'Apache Spark',
+  airflow: 'Airflow',
+  prometheus: 'Prometheus',
+  grafana: 'Grafana',
+  opencv: 'OpenCV',
+  transformers: 'Transformers',
+  sqlalchemy: 'SQLAlchemy',
+  celery: 'Celery',
+  firebase: 'Firebase',
+  'data visualization': 'Data Visualization',
+  'data visualisation': 'Data Visualization',
+  'api testing': 'API Testing',
+  networking: 'Networking',
 };
 
 export function normalizeSkillName(raw) {

@@ -13,18 +13,38 @@ import '../styles/student-experience.css';
 
 function StudentDashboard() {
   const [report, setReport] = useState(null);
+  const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const reportId = localStorage.getItem('report_id');
     if (!reportId) {
-      setLoading(false);
+      api.get('/report/history')
+        .then((res) => {
+          const entries = [...(res.data.history ?? [])]
+            .sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at));
+          setHistory(entries);
+          const latest = entries[0];
+          if (!latest?.report_id) return null;
+          localStorage.setItem('report_id', latest.report_id);
+          return api.get(`/report/${latest.report_id}`);
+        })
+        .then((res) => { if (res?.data?.report_id) setReport(res.data); })
+        .catch((err) => setError(errorMessage(err)))
+        .finally(() => setLoading(false));
       return;
     }
     api
       .get(`/report/${reportId}`)
-      .then((res) => setReport(res.data))
+      .then((res) => {
+        setReport(res.data);
+        return api.get('/report/history').then((historyResponse) => {
+          const entries = [...(historyResponse.data.history ?? [])]
+            .sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at));
+          setHistory(entries);
+        }).catch(() => {});
+      })
       .catch((err) => {
         // A report id can survive a logout/account switch. Treat an inaccessible
         // old report as no current report rather than surfacing a misleading 403.
@@ -38,6 +58,21 @@ function StudentDashboard() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  async function selectReport(reportId) {
+    if (!reportId || reportId === report?.report_id) return;
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.get(`/report/${reportId}`);
+      setReport(response.data);
+      localStorage.setItem('report_id', reportId);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function handleToggle(itemId) {
     setReport((prev) => ({
@@ -54,7 +89,7 @@ function StudentDashboard() {
 
       <motion.section
         className="dashboard-intro student-dashboard-intro"
-        initial={{ opacity: 0, y: 14 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
       >
@@ -67,6 +102,7 @@ function StudentDashboard() {
           <span>LATEST ANALYSIS</span>
           <strong>{report ? 'Ready to explore' : 'Get started'}</strong>
           <small>{report ? report.target_role : 'Upload a profile to begin'}</small>
+          {history.length > 1 && <label className="student-report-picker">Saved analyses<select aria-label="Choose a saved analysis" value={report?.report_id ?? ''} onChange={(event) => selectReport(event.target.value)}>{history.map((entry) => <option key={entry.report_id} value={entry.report_id}>{entry.target_role} · {entry.score}/100 · {new Date(entry.completed_at).toLocaleDateString()}</option>)}</select></label>}
         </div>
       </motion.section>
 
@@ -89,11 +125,11 @@ function StudentDashboard() {
       {report && (
         <motion.div
           className="dashboard-stack"
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.45 }}
         >
-          {/* 1. ATS score */}
+          {/* The report score is the single weighted readiness metric for this role. */}
           <ScoreCard score={report.score} targetRole={report.target_role} generatedAt={report.generated_at} />
 
           {/* 2. Skill breakdown */}
@@ -102,18 +138,17 @@ function StudentDashboard() {
           {/* 3. Study plan */}
           <StudyPlan reportId={report.report_id} items={report.study_plan} onToggle={handleToggle} />
 
-          {/* 4. Role readiness */}
           <div className="card role-readiness">
             <h2>Role readiness</h2>
             <div className="readiness-row">
               <span className="chip">{report.target_role}</span>
-              <strong className="readiness-score">{report.score}/100</strong>
+              <span className="score-status"><i /> Single weighted metric shown above</span>
             </div>
             <p className="muted small">
-              The ATS score above is the weighted readiness for this target role, computed from the role's
-              skill ontology.
+              The score above combines the evidence, skill coverage, and gaps for this target role. It is not a separate ATS and readiness score.
             </p>
           </div>
+
         </motion.div>
       )}
     </>

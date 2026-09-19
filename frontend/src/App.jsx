@@ -87,6 +87,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<div className="page"><div className="card center"><h1>Page not found</h1><p className="muted">That Vortex workspace route does not exist.</p><a className="primary inline" href="/">Back to home</a></div></div>} />
     </Routes>
   );
 }

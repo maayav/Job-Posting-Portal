@@ -4,7 +4,7 @@ export default function JobCard({ job, actions }) {
   return (
     <motion.article
       className="card job-card"
-      initial={{ opacity: 0, y: 16 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >

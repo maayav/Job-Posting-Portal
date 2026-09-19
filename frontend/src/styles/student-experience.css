@@ -87,6 +87,18 @@
 .student-jobs-page .student-job-filters h2 { margin-bottom: 18px; font-size: .95rem; }
 .student-jobs-page .student-job-filters label { color: var(--muted); font-size: .72rem; }
 .student-jobs-page .student-job-filters input { min-height: 47px; margin-top: 7px; border-radius: 10px; }
+.student-jobs-page .job-filter-skill-entry { margin-top: 7px; padding: 7px 10px; border: 1px solid var(--line-bright); border-radius: 10px; background: var(--panel); }
+.student-jobs-page .job-filter-skill-entry:focus-within { border-color: var(--text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 10%, transparent); }
+.student-jobs-page .job-filter-skill-entry input { width: 100%; min-height: 30px; margin: 0; padding: 4px 0; border: 0; background: transparent; box-shadow: none; }
+.student-jobs-page .job-filter-skill-entry input:focus { box-shadow: none; }
+.student-jobs-page .job-filter-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.student-jobs-page .job-filter-chip { display: inline-flex; align-items: center; gap: 5px; min-height: 25px; padding: 3px 7px 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel-2); color: var(--text); font-size: .67rem; }
+.student-jobs-page .job-filter-chip button { display: inline-grid; width: 18px; height: 18px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: .9rem; line-height: 1; }
+.student-jobs-page .job-filter-chip button:hover { background: var(--line); color: var(--text); }
+.student-jobs-page .job-filter-suggestions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
+.student-jobs-page .job-filter-suggestions > span { margin-right: 3px; color: var(--muted); font-size: .63rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.student-jobs-page .job-filter-suggestion { min-height: 28px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 99px; background: var(--panel-2); color: var(--muted); font-size: .63rem; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
+.student-jobs-page .job-filter-suggestion:hover { border-color: var(--line-bright); background: var(--panel); color: var(--text); }
 .student-jobs-page .student-job-filters .field-hint { margin-top: 14px; }
 .student-jobs-page .student-job-filters .filters-actions { margin-top: 18px; }
 .student-results-heading { margin: 36px 0 17px; }
@@ -143,6 +155,8 @@
 .student-dashboard-page .dashboard-intro-rail { z-index: 1; min-width: 200px; padding: 14px 0 14px 24px; border-left-color: var(--line-bright); }
 .student-dashboard-page .dashboard-intro-rail strong { color: var(--text); font-size: .96rem; }
 .student-dashboard-page .dashboard-intro-rail small { max-width: 190px; line-height: 1.5; }
+.student-dashboard-page .student-report-picker { display: grid; gap: 5px; margin-top: 14px; color: var(--muted); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; }
+.student-dashboard-page .student-report-picker select { min-height: 34px; max-width: 230px; padding: 6px 26px 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--text); font-size: .68rem; letter-spacing: normal; text-transform: none; }
 
 .student-dashboard-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 28px; }
 .student-shortcut { display: flex; min-width: 0; align-items: center; gap: 12px; padding: 15px; border: 1px solid var(--line); border-radius: var(--student-radius-sm); background: var(--panel); color: var(--text); transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; }
@@ -279,6 +293,26 @@
 .student-assistant-page .assistant-suggestion:hover:not(:disabled) { padding-inline: 5px; color: var(--text); }
 .student-assistant-page .assistant-suggestion:disabled { opacity: .55; }
 .student-assistant-page .assistant-empty-state { border-radius: 20px; }
+.student-assistant-page .assistant-admin-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-bottom: 22px; }
+.student-assistant-page .assistant-admin-stats > div { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 10px 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); }
+.student-assistant-page .assistant-admin-stats span { color: var(--muted); font-size: .55rem; line-height: 1.25; }
+.student-assistant-page .assistant-admin-stats strong { font-size: 1.1rem; font-weight: 650; letter-spacing: -.04em; }
+.student-assistant-page .assistant-admin-roles { margin-bottom: 20px; }
+.student-assistant-page .assistant-admin-roles .section-heading { margin-bottom: 4px; }
+.student-assistant-page .assistant-admin-roles h2 { font-size: .96rem; }
+.student-assistant-page .assistant-admin-role { display: flex; align-items: center; justify-content: space-between; gap: 9px; padding: 10px 0; border-top: 1px solid var(--line); }
+.student-assistant-page .assistant-admin-role > span { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.student-assistant-page .assistant-admin-role strong { overflow: hidden; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
+.student-assistant-page .assistant-admin-role small { overflow: hidden; color: var(--muted); font-size: .58rem; text-overflow: ellipsis; white-space: nowrap; }
+.student-assistant-page .assistant-admin-role b { display: grid; min-width: 25px; height: 25px; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--text); font-size: .64rem; font-weight: 600; }
+.student-assistant-page .assistant-admin-candidates { margin-bottom: 20px; }
+.student-assistant-page .assistant-admin-candidates .section-heading { margin-bottom: 4px; }
+.student-assistant-page .assistant-admin-candidates h2 { font-size: .96rem; }
+.student-assistant-page .assistant-admin-candidate { display: flex; align-items: center; justify-content: space-between; gap: 9px; padding: 10px 0; border-top: 1px solid var(--line); }
+.student-assistant-page .assistant-admin-candidate > span { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.student-assistant-page .assistant-admin-candidate strong { overflow: hidden; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
+.student-assistant-page .assistant-admin-candidate small { overflow: hidden; color: var(--muted); font-size: .58rem; text-overflow: ellipsis; white-space: nowrap; }
+.student-assistant-page .assistant-admin-candidate b { max-width: 92px; overflow: hidden; padding: 4px 6px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); font-size: .5rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Application tracking */
 .student-applications-heading { align-items: center; margin-bottom: 23px; }
@@ -472,3 +506,6 @@
     grid-column: auto;
   }
 }
+.plan-resources a { display: inline-flex; flex-direction: column; gap: 4px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); text-decoration: none; }
+.plan-resources a:hover { border-color: var(--text); }
+.plan-resources a small { color: var(--muted); font-size: .61rem; text-transform: capitalize; }

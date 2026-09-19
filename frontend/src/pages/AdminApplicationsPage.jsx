@@ -11,7 +11,7 @@ function SummaryCard({ label, value, tone = '', reduceMotion, index }) {
   return (
     <motion.div
       layout={!reduceMotion}
-      initial={reduceMotion ? false : { opacity: 0, y: 7 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       whileHover={reduceMotion ? undefined : { y: -1 }}
       transition={{ duration: reduceMotion ? 0 : 0.16, delay: reduceMotion ? 0 : index * 0.025, ease: 'easeOut' }}
@@ -25,6 +25,11 @@ function SummaryCard({ label, value, tone = '', reduceMotion, index }) {
 
 export default function AdminApplicationsPage() {
   const reduceMotion = useReducedMotion();
+  const resetPanelScroll = useCallback((node) => {
+    if (!node) return;
+    node.scrollTop = 0;
+    node.scrollLeft = 0;
+  }, []);
   const [summary, setSummary] = useState(null);
   const [applications, setApplications] = useState([]);
   const [filters, setFilters] = useState({ search: '', jobId: '', status: '' });
@@ -147,7 +152,7 @@ export default function AdminApplicationsPage() {
           <span className="section-note">{jobs.length} roles</span>
         </div>
         {summaryLoading ? <p className="muted" role="status">Loading role totals…</p> : (
-          <div className="table-scroll">
+          <div className="table-scroll" ref={resetPanelScroll}>
             <table className="applications-table">
               <thead>
                 <tr>
@@ -207,7 +212,7 @@ export default function AdminApplicationsPage() {
         {!loading && applications.length === 0 && <div className="admin-applications-empty"><strong>No applications found</strong><p className="muted">Adjust the filters or clear them to see the full candidate flow.</p></div>}
 
         {!loading && applications.length > 0 && (
-          <div className="pipeline-board">
+          <div className="pipeline-board" ref={resetPanelScroll} tabIndex="0" aria-label="Scrollable candidate flow">
             {PIPELINE_ORDER.map((status) => (
               <div className={`pipeline-column pipeline-${status}`} key={status}>
                 <div className="pipeline-column-header"><span>{STATUS_LABELS[status]}</span><strong>{grouped[status].length}</strong></div>
@@ -215,7 +220,7 @@ export default function AdminApplicationsPage() {
                   {grouped[status].map((application, index) => (
                     <motion.article
                       layout={!reduceMotion}
-                      initial={reduceMotion ? false : { opacity: 0, y: 7 }}
+                      initial={false}
                       animate={{ opacity: 1, y: 0 }}
                       whileHover={reduceMotion ? undefined : { y: -1 }}
                       transition={{ duration: reduceMotion ? 0 : 0.16, delay: reduceMotion ? 0 : Math.min(index * 0.02, 0.1), ease: 'easeOut' }}

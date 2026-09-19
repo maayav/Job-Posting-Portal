@@ -19,7 +19,8 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login';
+        const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        window.location.href = `/login?returnTo=${encodeURIComponent(returnTo)}`;
       }
     }
     return Promise.reject(err);

@@ -4,14 +4,16 @@ import { safeExternalUrl } from '../utils/links';
 
 export default function StudyPlan({ reportId, items, onToggle }) {
   const [busy, setBusy] = useState(null);
+  const [error, setError] = useState('');
 
   async function toggle(itemId, skill) {
     setBusy(itemId);
+    setError('');
     try {
       await api.patch(`/report/${reportId}/study-plan/${itemId}`);
       onToggle(itemId, skill);
     } catch {
-      // ignore transient failures; user can retry
+      setError('Could not save that change. Try again.');
     } finally {
       setBusy(null);
     }
@@ -36,14 +38,16 @@ export default function StudyPlan({ reportId, items, onToggle }) {
         </div>
         <span className="section-note">{items.filter((item) => !item.done).length} open</span>
       </div>
+      {error && <p className="error card-error" role="alert">{error}</p>}
       <ul className="plan-list">
         {items.map((item) => (
           <li key={item._id} className={item.done ? 'done' : ''}>
-            <label className="plan-item">
+            <div className="plan-item">
               <input
                 type="checkbox"
                 checked={!!item.done}
-                disabled={busy === item._id}
+                aria-label={`Mark ${item.skill} ${item.done ? 'incomplete' : 'complete'}`}
+                disabled={busy !== null}
                 onChange={() => toggle(item._id, item.skill)}
               />
               <span className="plan-body">
@@ -52,17 +56,19 @@ export default function StudyPlan({ reportId, items, onToggle }) {
                   {item.priority >= 0.75 && <span className="badge badge-high">high priority</span>}
                 </span>
                 <span className="plan-resources">
-                  {item.resources.map((r) => {
+                  {(item.resources ?? []).map((r) => {
                     const url = safeExternalUrl(r.url);
-                    return url ? <a key={r.url} href={url} target="_blank" rel="noreferrer">{r.title}</a> : null;
+                    return url ? <a key={r.url} href={url} target="_blank" rel="noopener noreferrer"><span>{r.title}</span><small>{r.type === 'practice-set' ? 'Practice' : r.type} ↗</small></a> : null;
                   })}
-                  {item.resources.length === 0 && <em>No curated resources yet</em>}
+                  {!item.resources?.length && <em>Resources for this skill are being curated.</em>}
                 </span>
                 {item.reason && <span className="muted small plan-explanation">{item.reason}</span>}
                 {item.learningObjectives?.length > 0 && <span className="plan-explanation small">Learn: {item.learningObjectives.join(' · ')}</span>}
                 {item.projectRecommendations?.length > 0 && <span className="plan-explanation small">Practice project: {item.projectRecommendations.join(' · ')}</span>}
+                {item.practiceProblems?.length > 0 && <span className="plan-explanation small">Exercises: {item.practiceProblems.join(' · ')}</span>}
+                {item.estimatedEffortHours > 0 && <span className="muted small plan-explanation">Suggested effort: {item.estimatedEffortHours} hours</span>}
               </span>
-            </label>
+            </div>
           </li>
         ))}
       </ul>
