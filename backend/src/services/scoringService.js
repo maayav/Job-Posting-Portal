@@ -1,10 +1,11 @@
 import { cosineSimilarity, normalizeName } from './embeddingService.js';
 import { hydrateStudyPlan } from './resourceService.js';
+import { normalizeSkillName } from '../utils/skillNormalizer.js';
 
 const STRONG_MIN = 80;
 const DEVELOPING_MIN = 60;
 const aliases = { reactjs: 'react', 'react.js': 'react', node: 'node.js', nodejs: 'node.js', js: 'javascript', ts: 'typescript', mongo: 'mongodb', 'express.js': 'express', sklearn: 'scikit-learn' };
-function canonical(name) { const key = normalizeName(name); return aliases[key] || key; }
+function canonical(name) { const key = normalizeName(normalizeSkillName(name)); return aliases[key] || key; }
 
 export function computeBestMatches(ontologySkills, candidateVectors) {
   const perSkill = [];

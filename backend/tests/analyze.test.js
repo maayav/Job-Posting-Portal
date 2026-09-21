@@ -34,14 +34,14 @@ vi.mock('../src/services/geminiService.js', () => ({
   })),
 }));
 
-async function createSubmission(token, github = 'maayav') {
+async function createSubmission(token, github = 'maayav', role = 'SDE') {
   const pdf = fs.readFileSync(path.join(SAMPLE_DIR, 'sample-sde.pdf'));
   const res = await request(app)
     .post('/api/profile')
     .set('Authorization', `Bearer ${token}`)
     .attach('resume', pdf, { filename: 'sample-sde.pdf' })
     .field('github_username', github)
-    .field('target_role', 'SDE');
+    .field('target_role', role);
   expect(res.status).toBe(201);
   return res.body.id;
 }
@@ -93,6 +93,33 @@ describe('Analyze pipeline', () => {
     expect(report.body.embedding_model).toBe('gemini-embedding-2');
     expect(Array.isArray(report.body.strong_areas)).toBe(true);
     expect(Array.isArray(report.body.study_plan)).toBe(true);
+  });
+
+  it('analyzes AI Engineer and returns its curated skill resources', async () => {
+    const { SkillOntology } = await import('../src/models/skillOntology.js');
+    const { ResourceCatalog } = await import('../src/models/resourceCatalog.js');
+    const { skills } = JSON.parse(fs.readFileSync(new URL('../ontology/ai-engineer.json', import.meta.url)));
+    const { resources } = JSON.parse(fs.readFileSync(new URL('../resources/resources-ai-engineer.json', import.meta.url)));
+    for (const skill of skills) {
+      await SkillOntology.updateOne({ skill_name: skill.skill_name }, { $set: {
+        ...skill, embedding_model: 'gemini-embedding-2', embedding_version: '2026-09', embedding_vector: fakeVector(skill.skill_name),
+      } }, { upsert: true });
+    }
+    for (const resource of resources) {
+      await ResourceCatalog.updateOne({ skill_name: resource.skill_name, url: resource.url }, { $set: resource }, { upsert: true });
+    }
+    const roles = await request(app).get('/api/roles').set(authHeader(token));
+    expect(roles.body.roles).toContainEqual({ id: 'AI Engineer', label: 'AI Engineer' });
+    const sid = await createSubmission(token, '', 'AI Engineer');
+    const created = await request(app).post('/api/analyze').set(authHeader(token)).send({ submission_id: sid });
+    expect(created.status).toBe(202);
+    expect((await waitForStatus(token, created.body.report_id)).status).toBe('completed');
+    const { body: report } = await request(app).get(`/api/report/${created.body.report_id}`).set(authHeader(token));
+    expect(report.target_role).toBe('AI Engineer');
+    expect(report.score).toBeGreaterThan(0);
+    const rag = report.study_plan.find((s) => s.skill === 'Retrieval-Augmented Generation');
+    expect(rag.resources[0].url).toBe('https://docs.langchain.com/oss/python/deepagents/rag');
+    expect(report.study_plan.every((s) => s.resources.length > 0)).toBe(true);
   });
 
   it('enforces the partial unique index — only one active (queued/processing) report per submission', async () => {

@@ -61,4 +61,10 @@ describe('UploadForm target-role selector', () => {
     expect(await screen.findByText(/could not load target roles/i)).toBeTruthy();
     expect(screen.getByRole('button', { name: /upload & extract skills/i }).disabled).toBe(true);
   });
+
+  it('selects AI Engineer when opened from its role guide', async () => {
+    api.get.mockResolvedValue({ data: { roles: [{ id: 'SDE', label: 'Software Development Engineer' }, { id: 'AI Engineer', label: 'AI Engineer' }] } });
+    render(<UploadForm onSubmit={vi.fn()} loading={false} requestedRole="AI Engineer" />);
+    await waitFor(() => expect(screen.getByLabelText(/target role/i).value).toBe('AI Engineer'));
+  });
 });

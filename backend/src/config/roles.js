@@ -5,6 +5,7 @@
 export const ROLE_LABELS = {
   SDE: 'Software Development Engineer',
   'ML Engineer': 'ML Engineer',
+  'AI Engineer': 'AI Engineer',
 };
 
 export function roleLabel(roleName) {

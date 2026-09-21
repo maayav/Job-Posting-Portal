@@ -1,0 +1,2716 @@
+{
+  "roles": [
+    {
+      "id": "SDE",
+      "label": "Software Development Engineer",
+      "skills": [
+        {
+          "name": "Data Structures & Algorithms",
+          "category": "core-cs",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "NeetCode (YouTube)",
+              "url": "https://www.youtube.com/@NeetCode"
+            },
+            {
+              "title": "freeCodeCamp DSA (YouTube)",
+              "url": "https://www.youtube.com/@freecodecamp"
+            },
+            {
+              "title": "Visualgo — Algorithm Visualizations",
+              "url": "https://visualgo.net/en"
+            },
+            {
+              "title": "MIT Introduction to Algorithms",
+              "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/"
+            },
+            {
+              "title": "GeeksforGeeks DSA",
+              "url": "https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"
+            }
+          ]
+        },
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "JavaScript Mastery (YouTube)",
+              "url": "https://www.youtube.com/@javascriptmastery"
+            },
+            {
+              "title": "JavaScript30 — 30 Day Challenge",
+              "url": "https://javascript30.com/"
+            },
+            {
+              "title": "MDN JavaScript Guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+            },
+            {
+              "title": "JavaScript.info",
+              "url": "https://javascript.info/"
+            }
+          ]
+        },
+        {
+          "name": "React",
+          "category": "framework",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "The Net Ninja React (YouTube)",
+              "url": "https://www.youtube.com/@NetNinja"
+            },
+            {
+              "title": "React Tutorial (official)",
+              "url": "https://react.dev/learn"
+            },
+            {
+              "title": "React Official Docs",
+              "url": "https://react.dev/"
+            },
+            {
+              "title": "freeCodeCamp React",
+              "url": "https://www.freecodecamp.org/learn/front-end-development-libraries/#react"
+            },
+            {
+              "title": "Frontend Mentor — Frontend Challenges",
+              "url": "https://www.frontendmentor.io/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Traversy Media (YouTube)",
+              "url": "https://www.youtube.com/@TraversyMedia"
+            },
+            {
+              "title": "The Odin Project — Node Path",
+              "url": "https://www.theodinproject.com/paths/full-stack-javascript"
+            },
+            {
+              "title": "Node.js Official Docs",
+              "url": "https://nodejs.org/docs/latest/api/"
+            },
+            {
+              "title": "Node.js Tutorial (W3Schools)",
+              "url": "https://www.w3schools.com/nodejs/"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology (YouTube)",
+              "url": "https://www.youtube.com/@IBMTechnology"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "ByteByteGo (YouTube)",
+              "url": "https://www.youtube.com/@ByteByteGo"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/karanpratapsingh/system-design"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/donnemartin/system-design-primer"
+            }
+          ]
+        },
+        {
+          "name": "Express",
+          "category": "framework",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Web Dev Simplified (YouTube)",
+              "url": "https://www.youtube.com/@WebDevSimplified"
+            },
+            {
+              "title": "Express.js Routing Guide",
+              "url": "https://expressjs.com/en/guide/routing.html"
+            },
+            {
+              "title": "Express.js Guide",
+              "url": "https://expressjs.com/en/starter/installing.html"
+            }
+          ]
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "MongoDB (YouTube)",
+              "url": "https://www.youtube.com/@MongoDB"
+            },
+            {
+              "title": "MongoDB Developer Center",
+              "url": "https://www.mongodb.com/developer/"
+            },
+            {
+              "title": "MongoDB University",
+              "url": "https://learn.mongodb.com/"
+            },
+            {
+              "title": "MongoDB Manual",
+              "url": "https://www.mongodb.com/docs/manual/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "TypeScript",
+          "category": "language",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Matt Pocock (YouTube)",
+              "url": "https://www.youtube.com/@mattpocockuk"
+            },
+            {
+              "title": "TypeScript Playground",
+              "url": "https://www.typescriptlang.org/play"
+            },
+            {
+              "title": "TypeScript Handbook",
+              "url": "https://www.typescriptlang.org/docs/handbook/intro.html"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Testing",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Raghav Pal — Automation Step by Step (YouTube)",
+              "url": "https://www.youtube.com/@RaghavPal"
+            },
+            {
+              "title": "Jest Docs",
+              "url": "https://jestjs.io/docs/getting-started"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ML Engineer",
+      "label": "ML Engineer",
+      "skills": [
+        {
+          "name": "Machine Learning",
+          "category": "ml",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Google ML Crash Course",
+              "url": "https://developers.google.com/machine-learning/crash-course"
+            },
+            {
+              "title": "StatQuest (YouTube)",
+              "url": "https://www.youtube.com/@statquest"
+            },
+            {
+              "title": "Andrew Ng ML Course (Coursera)",
+              "url": "https://www.coursera.org/learn/machine-learning"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Deep Learning",
+          "category": "ml",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "fast.ai Practical Deep Learning",
+              "url": "https://course.fast.ai/"
+            },
+            {
+              "title": "3Blue1Brown — Neural Networks (YouTube)",
+              "url": "https://www.youtube.com/@3blue1brown"
+            },
+            {
+              "title": "DeepLearning.AI",
+              "url": "https://www.deeplearning.ai/"
+            }
+          ]
+        },
+        {
+          "name": "PyTorch",
+          "category": "framework",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "PyTorch tutorials",
+              "url": "https://pytorch.org/tutorials/"
+            },
+            {
+              "title": "Aladdin Persson (YouTube)",
+              "url": "https://www.youtube.com/@AladdinPersson"
+            },
+            {
+              "title": "PyTorch Basics Tutorial",
+              "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+            },
+            {
+              "title": "PyTorch Official Docs",
+              "url": "https://docs.pytorch.org/docs/stable/index.html"
+            },
+            {
+              "title": "PyTorch Tutorials",
+              "url": "https://docs.pytorch.org/tutorials/"
+            }
+          ]
+        },
+        {
+          "name": "scikit-learn",
+          "category": "framework",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Data School (YouTube)",
+              "url": "https://www.youtube.com/@dataschool"
+            },
+            {
+              "title": "scikit-learn Getting Started",
+              "url": "https://scikit-learn.org/stable/getting_started.html"
+            },
+            {
+              "title": "scikit-learn Docs",
+              "url": "https://scikit-learn.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "TensorFlow",
+          "category": "framework",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "TensorFlow (YouTube)",
+              "url": "https://www.youtube.com/@TensorFlow"
+            },
+            {
+              "title": "TensorFlow Tutorials",
+              "url": "https://www.tensorflow.org/tutorials"
+            },
+            {
+              "title": "TensorFlow Learn",
+              "url": "https://www.tensorflow.org/learn"
+            }
+          ]
+        },
+        {
+          "name": "NLP",
+          "category": "ml",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Hugging Face (YouTube)",
+              "url": "https://www.youtube.com/@HuggingFace"
+            },
+            {
+              "title": "Hugging Face LLM Course",
+              "url": "https://huggingface.co/learn/llm-course"
+            }
+          ]
+        },
+        {
+          "name": "NumPy",
+          "category": "data",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "NumPy Learn",
+              "url": "https://numpy.org/learn/"
+            },
+            {
+              "title": "Keith Galli — NumPy (YouTube)",
+              "url": "https://www.youtube.com/@KeithGalli"
+            },
+            {
+              "title": "NumPy Quickstart",
+              "url": "https://numpy.org/doc/stable/user/quickstart.html"
+            }
+          ]
+        },
+        {
+          "name": "Pandas",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Keith Galli (YouTube)",
+              "url": "https://www.youtube.com/@KeithGalli"
+            },
+            {
+              "title": "Pandas Getting Started",
+              "url": "https://pandas.pydata.org/docs/getting_started/index.html"
+            },
+            {
+              "title": "Pandas User Guide",
+              "url": "https://pandas.pydata.org/docs/user_guide/index.html"
+            }
+          ]
+        },
+        {
+          "name": "Computer Vision",
+          "category": "ml",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Roboflow (YouTube)",
+              "url": "https://www.youtube.com/@Roboflow"
+            },
+            {
+              "title": "PyTorch object detection tutorial",
+              "url": "https://docs.pytorch.org/tutorials/intermediate/torchvision_tutorial.html"
+            },
+            {
+              "title": "TorchVision computer vision documentation",
+              "url": "https://docs.pytorch.org/vision/stable/index.html"
+            }
+          ]
+        },
+        {
+          "name": "FastAPI",
+          "category": "framework",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "FastAPI Tutorial (official)",
+              "url": "https://fastapi.tiangolo.com/tutorial/"
+            },
+            {
+              "title": "ArjanCodes (YouTube)",
+              "url": "https://www.youtube.com/@ArjanCodes"
+            },
+            {
+              "title": "FastAPI Official Docs",
+              "url": "https://fastapi.tiangolo.com/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Statistics",
+          "category": "core-cs",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Seeing Theory — Visual Statistics",
+              "url": "https://seeing-theory.brown.edu/"
+            },
+            {
+              "title": "StatQuest Statistics (YouTube)",
+              "url": "https://www.youtube.com/@statquest"
+            },
+            {
+              "title": "Khan Academy Statistics",
+              "url": "https://www.khanacademy.org/math/statistics-probability"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Tableau/Power BI (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "AI Engineer",
+      "label": "AI Engineer",
+      "skills": [
+        {
+          "name": "Large Language Models",
+          "category": "ml",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Hugging Face LLM course",
+              "url": "https://huggingface.co/learn/llm-course/chapter1/1"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Retrieval-Augmented Generation",
+          "category": "ml",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Build retrieval-augmented generation",
+              "url": "https://docs.langchain.com/oss/python/deepagents/rag"
+            }
+          ]
+        },
+        {
+          "name": "LLM Evaluation",
+          "category": "ml",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Evaluate models with Hugging Face",
+              "url": "https://huggingface.co/docs/evaluate/index"
+            }
+          ]
+        },
+        {
+          "name": "Machine Learning",
+          "category": "ml",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Google ML Crash Course",
+              "url": "https://developers.google.com/machine-learning/crash-course"
+            },
+            {
+              "title": "StatQuest (YouTube)",
+              "url": "https://www.youtube.com/@statquest"
+            },
+            {
+              "title": "Andrew Ng ML Course (Coursera)",
+              "url": "https://www.coursera.org/learn/machine-learning"
+            }
+          ]
+        },
+        {
+          "name": "Prompt Engineering",
+          "category": "ml",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Prompt design strategies",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies"
+            }
+          ]
+        },
+        {
+          "name": "Transformers",
+          "category": "ml",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Transformers documentation",
+              "url": "https://huggingface.co/docs/transformers/index"
+            },
+            {
+              "title": "Hugging Face Transformers quick tour",
+              "url": "https://huggingface.co/docs/transformers/quicktour"
+            }
+          ]
+        },
+        {
+          "name": "AI Safety",
+          "category": "ml",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "NIST AI Risk Management Framework",
+              "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+            }
+          ]
+        },
+        {
+          "name": "Deep Learning",
+          "category": "ml",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "fast.ai Practical Deep Learning",
+              "url": "https://course.fast.ai/"
+            },
+            {
+              "title": "3Blue1Brown — Neural Networks (YouTube)",
+              "url": "https://www.youtube.com/@3blue1brown"
+            },
+            {
+              "title": "DeepLearning.AI",
+              "url": "https://www.deeplearning.ai/"
+            }
+          ]
+        },
+        {
+          "name": "PyTorch",
+          "category": "framework",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "PyTorch tutorials",
+              "url": "https://pytorch.org/tutorials/"
+            },
+            {
+              "title": "Aladdin Persson (YouTube)",
+              "url": "https://www.youtube.com/@AladdinPersson"
+            },
+            {
+              "title": "PyTorch Basics Tutorial",
+              "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+            },
+            {
+              "title": "PyTorch Official Docs",
+              "url": "https://docs.pytorch.org/docs/stable/index.html"
+            },
+            {
+              "title": "PyTorch Tutorials",
+              "url": "https://docs.pytorch.org/tutorials/"
+            }
+          ]
+        },
+        {
+          "name": "Vector Databases",
+          "category": "database",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Pinecone vector database guide",
+              "url": "https://docs.pinecone.io/guides/get-started/overview"
+            },
+            {
+              "title": "Qdrant vector search quickstart",
+              "url": "https://qdrant.tech/documentation/quickstart/"
+            }
+          ]
+        },
+        {
+          "name": "Fine-tuning",
+          "category": "ml",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "Parameter-efficient fine-tuning",
+              "url": "https://huggingface.co/docs/peft/index"
+            }
+          ]
+        },
+        {
+          "name": "FastAPI",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "FastAPI Tutorial (official)",
+              "url": "https://fastapi.tiangolo.com/tutorial/"
+            },
+            {
+              "title": "ArjanCodes (YouTube)",
+              "url": "https://www.youtube.com/@ArjanCodes"
+            },
+            {
+              "title": "FastAPI Official Docs",
+              "url": "https://fastapi.tiangolo.com/"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Backend Developer",
+      "label": "Backend Developer",
+      "skills": [
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Traversy Media (YouTube)",
+              "url": "https://www.youtube.com/@TraversyMedia"
+            },
+            {
+              "title": "The Odin Project — Node Path",
+              "url": "https://www.theodinproject.com/paths/full-stack-javascript"
+            },
+            {
+              "title": "Node.js Official Docs",
+              "url": "https://nodejs.org/docs/latest/api/"
+            },
+            {
+              "title": "Node.js Tutorial (W3Schools)",
+              "url": "https://www.w3schools.com/nodejs/"
+            }
+          ]
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology (YouTube)",
+              "url": "https://www.youtube.com/@IBMTechnology"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Redis",
+          "category": "database",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Redis getting started",
+              "url": "https://redis.io/docs/latest/develop/get-started/"
+            }
+          ]
+        },
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "ByteByteGo (YouTube)",
+              "url": "https://www.youtube.com/@ByteByteGo"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/karanpratapsingh/system-design"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/donnemartin/system-design-primer"
+            }
+          ]
+        },
+        {
+          "name": "GraphQL",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "GraphQL fundamentals",
+              "url": "https://graphql.org/learn/"
+            }
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "MongoDB (YouTube)",
+              "url": "https://www.youtube.com/@MongoDB"
+            },
+            {
+              "title": "MongoDB Developer Center",
+              "url": "https://www.mongodb.com/developer/"
+            },
+            {
+              "title": "MongoDB University",
+              "url": "https://learn.mongodb.com/"
+            },
+            {
+              "title": "MongoDB Manual",
+              "url": "https://www.mongodb.com/docs/manual/"
+            }
+          ]
+        },
+        {
+          "name": "OAuth",
+          "category": "security",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "OAuth 2.0 concepts and implementation",
+              "url": "https://oauth.net/2/"
+            }
+          ]
+        },
+        {
+          "name": "Jest",
+          "category": "testing",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Jest getting started",
+              "url": "https://jestjs.io/docs/getting-started"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Cloud Engineer",
+      "label": "Cloud Engineer",
+      "skills": [
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "GitHub Actions quickstart",
+              "url": "https://docs.github.com/en/actions/get-started/quickstart"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "HashiCorp Terraform tutorials",
+              "url": "https://developer.hashicorp.com/terraform/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Azure",
+          "category": "cloud",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Azure fundamentals learning path",
+              "url": "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/"
+            }
+          ]
+        },
+        {
+          "name": "Cloud Security",
+          "category": "security",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "AWS security best practices",
+              "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Ansible",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Ansible getting started",
+              "url": "https://docs.ansible.com/ansible/latest/getting_started/index.html"
+            }
+          ]
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Cisco networking basics",
+              "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html"
+            }
+          ]
+        },
+        {
+          "name": "Prometheus",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Prometheus getting started",
+              "url": "https://prometheus.io/docs/prometheus/latest/getting_started/"
+            }
+          ]
+        },
+        {
+          "name": "Go",
+          "category": "language",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Go tutorials",
+              "url": "https://go.dev/doc/tutorial/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Cybersecurity Analyst",
+      "label": "Cybersecurity Analyst",
+      "skills": [
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "NIST incident response recommendations",
+              "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+            }
+          ]
+        },
+        {
+          "name": "SIEM Tools",
+          "category": "tools",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Microsoft Sentinel overview",
+              "url": "https://learn.microsoft.com/en-us/azure/sentinel/overview"
+            }
+          ]
+        },
+        {
+          "name": "Vulnerability Assessment",
+          "category": "security",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "OWASP security testing framework",
+              "url": "https://owasp.org/www-project-web-security-testing-guide/"
+            }
+          ]
+        },
+        {
+          "name": "Endpoint Detection and Response",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft endpoint detection and response overview",
+              "url": "https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response"
+            }
+          ]
+        },
+        {
+          "name": "Firewalls and VPNs",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft Azure network security overview",
+              "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview"
+            }
+          ]
+        },
+        {
+          "name": "Network Security",
+          "category": "security",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "NIST zero trust architecture",
+              "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Cloud Security",
+          "category": "security",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "AWS security best practices",
+              "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
+            }
+          ]
+        },
+        {
+          "name": "IAM",
+          "category": "security",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "AWS IAM introduction",
+              "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Threat Modeling",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "OWASP threat modeling guide",
+              "url": "https://owasp.org/www-community/Threat_Modeling"
+            }
+          ]
+        },
+        {
+          "name": "Penetration Testing",
+          "category": "testing",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "PortSwigger Web Security Academy",
+              "url": "https://portswigger.net/web-security"
+            }
+          ]
+        },
+        {
+          "name": "PowerShell",
+          "category": "language",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Microsoft PowerShell learning resources",
+              "url": "https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/00-introduction"
+            }
+          ]
+        },
+        {
+          "name": "Wireshark",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Wireshark user guide",
+              "url": "https://www.wireshark.org/docs/wsug_html_chunked/"
+            }
+          ]
+        },
+        {
+          "name": "Compliance Frameworks",
+          "category": "security",
+          "weight": 0.2,
+          "resources": [
+            {
+              "title": "NIST Cybersecurity Framework",
+              "url": "https://www.nist.gov/cyberframework"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Data Engineer",
+      "label": "Data Engineer",
+      "skills": [
+        {
+          "name": "Apache Spark",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Apache Spark quick start",
+              "url": "https://spark.apache.org/docs/latest/quick-start.html"
+            }
+          ]
+        },
+        {
+          "name": "ETL/ELT Design",
+          "category": "architecture",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Microsoft data integration concepts",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/data-guide/relational-data/etl"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Apache Airflow",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Airflow core concepts",
+              "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/overview.html"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Data Modeling",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft dimensional modeling guidance",
+              "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema"
+            }
+          ]
+        },
+        {
+          "name": "Snowflake",
+          "category": "database",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Snowflake tutorials",
+              "url": "https://docs.snowflake.com/en/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "PostgreSQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html"
+            }
+          ]
+        },
+        {
+          "name": "dbt",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "dbt quickstart guides",
+              "url": "https://docs.getdbt.com/docs/get-started-dbt"
+            }
+          ]
+        },
+        {
+          "name": "Kafka",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Apache Kafka quickstart",
+              "url": "https://kafka.apache.org/quickstart"
+            }
+          ]
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "HashiCorp Terraform tutorials",
+              "url": "https://developer.hashicorp.com/terraform/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "NoSQL",
+          "category": "database",
+          "weight": 0.2,
+          "resources": [
+            {
+              "title": "MongoDB data modeling guide",
+              "url": "https://www.mongodb.com/docs/manual/data-modeling/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Data Scientist",
+      "label": "Data Scientist",
+      "skills": [
+        {
+          "name": "Machine Learning",
+          "category": "ml",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Google ML Crash Course",
+              "url": "https://developers.google.com/machine-learning/crash-course"
+            },
+            {
+              "title": "StatQuest (YouTube)",
+              "url": "https://www.youtube.com/@statquest"
+            },
+            {
+              "title": "Andrew Ng ML Course (Coursera)",
+              "url": "https://www.coursera.org/learn/machine-learning"
+            }
+          ]
+        },
+        {
+          "name": "Pandas",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Keith Galli (YouTube)",
+              "url": "https://www.youtube.com/@KeithGalli"
+            },
+            {
+              "title": "Pandas Getting Started",
+              "url": "https://pandas.pydata.org/docs/getting_started/index.html"
+            },
+            {
+              "title": "Pandas User Guide",
+              "url": "https://pandas.pydata.org/docs/user_guide/index.html"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Statistics",
+          "category": "core-cs",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Seeing Theory — Visual Statistics",
+              "url": "https://seeing-theory.brown.edu/"
+            },
+            {
+              "title": "StatQuest Statistics (YouTube)",
+              "url": "https://www.youtube.com/@statquest"
+            },
+            {
+              "title": "Khan Academy Statistics",
+              "url": "https://www.khanacademy.org/math/statistics-probability"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Tableau/Power BI (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "scikit-learn",
+          "category": "framework",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Data School (YouTube)",
+              "url": "https://www.youtube.com/@dataschool"
+            },
+            {
+              "title": "scikit-learn Getting Started",
+              "url": "https://scikit-learn.org/stable/getting_started.html"
+            },
+            {
+              "title": "scikit-learn Docs",
+              "url": "https://scikit-learn.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "Apache Spark",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Apache Spark quick start",
+              "url": "https://spark.apache.org/docs/latest/quick-start.html"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "PyTorch",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "PyTorch tutorials",
+              "url": "https://pytorch.org/tutorials/"
+            },
+            {
+              "title": "Aladdin Persson (YouTube)",
+              "url": "https://www.youtube.com/@AladdinPersson"
+            },
+            {
+              "title": "PyTorch Basics Tutorial",
+              "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+            },
+            {
+              "title": "PyTorch Official Docs",
+              "url": "https://docs.pytorch.org/docs/stable/index.html"
+            },
+            {
+              "title": "PyTorch Tutorials",
+              "url": "https://docs.pytorch.org/tutorials/"
+            }
+          ]
+        },
+        {
+          "name": "A/B Testing",
+          "category": "core-cs",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Firebase A/B testing guide",
+              "url": "https://firebase.google.com/docs/ab-testing"
+            }
+          ]
+        },
+        {
+          "name": "Snowflake",
+          "category": "database",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Snowflake tutorials",
+              "url": "https://docs.snowflake.com/en/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Tableau",
+          "category": "tools",
+          "weight": 0.2,
+          "resources": [
+            {
+              "title": "Tableau getting started tutorial",
+              "url": "https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-home.htm"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DevOps Engineer",
+      "label": "DevOps Engineer",
+      "skills": [
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "GitHub Actions quickstart",
+              "url": "https://docs.github.com/en/actions/get-started/quickstart"
+            }
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "HashiCorp Terraform tutorials",
+              "url": "https://developer.hashicorp.com/terraform/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Prometheus",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Prometheus getting started",
+              "url": "https://prometheus.io/docs/prometheus/latest/getting_started/"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Ansible",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Ansible getting started",
+              "url": "https://docs.ansible.com/ansible/latest/getting_started/index.html"
+            }
+          ]
+        },
+        {
+          "name": "Bash",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Ubuntu command-line tutorial",
+              "url": "https://ubuntu.com/tutorials/command-line-for-beginners"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "IAM",
+          "category": "security",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "AWS IAM introduction",
+              "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+            }
+          ]
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Cisco networking basics",
+              "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html"
+            }
+          ]
+        },
+        {
+          "name": "Helm",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Helm quickstart guide",
+              "url": "https://helm.sh/docs/intro/quickstart/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Full-Stack Developer",
+      "label": "Full-Stack Developer",
+      "skills": [
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "JavaScript Mastery (YouTube)",
+              "url": "https://www.youtube.com/@javascriptmastery"
+            },
+            {
+              "title": "JavaScript30 — 30 Day Challenge",
+              "url": "https://javascript30.com/"
+            },
+            {
+              "title": "MDN JavaScript Guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+            },
+            {
+              "title": "JavaScript.info",
+              "url": "https://javascript.info/"
+            }
+          ]
+        },
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Traversy Media (YouTube)",
+              "url": "https://www.youtube.com/@TraversyMedia"
+            },
+            {
+              "title": "The Odin Project — Node Path",
+              "url": "https://www.theodinproject.com/paths/full-stack-javascript"
+            },
+            {
+              "title": "Node.js Official Docs",
+              "url": "https://nodejs.org/docs/latest/api/"
+            },
+            {
+              "title": "Node.js Tutorial (W3Schools)",
+              "url": "https://www.w3schools.com/nodejs/"
+            }
+          ]
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html"
+            }
+          ]
+        },
+        {
+          "name": "React",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "The Net Ninja React (YouTube)",
+              "url": "https://www.youtube.com/@NetNinja"
+            },
+            {
+              "title": "React Tutorial (official)",
+              "url": "https://react.dev/learn"
+            },
+            {
+              "title": "React Official Docs",
+              "url": "https://react.dev/"
+            },
+            {
+              "title": "freeCodeCamp React",
+              "url": "https://www.freecodecamp.org/learn/front-end-development-libraries/#react"
+            },
+            {
+              "title": "Frontend Mentor — Frontend Challenges",
+              "url": "https://www.frontendmentor.io/"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology (YouTube)",
+              "url": "https://www.youtube.com/@IBMTechnology"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "TypeScript",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Matt Pocock (YouTube)",
+              "url": "https://www.youtube.com/@mattpocockuk"
+            },
+            {
+              "title": "TypeScript Playground",
+              "url": "https://www.typescriptlang.org/play"
+            },
+            {
+              "title": "TypeScript Handbook",
+              "url": "https://www.typescriptlang.org/docs/handbook/intro.html"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "ByteByteGo (YouTube)",
+              "url": "https://www.youtube.com/@ByteByteGo"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/karanpratapsingh/system-design"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/donnemartin/system-design-primer"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Amazon Web Services (YouTube)",
+              "url": "https://www.youtube.com/@amazonwebservices"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "MongoDB (YouTube)",
+              "url": "https://www.youtube.com/@MongoDB"
+            },
+            {
+              "title": "MongoDB Developer Center",
+              "url": "https://www.mongodb.com/developer/"
+            },
+            {
+              "title": "MongoDB University",
+              "url": "https://learn.mongodb.com/"
+            },
+            {
+              "title": "MongoDB Manual",
+              "url": "https://www.mongodb.com/docs/manual/"
+            }
+          ]
+        },
+        {
+          "name": "GraphQL",
+          "category": "framework",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "GraphQL fundamentals",
+              "url": "https://graphql.org/learn/"
+            }
+          ]
+        },
+        {
+          "name": "Jest",
+          "category": "testing",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Jest getting started",
+              "url": "https://jestjs.io/docs/getting-started"
+            }
+          ]
+        },
+        {
+          "name": "Redis",
+          "category": "database",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Redis getting started",
+              "url": "https://redis.io/docs/latest/develop/get-started/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QA/Test Engineer",
+      "label": "QA/Test Engineer",
+      "skills": [
+        {
+          "name": "API Testing",
+          "category": "testing",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Postman API test scripts",
+              "url": "https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-scripts/"
+            }
+          ]
+        },
+        {
+          "name": "Selenium",
+          "category": "framework",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Selenium WebDriver first script",
+              "url": "https://www.selenium.dev/documentation/webdriver/getting_started/first_script/"
+            }
+          ]
+        },
+        {
+          "name": "Test Automation",
+          "category": "testing",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Playwright test-writing guide",
+              "url": "https://playwright.dev/docs/writing-tests"
+            }
+          ]
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "GitHub Actions quickstart",
+              "url": "https://docs.github.com/en/actions/get-started/quickstart"
+            }
+          ]
+        },
+        {
+          "name": "Java",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Java learning guides",
+              "url": "https://dev.java/learn/"
+            }
+          ]
+        },
+        {
+          "name": "Postman",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Postman first steps",
+              "url": "https://learning.postman.com/docs/getting-started/first-steps/"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Corey Schafer (YouTube)",
+              "url": "https://www.youtube.com/@coreyms"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Cypress",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Cypress first end-to-end test",
+              "url": "https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test"
+            }
+          ]
+        },
+        {
+          "name": "Jira",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Atlassian Jira getting started guide",
+              "url": "https://www.atlassian.com/software/jira/guides/getting-started/introduction"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst (YouTube)",
+              "url": "https://www.youtube.com/@AlexTheAnalyst"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana (YouTube)",
+              "url": "https://www.youtube.com/@TechWorldwithNana"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub (YouTube)",
+              "url": "https://www.youtube.com/@github"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Performance Testing",
+          "category": "testing",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Grafana k6 getting started",
+              "url": "https://grafana.com/docs/k6/latest/get-started/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skillCount": 82,
+  "resourceCount": 189
+}

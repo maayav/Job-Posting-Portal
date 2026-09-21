@@ -9,6 +9,7 @@ describe('Ontology seed source', () => {
     const expected = [
       'SDE',
       'ML Engineer',
+      'AI Engineer',
       'Full-Stack Developer',
       'Backend Developer',
       'Data Scientist',

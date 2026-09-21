@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import UploadForm from '../components/UploadForm';
 import ExtractedSkillReview from '../components/ExtractedSkillReview';
@@ -12,6 +12,7 @@ const POLL_MS = 4000;
 
 export default function UploadPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const prefersReducedMotion = useReducedMotion();
 
   const [phase, setPhase] = useState('upload'); // upload | review | analyzing
@@ -158,7 +159,7 @@ export default function UploadPage() {
           >
             {phase === 'upload' && (
               <>
-                <UploadForm onSubmit={handleUpload} loading={loading} />
+                <UploadForm requestedRole={searchParams.get('role')} onSubmit={handleUpload} loading={loading} />
                 {error && <p className="error card-error">{error}</p>}
               </>
             )}

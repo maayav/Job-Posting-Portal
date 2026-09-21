@@ -51,7 +51,9 @@ npm --prefix backend run seed
 npm run dev
 ```
 
-Open the URL printed by Vite, usually <http://localhost:5173>. If that port is occupied, Vite automatically selects the next available port. The frontend proxies `/api` requests to the backend at `http://localhost:5000`.
+Open <http://localhost:5173>. The frontend proxies `/api` requests to the backend at `http://localhost:5000`.
+
+The frontend uses port `5173` and the backend uses port `5000`. Both fail fast when the port is already taken, so stop any previous dev server or free the port first.
 
 Create a student account from the app. Public registration cannot create administrators. To promote an existing account or create an administrator, use the backend CLI:
 
@@ -112,13 +114,59 @@ Run from the repository root:
 | `npm run lint` | Run the frontend linter |
 | `npm run build` | Build the production frontend |
 
-Stop a development server with **Ctrl+C** in the terminal that started it. If port 5173 is already serving Vortex, keep using that browser tab; starting another frontend will select the next free port.
+Stop a development server with **Ctrl+C** in the terminal that started it. The frontend uses a fixed port (`5173`, strict) so a second instance fails fast instead of hiding on another port — free the port or keep using the running server.
 
-## Windows setup
+## Platform setup
 
-The app uses Node scripts and cross-platform npm commands; WSL is not required. Install Node.js 22.12+, Git for Windows, and Docker Desktop, then run the same Quick start commands from PowerShell. If PowerShell blocks `npm.ps1`, use `npm.cmd` in its place. Docker Desktop must be running before `docker compose up -d mongo`.
+The same four commands work everywhere; the differences are only in the shell and in how you free a busy port.
 
-Install dependencies on the Windows machine itself; do not copy `node_modules` from Linux or macOS. If `bcrypt` needs to compile, install Visual Studio Build Tools with the C++ workload and Python, then run `npm rebuild bcrypt`. More Windows notes are in [`docs/SETUP.md`](docs/SETUP.md#7-windows-setup-notes).
+### Linux and macOS
+
+```sh
+npm run setup                 # creates backend/.env from the example if missing
+npm run install:all           # installs backend + frontend dependencies
+docker compose up -d mongo    # Docker Engine or Docker Desktop must be running
+npm --prefix backend run seed # embeds the skill ontology, loads resources
+npm run dev                   # API on :5000 and Vite on :5173
+```
+
+- MongoDB data lives in the named Docker volume `mongo_data`; `docker compose down` keeps it, `docker compose down -v` deletes it.
+- Free a busy port when needed:
+  ```sh
+  lsof -ti tcp:5173 | xargs -r kill   # frontend
+  lsof -ti tcp:5000 | xargs -r kill   # backend
+  ```
+- On Linux, `bcrypt` ships prebuilt binaries; if your distribution/Node combination has no prebuild, install build tools (`build-essential`, `python3`) and run `npm rebuild bcrypt`.
+
+### Windows (PowerShell)
+
+WSL is not required. Install Node.js 22.12+ (or nvm-windows), Git for Windows, and Docker Desktop with the WSL2 backend, then run the same commands from the repository root:
+
+```powershell
+npm run setup
+npm run install:all
+docker compose up -d mongo
+npm --prefix backend run seed
+npm run dev
+```
+
+- Start **Docker Desktop** before `docker compose up -d mongo`; keep it on Linux containers.
+- If PowerShell blocks `npm.ps1` with an execution-policy error, call `npm.cmd` instead (no policy change needed).
+- Set one-off environment variables for the current shell like this:
+  ```powershell
+  $env:ADMIN_PASSWORD = 'your-local-password'
+  node backend/scripts/create-admin.js admin@example.com --name "Placement Admin"
+  Remove-Item Env:ADMIN_PASSWORD
+  ```
+- Free a busy port:
+  ```powershell
+  Get-NetTCPConnection -LocalPort 5173 | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }
+  Get-NetTCPConnection -LocalPort 5000 | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }
+  ```
+- Install dependencies on Windows itself — never copy `node_modules` from Linux or macOS. If `bcrypt` has no prebuilt binary for your Node version, install Visual Studio Build Tools with the **Desktop development with C++** workload and Python, then run `npm rebuild bcrypt`.
+- Line endings are normalized by `.gitattributes`. If you cloned before it existed, run `git add --renormalize .` once.
+- If `localhost` does not resolve to the API in your environment, use `127.0.0.1` in `MONGO_URI` and in the Vite proxy (`frontend/vite.config.js`).
+- More Windows notes are in [`docs/SETUP.md`](docs/SETUP.md#7-windows-setup-notes).
 
 ## Repository layout
 
@@ -144,3 +192,17 @@ scripts/    Cross-platform root setup and development launchers
 - Resume text and password hashes are not returned by the API.
 - Ownership and administrator access are enforced by backend routes.
 - Demo credentials and generated records belong only in a local development database.
+
+### Landing page and AI Engineer guide
+
+The public landing page uses flat cream/charcoal surfaces and locally hosted Manrope. Anime.js handles one-time fades; Motion handles tab, chart, hover, and swipe interactions. The Kokonut UI tabs and Bklit horizontal bar primitive are adapted to this palette; their MIT notices are in `THIRD_PARTY_NOTICES.md`.
+
+The interactive guide and its counts are generated from `backend/ontology/*.json` and `backend/resources/*.json`, not example scores or user records. `npm run dev` and the frontend build regenerate `frontend/src/data/role-catalog.json`. To regenerate it manually, run `node scripts/build-role-catalog.mjs` from the project root.
+
+To add AI Engineer to an existing database without replacing other roles, run:
+
+```sh
+npm --prefix backend run seed:ai-engineer
+```
+
+This embeds any missing skills using the configured Gemini embedding provider, reuses compatible existing vectors, and upserts curated learning resources. Groq remains the text provider. For a clearly labeled sample AI Engineer posting, run `npm --prefix backend run seed:ai-engineer -- --with-demo-job` after creating an admin. Both commands also work in PowerShell. Fresh full ontology/job seeds include this role.

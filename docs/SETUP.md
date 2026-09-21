@@ -17,7 +17,7 @@ npm --prefix backend run seed
 npm run dev
 ```
 
-`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open the URL printed by Vite (normally **http://localhost:5173**); if the port is occupied, Vite automatically selects another. Never open `frontend/index.html` or downloaded app pages with `file://`.
+`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open **http://localhost:5173**; Vite uses a strict fixed port, so if it is occupied, stop the previous dev server or free the port instead of expecting another one. Never open `frontend/index.html` or downloaded app pages with `file://`.
 
 Required AI configuration:
 
@@ -103,7 +103,7 @@ npm install
 npm run dev               # Vite on :5173, proxies /api → :5000
 ```
 
-If port 5173 is already in use, Vite automatically chooses the next free port. Use the URL printed in the terminal, or stop the previous Vite process with Ctrl+C.
+If port 5173 is already in use, Vite stops with a `Port 5173 is already in use` error. Stop the previous Vite process with Ctrl+C, or free the port (`lsof -ti tcp:5173 | xargs -r kill` on Linux/macOS; `Get-NetTCPConnection -LocalPort 5173 | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }` in PowerShell).
 
 Open http://localhost:5173, register, upload a PDF resume (+ optional GitHub username), review extracted skills, then analyze to see the readiness score and study plan.
 

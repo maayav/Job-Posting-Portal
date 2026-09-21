@@ -13,7 +13,8 @@
     "check:resources": "node scripts/check-resource-links.js",
     "refresh-ontology": "node scripts/refresh-ontology.js",
     "drift-baseline": "node scripts/record-drift-baseline.js",
-    "gen-resumes": "node scripts/generate-sample-resumes.js"
+    "gen-resumes": "node scripts/generate-sample-resumes.js",
+    "seed:ai-engineer": "node scripts/seed-ai-engineer.js"
   },
   "license": "UNLICENSED",
   "private": true,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api, errorMessage } from '../api/client';
 
-export default function UploadForm({ onSubmit, loading }) {
+export default function UploadForm({ onSubmit, loading, requestedRole }) {
   const [file, setFile] = useState(null);
   const [github, setGithub] = useState('');
   const [leetcode, setLeetcode] = useState('');
@@ -19,7 +19,7 @@ export default function UploadForm({ onSubmit, loading }) {
         if (!active) return;
         const available = res.data.roles ?? [];
         setRoles(available);
-        if (available.length > 0) setRole(available[0].id);
+        if (available.length > 0) setRole(available.some((r) => r.id === requestedRole) ? requestedRole : available[0].id);
       })
       .catch((err) => {
         if (active) setRolesError(errorMessage(err));
@@ -27,7 +27,7 @@ export default function UploadForm({ onSubmit, loading }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [requestedRole]);
 
   function handleFile(e) {
     const f = e.target.files?.[0] ?? null;

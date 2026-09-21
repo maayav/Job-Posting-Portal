@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import {
-  initDb, closeDb,
+  initDb, closeDb, clearDb,
 } from './helpers.js';
 import { computeBestMatches, computeScore, categorize, generateReport, normalizeName } from '../src/services/scoringService.js';
 import { cosineSimilarity } from '../src/services/embeddingService.js';
@@ -20,6 +20,16 @@ function ontologySkill(name, weight, vector) {
 describe('Deterministic scoring (Section 6 formula)', () => {
   beforeAll(initDb);
   afterAll(closeDb);
+  beforeEach(clearDb);
+
+  it('matches AI skill aliases without confusing different skills', () => {
+    const matches = computeBestMatches([
+      ontologySkill('Retrieval-Augmented Generation', .9),
+      ontologySkill('Large Language Models', .9),
+      ontologySkill('React', .5),
+    ], [{ name: 'RAG', vector: vec('RAG') }, { name: 'LLMs', vector: vec('LLMs') }]);
+    expect(matches.map((s) => s.percent)).toEqual([100, 100, 0]);
+  });
 
   it('computes the exact weighted formula', () => {
     const a = ontologySkill('React', 0.7, [1, 0, 0]);

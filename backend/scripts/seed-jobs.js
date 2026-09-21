@@ -1,6 +1,7 @@
 import { connectDB, disconnectDB } from '../src/config/db.js';
 import { Job } from '../src/models/job.js';
 import { User } from '../src/models/user.js';
+import { AI_ENGINEER_JOB } from './ai-engineer-job.js';
 
 // DEVELOPMENT / DEMO ONLY — idempotent job seed data.
 //
@@ -11,6 +12,7 @@ import { User } from '../src/models/user.js';
 // Only touches the `jobs` collection; placement collections are untouched.
 
 const DEMO_JOBS = [
+  AI_ENGINEER_JOB,
   {
     title: 'Frontend Developer',
     company: 'Northstar Labs',

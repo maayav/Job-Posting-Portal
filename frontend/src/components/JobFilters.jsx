@@ -3,6 +3,8 @@ import { normalizeSkillName } from '../utils/skills';
 import { motion } from 'motion/react';
 
 const POPULAR_SKILLS = [
+  'Large Language Models', 'Retrieval-Augmented Generation', 'Prompt Engineering',
+  'Vector Databases', 'LLM Evaluation', 'Fine-tuning', 'AI Safety',
   'FastAPI', 'Python', 'Django', 'TypeScript', 'PostgreSQL', 'Redis',
   'AWS', 'Docker', 'Kubernetes', 'GraphQL', 'PyTorch', 'TensorFlow',
   'React', 'Node.js', 'UI/UX', 'Flask', 'Spring Boot', '.NET', 'Go',

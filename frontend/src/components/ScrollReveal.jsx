@@ -1,82 +1,87 @@
 import { useContext, useLayoutEffect, useRef } from 'react';
-import { loadGsap } from '../utils/gsapRuntime';
+import { waapi } from 'animejs';
 import { LandingMotionContext } from '../context/LandingMotionContext';
 
-const origins = { left: [-42, 16], right: [42, 16], up: [0, 34], down: [0, -28] };
+const origins = { left: [-24, 8], right: [24, 8], up: [0, 22], down: [0, -18] };
 
 export default function ScrollReveal({ as = 'div', direction = 'up', delay = 0, stagger = false, children, ...props }) {
   const ref = useRef(null);
-  const revealed = useRef(false);
+  const completed = useRef(new WeakSet());
   const motionEnabled = useContext(LandingMotionContext);
+
   useLayoutEffect(() => {
     const element = ref.current;
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!element || revealed.current || motionEnabled === false || (motionEnabled === null && media.matches) || !('IntersectionObserver' in window) || element.getBoundingClientRect().bottom < 0) return;
+    if (!element || motionEnabled === false || (motionEnabled !== true && media.matches)
+      || !('IntersectionObserver' in window) || !element.animate) return;
+
     const targets = stagger ? Array.from(element.children) : [element];
     const [x, y] = origins[direction] ?? origins.up;
-    const isInitiallyVisible = targets.some((target) => {
-      const rect = target.getBoundingClientRect();
-      return rect.top < window.innerHeight * .92 && rect.bottom > 0;
-    });
-
-    // Anything already on screen must render in its final state. Hiding it for
-    // one frame while the observer starts is what caused the hero/footer flash.
-    if (isInitiallyVisible) {
-      revealed.current = true;
-      return;
-    }
-
-    let cancelled = false;
-    let finished = false;
-    let context;
-    let gsapInstance;
-    const clear = () => targets.forEach((target) => {
-      target.removeAttribute('data-reveal-pending');
-      target.style.removeProperty('--reveal-x');
-      target.style.removeProperty('--reveal-y');
-    });
-    const finish = () => {
-      revealed.current = true;
-      finished = true;
-      observer.disconnect();
-      gsapInstance?.killTweensOf(targets);
-      gsapInstance?.set(targets, { clearProps: 'opacity,transform' });
-      clear();
+    const started = new Set();
+    const animations = new Map();
+    const clear = (target) => target.removeAttribute('data-reveal-pending');
+    const finish = (target) => {
+      completed.current.add(target);
+      observer.unobserve(target);
+      clear(target);
+      const animation = animations.get(target);
+      if (animation) {
+        animation.onComplete = () => {};
+        animation.revert();
+        animations.delete(target);
+      }
+    };
+    const reveal = (target) => {
+      if (started.has(target) || completed.current.has(target)) return;
+      started.add(target);
+      observer.unobserve(target);
+      try {
+        // Start synchronously, without waiting for an animation bundle.
+        // Individual translate leaves card hover transforms untouched.
+        const animation = waapi.animate(target, {
+          opacity: [0, 1],
+          translate: [`${x}px ${y}px`, '0px 0px'],
+          duration: 620,
+          delay: (delay + (stagger ? targets.indexOf(target) * .07 : 0)) * 1000,
+          ease: 'out(3)',
+          onComplete: () => finish(target),
+        });
+        animations.set(target, animation);
+      } catch {
+        finish(target);
+      }
     };
     const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      revealed.current = true;
-      observer.disconnect();
-      targets.forEach((target) => {
-        target.style.setProperty('--reveal-x', `${x}px`);
-        target.style.setProperty('--reveal-y', `${y}px`);
-        target.setAttribute('data-reveal-pending', '');
-      });
-      loadGsap().then(({ gsap }) => {
-        if (cancelled || finished) return;
-        gsapInstance = gsap;
-        context = gsap.context(() => {
-          gsap.fromTo(targets, { x, y }, {
-            x: 0, y: 0, duration: .72, delay,
-            stagger: stagger ? .09 : 0, ease: 'power3.out',
-            clearProps: 'opacity,transform', onComplete: clear,
-          });
-        }, element);
-      }).catch(clear);
-    }, { rootMargin: '0px 0px -24px 0px', threshold: .08 });
-    observer.observe(element);
-    element.addEventListener('focusin', finish);
-    const onMotionChange = () => { if (media.matches && motionEnabled !== true) finish(); };
+      entries.forEach((entry) => { if (entry.isIntersecting) reveal(entry.target); });
+    }, { rootMargin: '0px 0px -16px 0px', threshold: 0 });
+
+    targets.forEach((target) => {
+      if (completed.current.has(target)) return;
+      const rect = target.getBoundingClientRect();
+      if (rect.bottom < 0) return;
+      // Prepare before the first paint, never after content becomes visible.
+      target.setAttribute('data-reveal-pending', '');
+      if (rect.top < window.innerHeight - 16 && rect.bottom > 0
+        && rect.left < window.innerWidth && rect.right > 0) reveal(target);
+      else observer.observe(target);
+    });
+
+    const finishAll = () => targets.forEach(finish);
+    const onMotionChange = () => { if (media.matches && motionEnabled !== true) finishAll(); };
+    element.addEventListener('focusin', finishAll);
     media.addEventListener('change', onMotionChange);
     return () => {
-      cancelled = true;
       observer.disconnect();
-      element.removeEventListener('focusin', finish);
+      element.removeEventListener('focusin', finishAll);
       media.removeEventListener('change', onMotionChange);
-      context?.revert();
-      clear();
+      animations.forEach((animation) => {
+        animation.onComplete = () => {};
+        animation.revert();
+      });
+      targets.forEach(clear);
     };
   }, [delay, direction, stagger, motionEnabled]);
+
   const Tag = as;
   return <Tag {...props} ref={ref} data-reveal-direction={direction}>{children}</Tag>;
 }

@@ -1,0 +1,116 @@
+{
+  "resources": [
+    {
+      "skill_name": "Python",
+      "title": "Python tutorial",
+      "url": "https://docs.python.org/3/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Machine Learning",
+      "title": "Machine learning course",
+      "url": "https://developers.google.com/machine-learning/crash-course",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Deep Learning",
+      "title": "Practical deep learning",
+      "url": "https://course.fast.ai/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "PyTorch",
+      "title": "PyTorch tutorials",
+      "url": "https://pytorch.org/tutorials/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Transformers",
+      "title": "Transformers documentation",
+      "url": "https://huggingface.co/docs/transformers/index",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Large Language Models",
+      "title": "Hugging Face LLM course",
+      "url": "https://huggingface.co/learn/llm-course/chapter1/1",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Prompt Engineering",
+      "title": "Prompt design strategies",
+      "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Retrieval-Augmented Generation",
+      "title": "Build retrieval-augmented generation",
+      "url": "https://docs.langchain.com/oss/python/deepagents/rag",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Vector Databases",
+      "title": "Pinecone vector database guide",
+      "url": "https://docs.pinecone.io/guides/get-started/overview",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "LLM Evaluation",
+      "title": "Evaluate models with Hugging Face",
+      "url": "https://huggingface.co/docs/evaluate/index",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Fine-tuning",
+      "title": "Parameter-efficient fine-tuning",
+      "url": "https://huggingface.co/docs/peft/index",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "FastAPI",
+      "title": "FastAPI tutorial",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "SQL",
+      "title": "PostgreSQL SQL tutorial",
+      "url": "https://www.postgresql.org/docs/current/tutorial-sql.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Docker",
+      "title": "Docker getting started",
+      "url": "https://docs.docker.com/get-started/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Git",
+      "title": "Pro Git book",
+      "url": "https://git-scm.com/book/en/v2",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "AI Safety",
+      "title": "NIST AI Risk Management Framework",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "type": "documentation",
+      "verified": true
+    }
+  ]
+}

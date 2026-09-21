@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+await import('./build-role-catalog.mjs');
 const root = new URL('../', import.meta.url);
 const children = [
   ['backend', ['--watch', 'server.js']],

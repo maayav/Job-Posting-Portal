@@ -60,19 +60,19 @@ describe('App routing and navigation order', () => {
     signIn('student');
     localStorage.setItem('report_id', 'r1');
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /find a role.*see what you.*need to learn/i })).toBeTruthy();
   });
 
   it('renders the landing page for unauthenticated users', async () => {
     renderApp('/');
-    expect(await screen.findByRole('heading', { name: /ai|clearer next step/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /find a role.*see what you.*need to learn/i })).toBeTruthy();
   });
 
-  it('plays the landing atmosphere by default without exposing a pause control', async () => {
+  it('uses a flat landing page without decorative atmosphere or a pause control', async () => {
     renderApp('/');
-    await screen.findByRole('heading', { name: /ai|clearer next step/i });
+    await screen.findByRole('heading', { name: /find a role.*see what you.*need to learn/i });
     expect(document.querySelector('main').dataset.motion).toBe('enabled');
-    expect(document.querySelector('.vortex-atmosphere').dataset.paused).toBe('false');
+    expect(document.querySelector('.vortex-atmosphere')).toBeNull();
     expect(screen.queryByRole('button', { name: /page animations/i })).toBeNull();
   });
 
@@ -80,14 +80,13 @@ describe('App routing and navigation order', () => {
     renderApp('/');
     const nav = await screen.findByRole('navigation', { name: /landing page navigation/i });
     expect(Array.from(nav.querySelectorAll('a')).map((link) => link.getAttribute('href'))).toEqual([
-      '#home',
       '#product-tour',
       '#how-it-works',
       '#for-you',
       '/login',
     ]);
-    expect(nav.querySelector('[aria-current="location"]')?.getAttribute('href')).toBe('#home');
-    expect(await screen.findByRole('heading', { name: /every part of your next move/i })).toBeTruthy();
+    expect(nav.querySelector('a[href="#product-tour"]')).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /what does your next role actually need/i })).toBeTruthy();
     expect(document.querySelector('.landing-endcap a')?.getAttribute('href')).toBe('/login');
     expect(document.querySelector('.vortex-scroll-cue')).toBeNull();
   });
