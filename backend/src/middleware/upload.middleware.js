@@ -23,3 +23,21 @@ export async function validateResumeFile(req, res, next) {
 
   next();
 }
+
+// Application resumes are optional: the student may attach a different resume,
+// use the one already on their profile, or apply without one.
+export const uploadApplicationResume = upload.single('resume');
+
+export async function validateOptionalResumeFile(req, res, next) {
+  if (!req.file) {
+    next();
+    return;
+  }
+
+  const type = await fileTypeFromBuffer(req.file.buffer);
+  if (!type || type.ext !== 'pdf' || type.mime !== 'application/pdf') {
+    throw new AppError('Only PDF resumes are accepted', 400, 'invalid_file_type');
+  }
+
+  next();
+}

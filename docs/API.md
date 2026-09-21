@@ -214,3 +214,40 @@ Body: `{ "message": "What should I learn first?", "analysisId": "...", "history"
 ### POST /api/profile/:id/retry-extraction
 
 Authenticated owner/admin endpoint. Reuses the stored resume and refreshes optional public profiles. Returns the same safe profile response as GET /api/profile/:id, with extraction_status and extraction_error. No resume re-upload is required. Provider errors are controlled 422/503 responses.
+
+### Applying with email and resume
+
+`POST /api/applications` accepts either JSON or multipart form data:
+
+| Field | Notes |
+|---|---|
+| `jobId` | required |
+| `email` | optional contact email; defaults to the account email when omitted |
+| `coverLetter` | optional |
+| `resume` | optional PDF attachment (multipart only, max 5 MB, magic-byte validated) |
+| `useProfileResume` | set `true` to copy the resume from the student's latest analysis |
+| `resumeUrl` | optional external link (JSON only) |
+
+Responses include `applicantEmail`, `hasResume`, and `resumeUrl`. When a resume is stored, `resumeUrl` points at `GET /api/applications/:applicationId/resume` (owner or admin only), which serves the attached resume or falls back to the resume on the applicant's latest profile submission.
+
+### `GET /api/notifications` — authenticated
+
+Returns the current user's notifications, newest first, plus `unreadCount`:
+
+```json
+{
+  "notifications": [
+    { "id": "...", "type": "application_status", "title": "Application Shortlisted",
+      "message": "Your application for \"AI Engineer\" is now \"Shortlisted\".",
+      "status": "shortlisted", "application": "...", "job": "...", "read": false,
+      "createdAt": "2026-09-21T14:00:00.000Z" }
+  ],
+  "unreadCount": 1
+}
+```
+
+Students receive a confirmation when they apply and a notification on every administrator status change (Applied, Under Review, Shortlisted, Interview Scheduled, Selected, Rejected).
+
+### `PATCH /api/notifications/:id/read` and `POST /api/notifications/read-all`
+
+Mark one notification, or all of the current user's notifications, as read. Users can only affect their own notifications.

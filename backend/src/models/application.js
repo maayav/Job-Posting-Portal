@@ -34,6 +34,11 @@ const applicationSchema = new mongoose.Schema(
     status: { type: String, enum: APPLICATION_STATUSES, default: 'applied' },
     appliedAt: { type: Date, default: Date.now },
     coverLetter: { type: String, trim: true, maxlength: 3000, default: '' },
+    // Contact email chosen at apply time (defaults to the account email).
+    applicantEmail: { type: String, trim: true, lowercase: true, maxlength: 200, default: '' },
+    // Server-generated storage filename for a resume attached to this application.
+    resumeFileRef: { type: String, trim: true, default: '' },
+    resumeOriginalName: { type: String, trim: true, maxlength: 200, default: '' },
     resumeUrl: { type: String, trim: true, maxlength: 500, default: '' },
     statusHistory: { type: [statusHistorySchema], default: [] },
   },

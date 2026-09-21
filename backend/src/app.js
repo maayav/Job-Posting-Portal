@@ -10,6 +10,7 @@ import jobRoutes from './routes/job.routes.js';
 import roleRoutes from './routes/role.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 import assistantRoutes from './routes/assistant.routes.js';
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/assistant', assistantRoutes);
 
 app.use(notFoundHandler);

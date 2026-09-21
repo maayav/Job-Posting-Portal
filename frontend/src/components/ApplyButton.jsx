@@ -1,40 +1,22 @@
 import { useState } from 'react';
-import { api, errorMessage } from '../api/client';
+import ApplyDialog from './ApplyDialog';
 
-export default function ApplyButton({ jobId }) {
-  const [state, setState] = useState('idle'); // idle | applied | applying | error
-  const [error, setError] = useState('');
+export default function ApplyButton({ job, user, onApplied }) {
+  const [open, setOpen] = useState(false);
 
-  async function apply() {
-    setState('applying');
-    setError('');
-    try {
-      await api.post('/applications', { jobId });
-      setState('applied');
-    } catch (err) {
-      if (err.response?.status === 409) {
-        setState('applied'); // already applied — treat as applied
-      } else {
-        setError(errorMessage(err));
-        setState('error');
-      }
-    }
-  }
-
-  if (state === 'applied') {
-    return (
-      <span className="badge badge-applied" role="status">
-        Applied
-      </span>
-    );
+  function handleApplied(jobId) {
+    setOpen(false);
+    onApplied?.(jobId);
   }
 
   return (
     <span className="apply-wrap">
-      <button className="apply-button" onClick={apply} disabled={state === 'applying'}>
-        {state === 'applying' ? 'Applying…' : 'Apply'}
+      <button className="apply-button" onClick={() => setOpen(true)}>
+        Apply
       </button>
-      {state === 'error' && <span className="error small apply-error">{error}</span>}
+      {open && (
+        <ApplyDialog job={job} user={user} onClose={() => setOpen(false)} onApplied={handleApplied} />
+      )}
     </span>
   );
 }

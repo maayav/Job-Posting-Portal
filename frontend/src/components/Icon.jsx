@@ -54,6 +54,12 @@ const paths = {
       <path d="M8 7V3h8v4M3 12a20 20 0 0 0 18 0M12 11v4" />
     </>
   ),
+  bell: (
+    <>
+      <path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6" />
+      <path d="M10.5 19a2 2 0 0 0 3 0" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 18 }) {

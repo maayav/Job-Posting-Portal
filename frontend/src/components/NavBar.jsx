@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
+import NotificationBell from './NotificationBell';
 import { createPortal } from 'react-dom';
 
 const NAV_ITEMS = [
@@ -44,6 +45,7 @@ export default function NavBar() {
           )}
         </div>
         <div className="nav-actions">
+          <NotificationBell />
           <span className="user-chip" title={user?.name}><i aria-hidden="true">{user?.name?.slice(0, 1).toUpperCase()}</i><span>{user?.name}</span></span>
           <ThemeToggle />
           <button className="link logout-link" onClick={logout}>Log out</button>

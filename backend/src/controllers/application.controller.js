@@ -5,8 +5,9 @@ import { User } from '../models/user.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
-import { readResume } from '../services/storageService.js';
+import { readResume, saveResume } from '../services/storageService.js';
 import { hydrateStudyPlan } from '../services/resourceService.js';
+import { notifyApplicationStatus, notifyApplicationSubmitted } from '../services/notificationService.js';
 import { AppError } from '../utils/errors.js';
 
 const MAX_LIMIT = 50;
@@ -15,8 +16,23 @@ const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid id');
 const applySchema = z.strictObject({
   jobId: objectIdSchema,
   coverLetter: z.string().trim().max(3000).optional().default(''),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(200)
+    .optional()
+    .default('')
+    .refine((value) => value === '' || z.string().email().safeParse(value).success, {
+      message: 'A valid email is required',
+    }),
   resumeUrl: z.string().trim().max(500).optional().default(''),
+  useProfileResume: z.union([z.boolean(), z.string()]).optional(),
 });
+
+function isTruthyFlag(value) {
+  return value === true || value === 'true' || value === '1' || value === 'on';
+}
 
 const statusSchema = z.strictObject({
   status: z.enum(APPLICATION_STATUSES),
@@ -137,7 +153,9 @@ function toApplicationResponse(application) {
     appliedAt: application.appliedAt,
     updatedAt: application.updatedAt,
     coverLetter: application.coverLetter ?? '',
+    applicantEmail: application.applicantEmail ?? '',
     resumeUrl: application.resumeUrl ?? '',
+    hasResume: Boolean(application.resumeFileRef),
     statusHistory: (application.statusHistory ?? []).map((entry) => ({
       status: entry.status,
       changedAt: entry.changedAt,
@@ -175,6 +193,8 @@ function toDashboardApplication(application, review) {
 }
 
 // POST /api/applications — authenticated student applies to a job.
+// The student may provide a contact email and either attach a different resume,
+// reuse the resume already on their profile, or apply without one.
 export async function applyToJob(req, res) {
   const data = applySchema.parse(req.body);
 
@@ -191,6 +211,33 @@ export async function applyToJob(req, res) {
     throw new AppError('You have already applied to this job', 409, 'already_applied');
   }
 
+  const account = await User.findById(req.user.id).select('email').lean();
+  const applicantEmail = data.email || account?.email || '';
+
+  let resumeFileRef = '';
+  let resumeOriginalName = '';
+  if (req.file) {
+    resumeFileRef = await saveResume(req.file.buffer, req.file.originalname);
+    resumeOriginalName = req.file.originalname;
+  } else if (isTruthyFlag(data.useProfileResume)) {
+    const submission = await ProfileSubmission.findOne({
+      user_id: req.user.id,
+      resume_file_ref: { $nin: ['', null] },
+    })
+      .sort({ submitted_at: -1 })
+      .select('resume_file_ref')
+      .lean();
+    if (submission?.resume_file_ref) {
+      try {
+        const buffer = await readResume(submission.resume_file_ref);
+        resumeFileRef = await saveResume(buffer, 'profile-resume.pdf');
+        resumeOriginalName = 'profile-resume.pdf';
+      } catch {
+        // The saved profile resume is unavailable; continue without one.
+      }
+    }
+  }
+
   let application;
   try {
     application = await Application.create({
@@ -198,6 +245,9 @@ export async function applyToJob(req, res) {
       job: data.jobId,
       status: 'applied',
       coverLetter: data.coverLetter,
+      applicantEmail,
+      resumeFileRef,
+      resumeOriginalName,
       resumeUrl: data.resumeUrl,
     });
   } catch (err) {
@@ -207,6 +257,12 @@ export async function applyToJob(req, res) {
     throw err;
   }
 
+  if (resumeFileRef) {
+    application.resumeUrl = `/api/applications/${application._id.toString()}/resume`;
+    await application.save();
+  }
+
+  await notifyApplicationSubmitted(application, job.title);
   await application.populate('job', 'title company city skills experienceLevel');
   res.status(201).json({ application: toApplicationResponse(application) });
 }
@@ -346,27 +402,39 @@ export async function getApplicationDetails(req, res) {
 // GET /api/admin/applications/:applicationId/resume — authorized resume preview.
 // Resume files stay outside the public web root and are streamed only after the
 // admin route has verified access to the application.
+// GET /api/applications/:applicationId/resume — the application resume (owner or admin).
 export async function getApplicationResume(req, res) {
   const id = objectIdSchema.parse(req.params.applicationId);
-  const application = await Application.findById(id).select('applicant').lean();
+  const application = await Application.findById(id).select('applicant resumeFileRef resumeOriginalName').lean();
   if (!application) {
     throw new AppError('Application not found', 404, 'not_found');
   }
-  if (!application.applicant) {
-    throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
+
+  const isOwner = application.applicant?.toString() === req.user.id;
+  const isAdmin = req.user.role === 'admin';
+  if (!isOwner && !isAdmin) {
+    throw new AppError('Insufficient permissions', 403, 'forbidden');
   }
 
-  const submission = await ProfileSubmission.findOne({ user_id: application.applicant })
-    .sort({ submitted_at: -1 })
-    .select('resume_file_ref')
-    .lean();
-  if (!submission?.resume_file_ref) {
+  // Prefer the resume attached to this application; fall back to the resume on
+  // the applicant's latest profile submission for applications without one.
+  let fileRef = application.resumeFileRef;
+  let downloadName = application.resumeOriginalName || 'vortex-resume.pdf';
+  if (!fileRef) {
+    const submission = await ProfileSubmission.findOne({ user_id: application.applicant })
+      .sort({ submitted_at: -1 })
+      .select('resume_file_ref')
+      .lean();
+    fileRef = submission?.resume_file_ref;
+    downloadName = 'vortex-resume.pdf';
+  }
+  if (!fileRef) {
     throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
   }
 
   let buffer;
   try {
-    buffer = await readResume(submission.resume_file_ref);
+    buffer = await readResume(fileRef);
   } catch (error) {
     if (error?.code === 'ENOENT') {
       throw new AppError('The saved resume file is no longer available', 404, 'resume_missing');
@@ -374,7 +442,7 @@ export async function getApplicationResume(req, res) {
     throw error;
   }
   res.type('application/pdf');
-  res.set('Content-Disposition', `inline; filename="vortex-resume-${id}.pdf"`);
+  res.set('Content-Disposition', `inline; filename="${downloadName.replace(/[^\w.-]+/g, '-')}"`);
   res.send(buffer);
 }
 
@@ -401,6 +469,7 @@ export async function updateApplicationStatus(req, res) {
 
   await application.populate('applicant', 'name email');
   await application.populate('job', 'title company city skills experienceLevel');
+  await notifyApplicationStatus(application, application.job?.title);
   res.json({ application: toApplicationResponse(application) });
 }
 

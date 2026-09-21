@@ -39,10 +39,26 @@ describe('Dashboard layout', () => {
     localStorage.setItem('token', 'test-token');
     localStorage.setItem('user', JSON.stringify({ id: 'u1', name: 'Test User', role: 'student' }));
     localStorage.setItem('report_id', 'r1');
-    api.get.mockResolvedValue({ data: report });
+    api.get.mockImplementation((url) => {
+      if (url === '/applications/me') {
+        return Promise.resolve({ data: { applications: [{ id: 'app1' }, { id: 'app2' }] } });
+      }
+      if (url === '/report/history') {
+        return Promise.resolve({
+          data: {
+            history: [
+              { report_id: 'r0', score: 61, target_role: 'SDE', completed_at: '2026-09-01T00:00:00.000Z' },
+              { report_id: 'r1', score: 77, target_role: 'SDE', completed_at: '2026-09-15T00:00:00.000Z' },
+            ],
+          },
+        });
+      }
+      if (url.startsWith('/report/')) return Promise.resolve({ data: report });
+      return Promise.resolve({ data: {} });
+    });
   });
 
-  it('shows ATS score, skill breakdown, study plan and role readiness in order', async () => {
+  it('shows the ATS score, jobs applied, and the readiness graph only', async () => {
     render(
       <MemoryRouter>
         <AuthProvider>
@@ -55,27 +71,21 @@ describe('Dashboard layout', () => {
 
     await screen.findByRole('heading', { name: /ats score/i });
     const headings = Array.from(document.querySelectorAll('h2')).map((h) => h.textContent);
-    expect(headings).toEqual(['ATS Score', 'Skill breakdown', 'Prioritized study plan', 'Role readiness']);
-  });
-
-  it('does not render the score trend chart', async () => {
-    render(
-      <MemoryRouter>
-        <AuthProvider>
-          <ThemeProvider>
-            <DashboardPage />
-          </ThemeProvider>
-        </AuthProvider>
-      </MemoryRouter>
-    );
-
-    await screen.findByRole('heading', { name: /ats score/i });
-    expect(screen.queryByText(/score trend/i)).toBeNull();
-    expect(document.querySelector('.recharts-responsive-container')).toBeNull();
+    expect(headings).toEqual(['ATS Score', 'Jobs applied', 'Readiness trend']);
+    expect(screen.getByText('2')).toBeTruthy();
+    expect(document.querySelector('.recharts-responsive-container')).toBeTruthy();
+    expect(screen.queryByText(/skill breakdown/i)).toBeNull();
+    expect(screen.queryByText(/study plan/i)).toBeNull();
+    expect(screen.queryByText(/role readiness/i)).toBeNull();
   });
 
   it('clears an inaccessible stale report and shows the empty state', async () => {
-    api.get.mockRejectedValue({ response: { status: 403 } });
+    api.get.mockImplementation((url) => {
+      if (url.startsWith('/report/') && url !== '/report/history') {
+        return Promise.reject({ response: { status: 403 } });
+      }
+      return Promise.resolve({ data: {} });
+    });
 
     render(
       <MemoryRouter>

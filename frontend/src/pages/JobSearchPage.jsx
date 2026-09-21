@@ -74,6 +74,10 @@ export default function JobSearchPage() {
       .catch(() => {});
   }, [isStudent]);
 
+  function handleApplied(jobId) {
+    setAppliedIds((current) => new Set([...current, jobId]));
+  }
+
   function handleSearch(f) {
     const next = Object.fromEntries(Object.entries({ ...f, page: 1 }).filter(([, value]) => value !== '' && value !== 'newest'));
     setSearchParams(next);
@@ -142,7 +146,7 @@ export default function JobSearchPage() {
                   appliedIds.has(job.id) ? (
                     <span className="badge badge-applied" role="status">Applied</span>
                   ) : (
-                    <ApplyButton jobId={job.id} />
+                    <ApplyButton job={job} user={user} onApplied={handleApplied} />
                   )
                 ) : undefined
               }
