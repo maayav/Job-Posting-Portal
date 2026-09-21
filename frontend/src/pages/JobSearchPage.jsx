@@ -6,6 +6,7 @@ import NavBar from '../components/NavBar';
 import JobFilters from '../components/JobFilters';
 import JobCard from '../components/JobCard';
 import ApplyButton from '../components/ApplyButton';
+import SaveButton from '../components/SaveButton';
 import { useAuth } from '../context/AuthContext';
 import { api, errorMessage } from '../api/client';
 import '../styles/student-experience.css';
@@ -15,6 +16,7 @@ export default function JobSearchPage() {
   const isStudent = user?.role === 'student';
   const [jobs, setJobs] = useState([]);
   const [appliedIds, setAppliedIds] = useState(new Set());
+  const [savedIds, setSavedIds] = useState(new Set());
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
@@ -74,8 +76,26 @@ export default function JobSearchPage() {
       .catch(() => {});
   }, [isStudent]);
 
+  // Preload the student's wishlist so cards can show the saved state.
+  useEffect(() => {
+    if (!isStudent) return;
+    api
+      .get('/wishlist')
+      .then((res) => setSavedIds(new Set((res.data.items ?? []).map((item) => item.job.id))))
+      .catch(() => {});
+  }, [isStudent]);
+
   function handleApplied(jobId) {
     setAppliedIds((current) => new Set([...current, jobId]));
+  }
+
+  function handleSavedToggle(jobId, saved) {
+    setSavedIds((current) => {
+      const next = new Set(current);
+      if (saved) next.add(jobId);
+      else next.delete(jobId);
+      return next;
+    });
   }
 
   function handleSearch(f) {
@@ -143,11 +163,14 @@ export default function JobSearchPage() {
               job={job}
               actions={
                 isStudent ? (
-                  appliedIds.has(job.id) ? (
-                    <span className="badge badge-applied" role="status">Applied</span>
-                  ) : (
-                    <ApplyButton job={job} user={user} onApplied={handleApplied} />
-                  )
+                  <div className="job-actions">
+                    <SaveButton jobId={job.id} saved={savedIds.has(job.id)} onToggle={handleSavedToggle} />
+                    {appliedIds.has(job.id) ? (
+                      <span className="badge badge-applied" role="status">Applied</span>
+                    ) : (
+                      <ApplyButton job={job} user={user} onApplied={handleApplied} />
+                    )}
+                  </div>
                 ) : undefined
               }
             />

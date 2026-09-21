@@ -7,6 +7,7 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 - **Explore opportunities:** search jobs by skills, experience, and city; apply with a chosen contact email and either your saved profile resume or a different PDF.
 - **Track your progress:** the student dashboard shows your ATS score, how many jobs you have applied to, and a readiness trend graph.
 - **Stay informed:** in-app notifications tell you when an administrator moves your application through the pipeline.
+- **Save for later:** bookmark jobs into a wishlist and apply from the dashboard when you are ready.
 - **Understand your readiness:** upload a resume and optional GitHub/LeetCode profile; review extracted evidence, skill matches, gaps, and a prioritized study plan.
 - **Get grounded AI help:** ask questions about your latest analysis and receive recommendations tied to its verified skills and gaps.
 - **Review candidates:** see application totals, filter by role or candidate, inspect a candidate’s profile and evaluation, and move an application through review stages.

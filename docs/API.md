@@ -251,3 +251,13 @@ Students receive a confirmation when they apply and a notification on every admi
 ### `PATCH /api/notifications/:id/read` and `POST /api/notifications/read-all`
 
 Mark one notification, or all of the current user's notifications, as read. Users can only affect their own notifications.
+
+### Wishlist (saved jobs) — students only
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/wishlist` | The student's saved jobs, newest first, with populated job details |
+| POST | `/api/wishlist` | Save a job for later (`{ "jobId": "..." }`); idempotent |
+| DELETE | `/api/wishlist/:jobId` | Remove a saved job (`204`) |
+
+Wishlists are private to each student; administrators receive `403`. The student dashboard shows saved jobs with Apply and Remove actions, and the Jobs page shows the saved state on each card.

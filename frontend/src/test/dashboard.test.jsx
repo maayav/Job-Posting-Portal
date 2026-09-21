@@ -43,6 +43,19 @@ describe('Dashboard layout', () => {
       if (url === '/applications/me') {
         return Promise.resolve({ data: { applications: [{ id: 'app1' }, { id: 'app2' }] } });
       }
+      if (url === '/wishlist') {
+        return Promise.resolve({
+          data: {
+            items: [
+              {
+                id: 'w1',
+                savedAt: '2026-09-14T00:00:00.000Z',
+                job: { id: 'j9', title: 'Saved Backend Role', company: 'Beta Ltd', city: 'Pune', skills: ['Node.js'], experienceLevel: 2 },
+              },
+            ],
+          },
+        });
+      }
       if (url === '/report/history') {
         return Promise.resolve({
           data: {
@@ -71,9 +84,10 @@ describe('Dashboard layout', () => {
 
     await screen.findByRole('heading', { name: /ats score/i });
     const headings = Array.from(document.querySelectorAll('h2')).map((h) => h.textContent);
-    expect(headings).toEqual(['ATS Score', 'Jobs applied', 'Readiness trend']);
+    expect(headings).toEqual(['ATS Score', 'Jobs applied', 'Saved jobs', 'Readiness trend']);
     expect(screen.getByText('2')).toBeTruthy();
     expect(document.querySelector('.recharts-responsive-container')).toBeTruthy();
+    expect(screen.getByText('Saved Backend Role')).toBeTruthy();
     expect(screen.queryByText(/skill breakdown/i)).toBeNull();
     expect(screen.queryByText(/study plan/i)).toBeNull();
     expect(screen.queryByText(/role readiness/i)).toBeNull();

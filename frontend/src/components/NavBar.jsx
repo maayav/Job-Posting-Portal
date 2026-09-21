@@ -14,6 +14,8 @@ const NAV_ITEMS = [
 export default function NavBar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
+  // New Analysis is a student-only workflow; administrators review candidates instead.
+  const navItems = NAV_ITEMS.filter((item) => item.to !== '/analyze' || user?.role === 'student');
 
   return createPortal(
     <header className="topbar">
@@ -23,7 +25,7 @@ export default function NavBar() {
       </Link>
       <nav className="topbar-user" aria-label="Main navigation">
         <div className="nav-pill">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link key={item.to} to={item.to} aria-current={pathname === item.to ? 'page' : undefined} className={pathname === item.to ? 'active-link' : undefined}>
               {item.label}
             </Link>

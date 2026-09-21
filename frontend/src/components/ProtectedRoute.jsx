@@ -10,12 +10,14 @@ export default function ProtectedRoute({ children, requiredRole }) {
   }
 
   if (requiredRole && user.role !== requiredRole) {
+    const audience = requiredRole === 'admin' ? 'administrators' : 'students';
+    const fallback = requiredRole === 'admin' ? '/jobs' : '/dashboard';
     return (
       <div className="page">
         <div className="card center">
           <h2>403 — Not authorized</h2>
-          <p className="muted">This page is available to administrators only.</p>
-          <Link to="/jobs" className="primary inline">Back to jobs</Link>
+          <p className="muted">This page is available to {audience} only.</p>
+          <Link to={fallback} className="primary inline">{requiredRole === 'admin' ? 'Back to jobs' : 'Back to dashboard'}</Link>
         </div>
       </div>
     );

@@ -40,7 +40,7 @@ export default function App() {
       <Route
         path="/analyze"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="student">
             <UploadPage />
           </ProtectedRoute>
         }

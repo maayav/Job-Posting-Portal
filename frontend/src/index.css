@@ -593,3 +593,14 @@ button.link:hover { color: var(--accent); }
 
 .dashboard-stat-value { display: flex; align-items: center; gap: 20px; }
 .dashboard-stat-value strong { font-size: clamp(2.2rem, 5vw, 3.6rem); letter-spacing: -.07em; }
+
+/* Wishlist / saved jobs */
+.save-button { padding: 8px 13px; border: 1px solid var(--line-bright); border-radius: 999px; background: transparent; color: var(--text); font-size: .75rem; font-weight: 600; transition: background 150ms ease, color 150ms ease, border-color 150ms ease; }
+.save-button:hover { background: var(--panel-2); }
+.save-button.is-saved { background: var(--text); border-color: var(--text); color: var(--bg); }
+.save-button:disabled { opacity: .55; cursor: wait; }
+.saved-jobs .section-heading { margin-bottom: 12px; }
+.saved-jobs-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.saved-jobs-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.saved-jobs-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.saved-job-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }

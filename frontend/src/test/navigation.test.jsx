@@ -144,7 +144,7 @@ describe('App routing and navigation order', () => {
     renderApp('/jobs');
     const nav = await screen.findByRole('navigation', { name: /main navigation/i });
     const links = Array.from(nav.querySelectorAll('a')).map((a) => a.textContent);
-    expect(links).toEqual(['Jobs', 'Dashboard', 'New Analysis', 'AI Assistant', 'Admin Jobs', 'Applications']);
+    expect(links).toEqual(['Jobs', 'Dashboard', 'AI Assistant', 'Admin Jobs', 'Applications']);
   });
 
   it('exposes a dark-mode toggle in the navigation', async () => {
