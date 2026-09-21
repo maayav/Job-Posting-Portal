@@ -6,9 +6,13 @@ config({ path: fileURLToPath(new URL('../../.env', import.meta.url)), quiet: tru
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(5000),
-  MONGO_URI: z.string().min(1, 'MONGO_URI is required'),
+  // MONGO_URI is the project name; MONGODB_URI is accepted for Render/Atlas setups.
+  MONGO_URI: z.string().default(''),
+  MONGODB_URI: z.string().default(''),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  // Comma-separated list of allowed browser origins (e.g. the Vercel URL).
+  CLIENT_URL: z.string().default(''),
   AI_TEXT_PROVIDER: z.enum(['groq', 'gemini']).default('groq'),
   AI_EMBEDDING_PROVIDER: z.literal('gemini').default('gemini'),
   AI_TEXT_FALLBACK_PROVIDER: z.enum(['none', 'groq', 'gemini']).default('none'),
@@ -25,14 +29,11 @@ const envSchema = z.object({
   EMBEDDING_VERSION: z.string().default('2026-09'),
   GITHUB_TOKEN: z.string().optional().default(''),
 }).superRefine((env, ctx) => {
-  if (env.NODE_ENV !== 'test' && !env.GEMINI_API_KEY) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['GEMINI_API_KEY'], message: 'GEMINI_API_KEY is required for embeddings' });
-  }
-  if (env.NODE_ENV !== 'test' && (env.AI_TEXT_PROVIDER === 'groq' || env.AI_TEXT_FALLBACK_PROVIDER === 'groq') && (!env.GROQ_API_KEY || !env.GROQ_MODEL)) {
+  if (!env.MONGO_URI && !env.MONGODB_URI) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ['GROQ_API_KEY'],
-      message: 'GROQ_API_KEY and GROQ_MODEL are required for Groq',
+      path: ['MONGO_URI'],
+      message: 'MONGO_URI (or MONGODB_URI) is required',
     });
   }
 });
@@ -47,4 +48,22 @@ if (!parsed.success) {
   process.exit(1);
 }
 
-export const env = { ...parsed.data, EMBEDDING_MODEL: parsed.data.GEMINI_EMBEDDING_MODEL || parsed.data.EMBEDDING_MODEL };
+const resolvedMongoUri = parsed.data.MONGO_URI || parsed.data.MONGODB_URI;
+
+// Missing AI credentials are not fatal at startup: the server still serves
+// health, auth, jobs and applications, while AI endpoints return a clear
+// configuration error (503 ai_configuration_error) at request time.
+if (parsed.data.NODE_ENV !== 'test') {
+  const warnings = [];
+  if (!parsed.data.GEMINI_API_KEY) warnings.push('GEMINI_API_KEY is missing — embeddings, analysis seeding and analysis runs will fail until it is set.');
+  if ((parsed.data.AI_TEXT_PROVIDER === 'groq' || parsed.data.AI_TEXT_FALLBACK_PROVIDER === 'groq') && (!parsed.data.GROQ_API_KEY || !parsed.data.GROQ_MODEL)) {
+    warnings.push('GROQ_API_KEY/GROQ_MODEL are missing — skill extraction, study plans and the AI assistant will fail until they are set.');
+  }
+  for (const warning of warnings) console.warn(`[config] ${warning}`);
+}
+
+export const env = {
+  ...parsed.data,
+  MONGO_URI: resolvedMongoUri,
+  EMBEDDING_MODEL: parsed.data.GEMINI_EMBEDDING_MODEL || parsed.data.EMBEDDING_MODEL,
+};

@@ -30,6 +30,9 @@ export function cosineSimilarity(a, b) {
 }
 
 async function embedRequest(text) {
+  if (!env.GEMINI_API_KEY) {
+    throw new AppError('GEMINI_API_KEY is required for embeddings', 503, 'ai_configuration_error');
+  }
   const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:embedContent?key=${env.GEMINI_API_KEY}`;
   const res = await axios.post(
     url,
@@ -47,6 +50,9 @@ async function embedRequest(text) {
 }
 
 async function embedBatchRequest(names) {
+  if (!env.GEMINI_API_KEY) {
+    throw new AppError('GEMINI_API_KEY is required for embeddings', 503, 'ai_configuration_error');
+  }
   const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:batchEmbedContents?key=${env.GEMINI_API_KEY}`;
   const res = await axios.post(
     url,
