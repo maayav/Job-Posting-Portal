@@ -1,6 +1,15 @@
 import app from '../src/app.js';
 import { connectDB } from '../src/config/db.js';
 import { isAllowedOrigin } from '../src/config/cors.js';
+import { env } from '../src/config/env.js';
+
+// Safe startup diagnostics: database name only, never credentials.
+try {
+  const parsed = new URL(env.MONGO_URI);
+  console.log('mongo target db:', parsed.pathname || '/<default>', '| host:', parsed.hostname);
+} catch {
+  console.log('mongo target: unparseable uri');
+}
 
 // Vercel Node.js serverless entry point. The Express app is itself a valid
 // (req, res) handler, but the serverless runtime never runs server.js, so the
