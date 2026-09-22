@@ -53,7 +53,9 @@ export async function createAnalysis(req, res) {
     embedding_version: null,
   });
 
-  if (env.NODE_ENV === 'test') {
+  // Serverless platforms freeze the process after the response, so the job must
+  // finish inside the request there; long-lived servers keep the async queue.
+  if (env.NODE_ENV === 'test' || process.env.VERCEL) {
     await runAnalysis(report._id);
   } else {
     queueAnalysis(report._id);

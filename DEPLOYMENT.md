@@ -584,3 +584,45 @@ follow-up and is not wired up in this build.
   reduce request counts.
 - Vercel hobby projects have bandwidth/build limits.
 - Ephemeral backend storage means resume files are not durable (see above).
+
+## 19. Serverless backend on Vercel (no-card option)
+
+Render free instances require payment verification for some accounts and Hugging Face
+now requires a PRO subscription for Docker Spaces. Vercel Hobby (free, no card) can
+host the same Express API as a Node.js serverless function.
+
+Repository changes that make this work:
+
+- `backend/api/index.js` — exports the existing Express app as the function handler.
+- `backend/vercel.json` — rewrites every path to `/api/index` and sets `maxDuration: 60`.
+- `backend/src/services/storageService.js` — uses `/tmp/vortex-storage` when the
+  `VERCEL` environment variable is present (the project filesystem is read-only there).
+- `backend/src/controllers/analyze.controller.js` — waits for the analysis inside the
+  request on Vercel because serverless functions freeze after responding.
+- `backend/src/middleware/upload.middleware.js` — 4 MB resume cap on Vercel (the
+  platform rejects request bodies above ~4.5 MB) and the usual 5 MB elsewhere.
+
+Vercel backend project configuration:
+
+```text
+Root Directory: backend
+Framework: Other
+Build Command: (default)
+Output Directory: (default)
+Env: NODE_ENV=production, MONGODB_URI, JWT_SECRET, CLIENT_URL,
+     GROQ_API_KEY, GROQ_MODEL, GROQ_FALLBACK_MODELS,
+     GEMINI_API_KEY, EMBEDDING_MODEL, EMBEDDING_VERSION,
+     AI_TEXT_PROVIDER=groq, AI_EMBEDDING_PROVIDER=gemini, AI_TEXT_FALLBACK_PROVIDER=none
+```
+
+Serverless limitations to expect:
+
+- Resume files live in `/tmp` per instance: they disappear on cold starts and are not
+  shared between instances, so resume downloads can return `404 resume_missing`.
+  Scores, jobs and applications in MongoDB are unaffected.
+- The AI analysis must finish within the function's 60-second limit; free-tier Groq
+  and Gemini latency plus retries can occasionally exceed it.
+- Cold starts add a few seconds to the first request.
+
+Hugging Face Spaces (Docker) is no longer a free option: creating a Docker Space on
+`cpu-basic` returns HTTP 402 requiring PRO.

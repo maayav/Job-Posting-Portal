@@ -3,7 +3,12 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const STORAGE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'storage');
+// Serverless hosts (Vercel) have a read-only project filesystem; only /tmp is
+// writable, and it is per-instance ephemeral. Local/Docker hosts keep using the
+// project storage directory.
+const STORAGE_DIR = process.env.VERCEL
+  ? path.join('/tmp', 'vortex-storage')
+  : path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'storage');
 
 export async function ensureStorageDir() {
   await fs.mkdir(STORAGE_DIR, { recursive: true });

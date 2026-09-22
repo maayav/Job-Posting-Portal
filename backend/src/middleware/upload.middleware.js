@@ -2,7 +2,9 @@ import multer from 'multer';
 import { fileTypeFromBuffer } from 'file-type';
 import { AppError } from '../utils/errors.js';
 
-export const MAX_RESUME_BYTES = 5 * 1024 * 1024; // 5,242,880
+// Vercel serverless functions reject request bodies above 4.5 MB, so the cap is
+// lowered there; other hosts keep the documented 5 MB limit.
+export const MAX_RESUME_BYTES = (process.env.VERCEL ? 4 : 5) * 1024 * 1024;
 
 const upload = multer({
   storage: multer.memoryStorage(),
