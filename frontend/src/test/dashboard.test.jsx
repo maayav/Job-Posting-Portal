@@ -103,6 +103,22 @@ describe('Dashboard layout', () => {
                   },
                 ],
               },
+              {
+                target_role: 'Data Analyst',
+                report_id: 'r2',
+                score: 62,
+                gap_count: 1,
+                gaps: [{ skill: 'SQL', percent: 45 }],
+                study_plan: [
+                  {
+                    _id: 'i2',
+                    skill: 'SQL',
+                    priority: 0.9,
+                    resources: [{ title: 'SQLBolt', url: 'https://sqlbolt.com', type: 'practice-set', verified: true }],
+                    done: false,
+                  },
+                ],
+              },
             ],
           },
         });
@@ -141,12 +157,23 @@ describe('Dashboard layout', () => {
     // Roadmap for the analyzed role, with its study items.
     const planTitle = document.querySelector('.plan-title');
     expect(planTitle.textContent).toContain('Express');
-    expect(screen.getByText('1 open item')).toBeTruthy();
+    expect(screen.getByText('1 open')).toBeTruthy();
 
     // Skills from applied jobs that are gaps in the roadmap are flagged.
     expect(screen.getByText('Backend Engineer')).toBeTruthy();
     expect(screen.getByText(/from your SDE roadmap/)).toBeTruthy();
     expect(screen.getByText(/does not flag these skills as gaps/)).toBeTruthy();
+
+    // The roadmap is chosen from a role dropdown; switching roles swaps the plan.
+    const roleSelect = screen.getByLabelText(/choose role for study plan/i);
+    expect(Array.from(roleSelect.options).map((option) => option.textContent)).toEqual([
+      'SDE · 77/100 · 1 open',
+      'Data Analyst · 62/100 · 1 open',
+    ]);
+    fireEvent.change(roleSelect, { target: { value: 'r2' } });
+    expect(screen.getByRole('heading', { name: 'Data Analyst roadmap' })).toBeTruthy();
+    expect(document.querySelector('.plan-title').textContent).toContain('SQL');
+    fireEvent.change(roleSelect, { target: { value: 'r1' } });
 
     api.patch.mockResolvedValueOnce({ data: { done: true } });
     fireEvent.click(screen.getByLabelText(/mark express complete/i));

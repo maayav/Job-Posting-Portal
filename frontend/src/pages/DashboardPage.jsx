@@ -15,6 +15,7 @@ function StudentDashboard() {
   const [report, setReport] = useState(null);
   const [history, setHistory] = useState([]);
   const [roadmaps, setRoadmaps] = useState([]);
+  const [selectedRoadmapId, setSelectedRoadmapId] = useState(null);
   const [applications, setApplications] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [error, setError] = useState('');
@@ -98,10 +99,8 @@ function StudentDashboard() {
     setWishlist((current) => current.filter((item) => item.job.id !== jobId));
   }
 
-  const openPlanCount = roadmaps.reduce(
-    (total, roadmap) => total + (roadmap.study_plan ?? []).filter((item) => !item.done).length,
-    0
-  );
+  const selectedRoadmap = roadmaps.find((roadmap) => roadmap.report_id === selectedRoadmapId) ?? roadmaps[0];
+  const openPlanCount = (selectedRoadmap?.study_plan ?? []).filter((item) => !item.done).length;
 
   return (
     <>
@@ -130,26 +129,37 @@ function StudentDashboard() {
             )
           )}
 
-          {roadmaps.length > 0 && (
+          {selectedRoadmap && (
             <section className="dashboard-roadmaps" aria-label="Study roadmaps">
               <div className="page-title-row dashboard-section-title">
                 <div>
                   <p className="section-kicker">ROADMAPS</p>
                   <h2>What to study for your target roles</h2>
                 </div>
-                <span className="section-note">{openPlanCount} open item{openPlanCount === 1 ? '' : 's'}</span>
+                <label className="roadmap-role-picker">
+                  Role
+                  <select
+                    aria-label="Choose role for study plan"
+                    value={selectedRoadmap.report_id}
+                    onChange={(event) => setSelectedRoadmapId(event.target.value)}
+                  >
+                    {roadmaps.map((roadmap) => (
+                      <option key={roadmap.report_id} value={roadmap.report_id}>
+                        {roadmap.target_role} · {roadmap.score ?? '—'}/100 · {(roadmap.study_plan ?? []).filter((item) => !item.done).length} open
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
-              {roadmaps.map((roadmap) => (
-                <StudyPlan
-                  key={roadmap.report_id}
-                  reportId={roadmap.report_id}
-                  items={roadmap.study_plan}
-                  title={`${roadmap.target_role} roadmap`}
-                  kicker={`SCORE ${roadmap.score ?? '—'}/100 · ${roadmap.gap_count ?? 0} GAP${roadmap.gap_count === 1 ? '' : 'S'}`}
-                  note={`${(roadmap.study_plan ?? []).filter((item) => !item.done).length} open`}
-                  onToggle={(itemId) => handleRoadmapToggle(roadmap.report_id, itemId)}
-                />
-              ))}
+              <StudyPlan
+                key={selectedRoadmap.report_id}
+                reportId={selectedRoadmap.report_id}
+                items={selectedRoadmap.study_plan}
+                title={`${selectedRoadmap.target_role} roadmap`}
+                kicker={`SCORE ${selectedRoadmap.score ?? '—'}/100 · ${selectedRoadmap.gap_count ?? 0} GAP${selectedRoadmap.gap_count === 1 ? '' : 'S'}`}
+                note={`${openPlanCount} open`}
+                onToggle={(itemId) => handleRoadmapToggle(selectedRoadmap.report_id, itemId)}
+              />
             </section>
           )}
 
