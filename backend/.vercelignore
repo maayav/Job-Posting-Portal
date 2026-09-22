@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+node_modules
+storage
+tests
+sample-resumes
+*.log
+.server.pid
+scripts/.server.pid

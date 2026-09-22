@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
+import { corsOptions } from './config/cors.js';
 import { apiLimiter } from './middleware/rateLimit.middleware.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
@@ -18,32 +19,14 @@ import assistantRoutes from './routes/assistant.routes.js';
 
 const app = express();
 
-// Browser origins allowed to call the API: the deployed frontend (CLIENT_URL,
-// comma-separated) plus the local Vite dev server. Requests without an Origin
-// header (health checks, server-to-server) are allowed.
-const allowedOrigins = [
-  ...env.CLIENT_URL.split(','),
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-]
-  .map((origin) => origin.trim().replace(/\/$/, ''))
-  .filter(Boolean);
+// Vercel (and other reverse proxies) forward the client IP in X-Forwarded-For;
+// express-rate-limit needs the proxy trust setting to identify clients correctly.
+if (process.env.VERCEL || env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 app.disable('x-powered-by');
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
-        callback(null, true);
-        return;
-      }
-      callback(null, false);
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '2mb' }));
 app.use(apiLimiter);
 
