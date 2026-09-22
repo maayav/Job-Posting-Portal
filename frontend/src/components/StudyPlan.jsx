@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { api } from '../api/client';
 import { safeExternalUrl } from '../utils/links';
 
-export default function StudyPlan({ reportId, items, onToggle, title = 'Prioritized study plan', kicker = '03 / NEXT MOVES', note = null }) {
+export default function StudyPlan({
+  reportId,
+  items,
+  onToggle,
+  title = 'Prioritized study plan',
+  kicker = '03 / NEXT MOVES',
+  note = null,
+  collapsible = true,
+  defaultOpen = false,
+}) {
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState('');
+  const [open, setOpen] = useState(!collapsible || defaultOpen);
+  const listId = useId();
 
   async function toggle(itemId, skill) {
     setBusy(itemId);
@@ -30,16 +41,29 @@ export default function StudyPlan({ reportId, items, onToggle, title = 'Prioriti
   }
 
   return (
-    <div className="card">
-      <div className="section-heading">
+    <div className="card plan-card">
+      <div className="section-heading plan-head">
         <div>
           <p className="section-kicker">{kicker}</p>
           <h2>{title}</h2>
         </div>
-        <span className="section-note">{note ?? `${items.filter((item) => !item.done).length} open`}</span>
+        <div className="plan-head-actions">
+          <span className="section-note">{note ?? `${items.filter((item) => !item.done).length} open`}</span>
+          {collapsible && <span className={`plan-chevron${open ? ' is-open' : ''}`} aria-hidden="true">▾</span>}
+        </div>
+        {collapsible && (
+          <button
+            type="button"
+            className="plan-toggle"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-label={`${open ? 'Collapse' : 'Expand'} ${title}`}
+            onClick={() => setOpen((current) => !current)}
+          />
+        )}
       </div>
       {error && <p className="error card-error" role="alert">{error}</p>}
-      <ul className="plan-list">
+      <ul className="plan-list" id={listId} hidden={collapsible && !open}>
         {items.map((item) => (
           <li key={item._id} className={item.done ? 'done' : ''}>
             <div className="plan-item">

@@ -154,10 +154,16 @@ describe('Dashboard layout', () => {
     expect(document.querySelector('.recharts-responsive-container')).toBeTruthy();
     expect(screen.getByText('Saved Backend Role')).toBeTruthy();
 
-    // Roadmap for the analyzed role, with its study items.
-    const planTitle = document.querySelector('.plan-title');
-    expect(planTitle.textContent).toContain('Express');
+    // Roadmap starts collapsed: only the header row is visible.
     expect(screen.getByText('1 open')).toBeTruthy();
+    const collapsedList = document.querySelector('.plan-list');
+    expect(collapsedList.hidden).toBe(true);
+
+    const expandSde = screen.getByRole('button', { name: 'Expand SDE roadmap' });
+    expect(expandSde.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(expandSde);
+    expect(screen.getByRole('button', { name: 'Collapse SDE roadmap' }).getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('.plan-title').textContent).toContain('Express');
 
     // Skills from applied jobs that are gaps in the roadmap are flagged.
     expect(screen.getByText('Backend Engineer')).toBeTruthy();
@@ -172,8 +178,10 @@ describe('Dashboard layout', () => {
     ]);
     fireEvent.change(roleSelect, { target: { value: 'r2' } });
     expect(screen.getByRole('heading', { name: 'Data Analyst roadmap' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Data Analyst roadmap' }));
     expect(document.querySelector('.plan-title').textContent).toContain('SQL');
     fireEvent.change(roleSelect, { target: { value: 'r1' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Expand SDE roadmap' }));
 
     api.patch.mockResolvedValueOnce({ data: { done: true } });
     fireEvent.click(screen.getByLabelText(/mark express complete/i));
