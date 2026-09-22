@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { api } from '../api/client';
 import { safeExternalUrl } from '../utils/links';
 
-export default function StudyPlan({ reportId, items, onToggle }) {
+export default function StudyPlan({ reportId, items, onToggle, title = 'Prioritized study plan', kicker = '03 / NEXT MOVES', note = null }) {
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState('');
 
@@ -22,8 +22,8 @@ export default function StudyPlan({ reportId, items, onToggle }) {
   if (!items?.length) {
     return (
       <div className="card">
-        <p className="section-kicker">03 / NEXT MOVES</p>
-        <h2>Study plan</h2>
+        <p className="section-kicker">{kicker}</p>
+        <h2>{title}</h2>
         <p className="muted">No gaps found — no study items needed. Keep it up!</p>
       </div>
     );
@@ -33,10 +33,10 @@ export default function StudyPlan({ reportId, items, onToggle }) {
     <div className="card">
       <div className="section-heading">
         <div>
-          <p className="section-kicker">03 / NEXT MOVES</p>
-          <h2>Prioritized study plan</h2>
+          <p className="section-kicker">{kicker}</p>
+          <h2>{title}</h2>
         </div>
-        <span className="section-note">{items.filter((item) => !item.done).length} open</span>
+        <span className="section-note">{note ?? `${items.filter((item) => !item.done).length} open`}</span>
       </div>
       {error && <p className="error card-error" role="alert">{error}</p>}
       <ul className="plan-list">

@@ -38,6 +38,13 @@ const extractedSkillProfileSchema = new mongoose.Schema(
     submission_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ProfileSubmission', required: true, unique: true },
     skills: { type: [skillSchema], default: [] },
     gemini_model: { type: String, required: true },
+    // Cached skill vectors so analysis does not re-embed unchanged profiles.
+    embeddings: {
+      type: [{ name: { type: String, required: true }, vector: { type: [Number], default: [] } }],
+      default: [],
+    },
+    embedding_model: { type: String, default: '' },
+    embedding_version: { type: String, default: '' },
   },
   { timestamps: true }
 );

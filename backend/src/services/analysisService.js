@@ -56,7 +56,25 @@ export async function runAnalysis(reportId) {
       throw error;
     }
 
-    const vectors = await embedSkillsBatch(skillProfile.skills.map((s) => s.name));
+    // Reuse cached skill vectors when they were produced by the pinned model;
+    // otherwise embed once and cache them on the profile.
+    const cacheValid = skillProfile.embedding_model === env.EMBEDDING_MODEL
+      && skillProfile.embedding_version === env.EMBEDDING_VERSION
+      && Array.isArray(skillProfile.embeddings)
+      && skillProfile.embeddings.length === skillProfile.skills.length
+      && skillProfile.embeddings.every((entry) => Array.isArray(entry.vector) && entry.vector.length > 0);
+
+    let vectors;
+    if (cacheValid) {
+      vectors = skillProfile.embeddings.map((entry) => entry.vector);
+    } else {
+      vectors = await embedSkillsBatch(skillProfile.skills.map((s) => s.name));
+      skillProfile.embeddings = skillProfile.skills.map((skill, index) => ({ name: skill.name, vector: vectors[index] }));
+      skillProfile.embedding_model = env.EMBEDDING_MODEL;
+      skillProfile.embedding_version = env.EMBEDDING_VERSION;
+      await skillProfile.save().catch(() => {});
+    }
+
     if (vectors.some((vector) => rawOntology.some((skill) => skill.embedding_vector.length !== vector.length))) {
       const error = new Error('Stored vector dimensions do not match the configured embedding model.');
       error.code = 'embedding_dimension_mismatch';

@@ -41,7 +41,24 @@ describe('Dashboard layout', () => {
     localStorage.setItem('report_id', 'r1');
     api.get.mockImplementation((url) => {
       if (url === '/applications/me') {
-        return Promise.resolve({ data: { applications: [{ id: 'app1' }, { id: 'app2' }] } });
+        return Promise.resolve({
+          data: {
+            applications: [
+              {
+                id: 'app1',
+                status: 'applied',
+                appliedAt: '2026-09-12T00:00:00.000Z',
+                job: { id: 'j1', title: 'Backend Engineer', company: 'Acme', city: 'Pune', skills: ['Express', 'Docker'], experienceLevel: 2 },
+              },
+              {
+                id: 'app2',
+                status: 'under_review',
+                appliedAt: '2026-09-13T00:00:00.000Z',
+                job: { id: 'j2', title: 'Frontend Developer', company: 'Beta', city: 'Pune', skills: ['React'], experienceLevel: 1 },
+              },
+            ],
+          },
+        });
       }
       if (url === '/wishlist') {
         return Promise.resolve({
@@ -66,12 +83,36 @@ describe('Dashboard layout', () => {
           },
         });
       }
+      if (url === '/report/roadmap') {
+        return Promise.resolve({
+          data: {
+            roadmaps: [
+              {
+                target_role: 'SDE',
+                report_id: 'r1',
+                score: 77,
+                gap_count: 1,
+                gaps: [{ skill: 'Express', percent: 55 }],
+                study_plan: [
+                  {
+                    _id: 'i1',
+                    skill: 'Express',
+                    priority: 1,
+                    resources: [{ title: 'Express Guide', url: 'https://example.com', type: 'documentation', verified: true }],
+                    done: false,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+      }
       if (url.startsWith('/report/')) return Promise.resolve({ data: report });
       return Promise.resolve({ data: {} });
     });
   });
 
-  it('shows the ATS score, jobs applied, and the readiness graph only', async () => {
+  it('shows the score, per-role roadmap, application prep, and readiness graph', async () => {
     render(
       <MemoryRouter>
         <AuthProvider>
@@ -84,18 +125,40 @@ describe('Dashboard layout', () => {
 
     await screen.findByRole('heading', { name: /ats score/i });
     const headings = Array.from(document.querySelectorAll('h2')).map((h) => h.textContent);
-    expect(headings).toEqual(['ATS Score', 'Jobs applied', 'Saved jobs', 'Readiness trend']);
+    expect(headings).toEqual([
+      'ATS Score',
+      'What to study for your target roles',
+      'SDE roadmap',
+      'Prepare for the roles you applied to',
+      'Jobs applied',
+      'Saved jobs',
+      'Readiness trend',
+    ]);
     expect(screen.getByText('2')).toBeTruthy();
     expect(document.querySelector('.recharts-responsive-container')).toBeTruthy();
     expect(screen.getByText('Saved Backend Role')).toBeTruthy();
+
+    // Roadmap for the analyzed role, with its study items.
+    const planTitle = document.querySelector('.plan-title');
+    expect(planTitle.textContent).toContain('Express');
+    expect(screen.getByText('1 open item')).toBeTruthy();
+
+    // Skills from applied jobs that are gaps in the roadmap are flagged.
+    expect(screen.getByText('Backend Engineer')).toBeTruthy();
+    expect(screen.getByText(/from your SDE roadmap/)).toBeTruthy();
+    expect(screen.getByText(/does not flag these skills as gaps/)).toBeTruthy();
+
+    api.patch.mockResolvedValueOnce({ data: { done: true } });
+    fireEvent.click(screen.getByLabelText(/mark express complete/i));
+    expect(api.patch).toHaveBeenCalledWith('/report/r1/study-plan/i1');
+
     expect(screen.queryByText(/skill breakdown/i)).toBeNull();
-    expect(screen.queryByText(/study plan/i)).toBeNull();
     expect(screen.queryByText(/role readiness/i)).toBeNull();
   });
 
   it('clears an inaccessible stale report and shows the empty state', async () => {
     api.get.mockImplementation((url) => {
-      if (url.startsWith('/report/') && url !== '/report/history') {
+      if (url.startsWith('/report/') && !['/report/history', '/report/roadmap'].includes(url)) {
         return Promise.reject({ response: { status: 403 } });
       }
       return Promise.resolve({ data: {} });

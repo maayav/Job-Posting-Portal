@@ -186,7 +186,7 @@ export default function UploadPage() {
                 <div className="student-analysis-orbit"><span /><span /><span /></div>
                 <p className="section-kicker">A MOMENT TO CONNECT THE DOTS</p>
                 <h2>Analyzing your profile…</h2>
-                <p className="muted">Comparing your skills with {submission?.target_role} and preparing your readiness report.</p>
+                <p className="muted">Comparing your skills with {submission?.target_role} and preparing your readiness report and study roadmap.</p>
               </div>
             )}
           </motion.div>

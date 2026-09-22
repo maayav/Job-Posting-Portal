@@ -594,6 +594,16 @@ button.link:hover { color: var(--accent); }
 .dashboard-stat-value { display: flex; align-items: center; gap: 20px; }
 .dashboard-stat-value strong { font-size: clamp(2.2rem, 5vw, 3.6rem); letter-spacing: -.07em; }
 
+/* Dashboard roadmaps & application prep */
+.dashboard-roadmaps { display: grid; gap: 20px; }
+.dashboard-section-title { margin-bottom: 0; }
+.dashboard-section-title h2 { margin: 8px 0 0; }
+.applied-prep .section-heading { margin-bottom: 12px; }
+.applied-prep-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.applied-prep-list > li { display: grid; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.applied-prep-list > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.applied-prep-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
 /* Wishlist / saved jobs */
 .save-button { padding: 8px 13px; border: 1px solid var(--line-bright); border-radius: 999px; background: transparent; color: var(--text); font-size: .75rem; font-weight: 600; transition: background 150ms ease, color 150ms ease, border-color 150ms ease; }
 .save-button:hover { background: var(--panel-2); }

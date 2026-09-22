@@ -78,6 +78,39 @@ export async function getOwnHistory(req, res) {
   res.json({ history });
 }
 
+// GET /api/report/roadmap — the latest study roadmap for every role the student
+// has analyzed, so the dashboard can show what to study per role (including the
+// roles behind their job applications).
+export async function getRoadmap(req, res) {
+  const submissions = await ProfileSubmission.find({ user_id: req.user.id }).select('_id').lean();
+  const reports = await ReadinessReport.find({
+    submission_id: { $in: submissions.map((s) => s._id) },
+    status: 'completed',
+  })
+    .sort({ completedAt: -1 })
+    .lean();
+
+  const latestByRole = new Map();
+  for (const report of reports) {
+    if (!latestByRole.has(report.target_role)) latestByRole.set(report.target_role, report);
+  }
+
+  const roadmaps = await Promise.all(
+    [...latestByRole.values()].map(async (report) => ({
+      target_role: report.target_role,
+      report_id: report._id.toString(),
+      score: report.score,
+      generated_at: report.generated_at,
+      gap_count: report.gaps?.length ?? 0,
+      gaps: (report.gaps ?? []).map((gap) => ({ skill: gap.skill, percent: gap.percent })),
+      study_plan: await hydrateStudyPlan(report.study_plan),
+    }))
+  );
+
+  roadmaps.sort((a, b) => b.gap_count - a.gap_count || a.target_role.localeCompare(b.target_role));
+  res.json({ roadmaps });
+}
+
 export async function getUserReports(req, res) {
   const { userId } = req.params;
   if (!mongoose.isValidObjectId(userId)) {

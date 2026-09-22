@@ -2,6 +2,8 @@ import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
 import { extractSkills } from './geminiService.js';
 import { fetchLeetcodeProfile } from './leetcodeService.js';
+import { generateEmbeddings } from './ai/embeddingProvider.js';
+import { env } from '../config/env.js';
 
 function buildProfileText(submission, github) {
   const parts = [];
@@ -104,9 +106,23 @@ export async function processExtraction(submissionId, githubData) {
   const { skills: geminiSkills, model: usedModel } = await extractSkills(profileText);
   const skills = mergeSkills(geminiSkills);
 
+  // Cache skill vectors now so later analyses skip the embedding round trip.
+  // A failure here must not fail extraction; analysis embeds as a fallback.
+  let embeddings = [];
+  let embeddingModel = '';
+  let embeddingVersion = '';
+  try {
+    const vectors = await generateEmbeddings(skills.map((skill) => skill.name));
+    embeddings = skills.map((skill, index) => ({ name: skill.name, vector: vectors[index] }));
+    embeddingModel = env.EMBEDDING_MODEL;
+    embeddingVersion = env.EMBEDDING_VERSION;
+  } catch (error) {
+    console.warn('skill embedding cache skipped:', error.message);
+  }
+
   const saved = await ExtractedSkillProfile.findOneAndUpdate(
     { submission_id: submissionId },
-    { $set: { skills, gemini_model: usedModel } },
+    { $set: { skills, gemini_model: usedModel, embeddings, embedding_model: embeddingModel, embedding_version: embeddingVersion } },
     { upsert: true, returnDocument: 'after' }
   );
   await ProfileSubmission.findByIdAndUpdate(submissionId, { $set: { extraction_status: 'completed', extraction_error: null, leetcode_status: leetcode.status } });
