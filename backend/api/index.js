@@ -18,6 +18,13 @@ function ready() {
 }
 
 export default async function handler(req, res) {
+  // Health must answer even when the database is unreachable.
+  if (req.url?.split('?')[0] === '/api/health') {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
+    return;
+  }
+
   try {
     await ready();
   } catch (error) {
