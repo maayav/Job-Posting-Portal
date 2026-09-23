@@ -94,13 +94,20 @@ export async function listJobs(req, res) {
     filter.$and = [{ $or: [{ status: 'open' }, { status: { $exists: false } }] }];
   }
   if (query.search) {
-    const escaped = query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    filter.$or = [
-      { title: new RegExp(escaped, 'i') },
-      { company: new RegExp(escaped, 'i') },
-      { skills: new RegExp(escaped, 'i') },
-      { description: new RegExp(escaped, 'i') },
-    ];
+    const terms = query.search.split(',').map((term) => term.trim()).filter(Boolean);
+    const clauses = [];
+    for (const term of terms.length ? terms : [query.search]) {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const canonical = normalizeSkillName(term).toLowerCase();
+      clauses.push(
+        { title: new RegExp(escaped, 'i') },
+        { company: new RegExp(escaped, 'i') },
+        { skills: new RegExp(escaped, 'i') },
+        { description: new RegExp(escaped, 'i') },
+        { skillsLower: canonical },
+      );
+    }
+    filter.$or = clauses;
   }
 
   const { page, limit } = query;

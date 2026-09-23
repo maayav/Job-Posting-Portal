@@ -200,6 +200,20 @@ describe('Job posting portal', () => {
       expect(res.body.jobs[0].title).toBe('Frontend Developer');
     });
 
+    it('searches skills from the free-text search field and normalizes synonyms', async () => {
+      const res = await request(app).get('/api/jobs?search=reactjs').set(authHeader(studentToken));
+      expect(res.status).toBe(200);
+      expect(res.body.total).toBe(1);
+      expect(res.body.jobs[0].title).toBe('Frontend Developer');
+    });
+
+    it('supports comma-separated skill terms in free-text search', async () => {
+      const res = await request(app).get('/api/jobs?search=React,Python').set(authHeader(studentToken));
+      expect(res.status).toBe(200);
+      expect(res.body.total).toBe(2);
+      expect(res.body.jobs.map((job) => job.title).sort()).toEqual(['Data Analyst', 'Frontend Developer']);
+    });
+
     it('uses ANY-match semantics for multiple skills', async () => {
       const res = await request(app).get('/api/jobs?skills=react,node.js').set(authHeader(studentToken));
       expect(res.body.total).toBe(2);
