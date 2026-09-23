@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { SkillOntology } from '../models/skillOntology.js';
 import { saveResume, deleteResume } from '../services/storageService.js';
-import { extractResumeText } from '../services/resumeService.js';
+import { extractResumeText, assertLooksLikeResume } from '../services/resumeService.js';
 import { normalizeUsername, fetchGithubProfile } from '../services/githubService.js';
 import { processExtraction } from '../services/skillService.js';
 import { AppError } from '../utils/errors.js';
@@ -54,6 +54,7 @@ export async function createProfile(req, res) {
   let resume_text;
   try {
     resume_text = await extractResumeText(req.file.buffer);
+    assertLooksLikeResume(resume_text);
   } catch (err) {
     await deleteResume(filename);
     throw err;

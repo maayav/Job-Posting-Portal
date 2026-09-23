@@ -10,12 +10,12 @@
           "weight": 0.9,
           "resources": [
             {
-              "title": "NeetCode (YouTube)",
-              "url": "https://www.youtube.com/@NeetCode"
+              "title": "NeetCode — How to Learn Algorithms & Data Structures (YouTube)",
+              "url": "https://www.youtube.com/watch?v=aHZW7TuY_yo"
             },
             {
-              "title": "freeCodeCamp DSA (YouTube)",
-              "url": "https://www.youtube.com/@freecodecamp"
+              "title": "freeCodeCamp — Data Structures Easy to Advanced (YouTube)",
+              "url": "https://www.youtube.com/watch?v=RBSGKlAvoiM"
             },
             {
               "title": "Visualgo — Algorithm Visualizations",
@@ -37,8 +37,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "JavaScript Mastery (YouTube)",
-              "url": "https://www.youtube.com/@javascriptmastery"
+              "title": "JavaScript Mastery — JavaScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g7T23Xzys-A"
             },
             {
               "title": "JavaScript30 — 30 Day Challenge",
@@ -60,8 +60,8 @@
           "weight": 0.7,
           "resources": [
             {
-              "title": "The Net Ninja React (YouTube)",
-              "url": "https://www.youtube.com/@NetNinja"
+              "title": "Net Ninja — React Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=j942wKiXFu8"
             },
             {
               "title": "React Tutorial (official)",
@@ -95,8 +95,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -110,8 +110,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "Traversy Media (YouTube)",
-              "url": "https://www.youtube.com/@TraversyMedia"
+              "title": "Traversy Media — Node.js Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=32M1al-Y6Ag"
             },
             {
               "title": "The Odin Project — Node Path",
@@ -137,8 +137,8 @@
               "url": "https://learning.postman.com/"
             },
             {
-              "title": "IBM Technology (YouTube)",
-              "url": "https://www.youtube.com/@IBMTechnology"
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
             },
             {
               "title": "REST API Tutorial",
@@ -152,8 +152,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "ByteByteGo (YouTube)",
-              "url": "https://www.youtube.com/@ByteByteGo"
+              "title": "ByteByteGo — System Design Guide (YouTube)",
+              "url": "https://www.youtube.com/watch?v=i7twT3x5yv8"
             },
             {
               "title": "System Design Primer (GitHub)",
@@ -171,8 +171,8 @@
           "weight": 0.5,
           "resources": [
             {
-              "title": "Web Dev Simplified (YouTube)",
-              "url": "https://www.youtube.com/@WebDevSimplified"
+              "title": "Web Dev Simplified — Express JS in 35 Minutes (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SccSCuHhOw0"
             },
             {
               "title": "Express.js Routing Guide",
@@ -190,8 +190,8 @@
           "weight": 0.5,
           "resources": [
             {
-              "title": "MongoDB (YouTube)",
-              "url": "https://www.youtube.com/@MongoDB"
+              "title": "MongoDB — MongoDB in 10 Minutes (YouTube)",
+              "url": "https://www.youtube.com/watch?v=GV9VBwH_h1U"
             },
             {
               "title": "MongoDB Developer Center",
@@ -217,8 +217,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -240,8 +240,8 @@
           "weight": 0.5,
           "resources": [
             {
-              "title": "Matt Pocock (YouTube)",
-              "url": "https://www.youtube.com/@mattpocockuk"
+              "title": "Matt Pocock — TypeScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=YmxwicpROps"
             },
             {
               "title": "TypeScript Playground",
@@ -259,8 +259,8 @@
           "weight": 0.4,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -282,8 +282,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -301,8 +301,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -320,8 +320,8 @@
           "weight": 0.4,
           "resources": [
             {
-              "title": "Raghav Pal — Automation Step by Step (YouTube)",
-              "url": "https://www.youtube.com/@RaghavPal"
+              "title": "Automation Step by Step — Cypress Masterclass (YouTube)",
+              "url": "https://www.youtube.com/watch?v=tRI5ruE7yCA"
             },
             {
               "title": "Jest Docs",
@@ -345,8 +345,8 @@
               "url": "https://developers.google.com/machine-learning/crash-course"
             },
             {
-              "title": "StatQuest (YouTube)",
-              "url": "https://www.youtube.com/@statquest"
+              "title": "StatQuest with Josh Starmer — Intro to Machine Learning (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Gv9_4yMHFhI"
             },
             {
               "title": "Andrew Ng ML Course (Coursera)",
@@ -364,8 +364,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -387,8 +387,8 @@
               "url": "https://course.fast.ai/"
             },
             {
-              "title": "3Blue1Brown — Neural Networks (YouTube)",
-              "url": "https://www.youtube.com/@3blue1brown"
+              "title": "3Blue1Brown — Neural Networks, Chapter 1 (YouTube)",
+              "url": "https://www.youtube.com/watch?v=aircAruvnKk"
             },
             {
               "title": "DeepLearning.AI",
@@ -406,8 +406,8 @@
               "url": "https://pytorch.org/tutorials/"
             },
             {
-              "title": "Aladdin Persson (YouTube)",
-              "url": "https://www.youtube.com/@AladdinPersson"
+              "title": "Aladdin Persson — PyTorch Neural Network Example (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Jy4wM2X21u0"
             },
             {
               "title": "PyTorch Basics Tutorial",
@@ -429,8 +429,8 @@
           "weight": 0.7,
           "resources": [
             {
-              "title": "Data School (YouTube)",
-              "url": "https://www.youtube.com/@dataschool"
+              "title": "Data School — Train a Machine Learning Model with scikit-learn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=RlQuVL6-qe8"
             },
             {
               "title": "scikit-learn Getting Started",
@@ -448,8 +448,8 @@
           "weight": 0.7,
           "resources": [
             {
-              "title": "TensorFlow (YouTube)",
-              "url": "https://www.youtube.com/@TensorFlow"
+              "title": "freeCodeCamp — Keras with TensorFlow Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qFJeN9V1ZsI"
             },
             {
               "title": "TensorFlow Tutorials",
@@ -467,8 +467,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "Hugging Face (YouTube)",
-              "url": "https://www.youtube.com/@HuggingFace"
+              "title": "Hugging Face — Natural Language Processing (YouTube)",
+              "url": "https://www.youtube.com/watch?v=G5lmya6eKtc"
             },
             {
               "title": "Hugging Face LLM Course",
@@ -486,8 +486,8 @@
               "url": "https://numpy.org/learn/"
             },
             {
-              "title": "Keith Galli — NumPy (YouTube)",
-              "url": "https://www.youtube.com/@KeithGalli"
+              "title": "Keith Galli — Complete NumPy Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=GB9ByFAIAH4"
             },
             {
               "title": "NumPy Quickstart",
@@ -501,8 +501,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "Keith Galli (YouTube)",
-              "url": "https://www.youtube.com/@KeithGalli"
+              "title": "Keith Galli — Pandas Data Science Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=2uvysYbKdjM"
             },
             {
               "title": "Pandas Getting Started",
@@ -520,8 +520,8 @@
           "weight": 0.5,
           "resources": [
             {
-              "title": "Roboflow (YouTube)",
-              "url": "https://www.youtube.com/@Roboflow"
+              "title": "Roboflow — Computer Vision with Roboflow (YouTube)",
+              "url": "https://www.youtube.com/watch?v=a3SBRtILjPI"
             },
             {
               "title": "PyTorch object detection tutorial",
@@ -543,8 +543,8 @@
               "url": "https://fastapi.tiangolo.com/tutorial/"
             },
             {
-              "title": "ArjanCodes (YouTube)",
-              "url": "https://www.youtube.com/@ArjanCodes"
+              "title": "ArjanCodes — FastAPI Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SORiTsvnU28"
             },
             {
               "title": "FastAPI Official Docs",
@@ -566,8 +566,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -585,8 +585,8 @@
               "url": "https://seeing-theory.brown.edu/"
             },
             {
-              "title": "StatQuest Statistics (YouTube)",
-              "url": "https://www.youtube.com/@statquest"
+              "title": "StatQuest — Mean, Variance and Standard Deviation (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SzZ6GpcfoQY"
             },
             {
               "title": "Khan Academy Statistics",
@@ -604,8 +604,8 @@
               "url": "https://matplotlib.org/stable/tutorials/index.html"
             },
             {
-              "title": "Alex The Analyst — Tableau/Power BI (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
             },
             {
               "title": "Matplotlib Docs",
@@ -623,8 +623,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -642,8 +642,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -686,8 +686,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -731,8 +731,8 @@
               "url": "https://developers.google.com/machine-learning/crash-course"
             },
             {
-              "title": "StatQuest (YouTube)",
-              "url": "https://www.youtube.com/@statquest"
+              "title": "StatQuest with Josh Starmer — Intro to Machine Learning (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Gv9_4yMHFhI"
             },
             {
               "title": "Andrew Ng ML Course (Coursera)",
@@ -787,8 +787,8 @@
               "url": "https://course.fast.ai/"
             },
             {
-              "title": "3Blue1Brown — Neural Networks (YouTube)",
-              "url": "https://www.youtube.com/@3blue1brown"
+              "title": "3Blue1Brown — Neural Networks, Chapter 1 (YouTube)",
+              "url": "https://www.youtube.com/watch?v=aircAruvnKk"
             },
             {
               "title": "DeepLearning.AI",
@@ -806,8 +806,8 @@
               "url": "https://pytorch.org/tutorials/"
             },
             {
-              "title": "Aladdin Persson (YouTube)",
-              "url": "https://www.youtube.com/@AladdinPersson"
+              "title": "Aladdin Persson — PyTorch Neural Network Example (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Jy4wM2X21u0"
             },
             {
               "title": "PyTorch Basics Tutorial",
@@ -859,8 +859,8 @@
               "url": "https://fastapi.tiangolo.com/tutorial/"
             },
             {
-              "title": "ArjanCodes (YouTube)",
-              "url": "https://www.youtube.com/@ArjanCodes"
+              "title": "ArjanCodes — FastAPI Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SORiTsvnU28"
             },
             {
               "title": "FastAPI Official Docs",
@@ -878,8 +878,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -901,8 +901,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -920,8 +920,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -949,8 +949,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Traversy Media (YouTube)",
-              "url": "https://www.youtube.com/@TraversyMedia"
+              "title": "Traversy Media — Node.js Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=32M1al-Y6Ag"
             },
             {
               "title": "The Odin Project — Node Path",
@@ -987,8 +987,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -1010,8 +1010,8 @@
               "url": "https://learning.postman.com/"
             },
             {
-              "title": "IBM Technology (YouTube)",
-              "url": "https://www.youtube.com/@IBMTechnology"
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
             },
             {
               "title": "REST API Tutorial",
@@ -1025,8 +1025,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -1048,8 +1048,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -1071,8 +1071,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -1097,8 +1097,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "ByteByteGo (YouTube)",
-              "url": "https://www.youtube.com/@ByteByteGo"
+              "title": "ByteByteGo — System Design Guide (YouTube)",
+              "url": "https://www.youtube.com/watch?v=i7twT3x5yv8"
             },
             {
               "title": "System Design Primer (GitHub)",
@@ -1138,8 +1138,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "MongoDB (YouTube)",
-              "url": "https://www.youtube.com/@MongoDB"
+              "title": "MongoDB — MongoDB in 10 Minutes (YouTube)",
+              "url": "https://www.youtube.com/watch?v=GV9VBwH_h1U"
             },
             {
               "title": "MongoDB Developer Center",
@@ -1189,8 +1189,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -1223,8 +1223,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -1297,8 +1297,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -1436,8 +1436,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -1575,8 +1575,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -1598,8 +1598,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -1632,8 +1632,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -1677,8 +1677,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -1700,8 +1700,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -1780,8 +1780,8 @@
               "url": "https://developers.google.com/machine-learning/crash-course"
             },
             {
-              "title": "StatQuest (YouTube)",
-              "url": "https://www.youtube.com/@statquest"
+              "title": "StatQuest with Josh Starmer — Intro to Machine Learning (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Gv9_4yMHFhI"
             },
             {
               "title": "Andrew Ng ML Course (Coursera)",
@@ -1795,8 +1795,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Keith Galli (YouTube)",
-              "url": "https://www.youtube.com/@KeithGalli"
+              "title": "Keith Galli — Pandas Data Science Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=2uvysYbKdjM"
             },
             {
               "title": "Pandas Getting Started",
@@ -1818,8 +1818,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -1841,8 +1841,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -1868,8 +1868,8 @@
               "url": "https://seeing-theory.brown.edu/"
             },
             {
-              "title": "StatQuest Statistics (YouTube)",
-              "url": "https://www.youtube.com/@statquest"
+              "title": "StatQuest — Mean, Variance and Standard Deviation (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SzZ6GpcfoQY"
             },
             {
               "title": "Khan Academy Statistics",
@@ -1887,8 +1887,8 @@
               "url": "https://matplotlib.org/stable/tutorials/index.html"
             },
             {
-              "title": "Alex The Analyst — Tableau/Power BI (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
             },
             {
               "title": "Matplotlib Docs",
@@ -1910,8 +1910,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -1925,8 +1925,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "Data School (YouTube)",
-              "url": "https://www.youtube.com/@dataschool"
+              "title": "Data School — Train a Machine Learning Model with scikit-learn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=RlQuVL6-qe8"
             },
             {
               "title": "scikit-learn Getting Started",
@@ -1955,8 +1955,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -1978,8 +1978,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -1997,8 +1997,8 @@
               "url": "https://pytorch.org/tutorials/"
             },
             {
-              "title": "Aladdin Persson (YouTube)",
-              "url": "https://www.youtube.com/@AladdinPersson"
+              "title": "Aladdin Persson — PyTorch Neural Network Example (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Jy4wM2X21u0"
             },
             {
               "title": "PyTorch Basics Tutorial",
@@ -2059,8 +2059,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -2115,8 +2115,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -2156,8 +2156,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -2205,8 +2205,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -2267,8 +2267,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -2282,8 +2282,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "JavaScript Mastery (YouTube)",
-              "url": "https://www.youtube.com/@javascriptmastery"
+              "title": "JavaScript Mastery — JavaScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g7T23Xzys-A"
             },
             {
               "title": "JavaScript30 — 30 Day Challenge",
@@ -2305,8 +2305,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Traversy Media (YouTube)",
-              "url": "https://www.youtube.com/@TraversyMedia"
+              "title": "Traversy Media — Node.js Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=32M1al-Y6Ag"
             },
             {
               "title": "The Odin Project — Node Path",
@@ -2339,8 +2339,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "The Net Ninja React (YouTube)",
-              "url": "https://www.youtube.com/@NetNinja"
+              "title": "Net Ninja — React Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=j942wKiXFu8"
             },
             {
               "title": "React Tutorial (official)",
@@ -2370,8 +2370,8 @@
               "url": "https://learning.postman.com/"
             },
             {
-              "title": "IBM Technology (YouTube)",
-              "url": "https://www.youtube.com/@IBMTechnology"
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
             },
             {
               "title": "REST API Tutorial",
@@ -2385,8 +2385,8 @@
           "weight": 1,
           "resources": [
             {
-              "title": "Matt Pocock (YouTube)",
-              "url": "https://www.youtube.com/@mattpocockuk"
+              "title": "Matt Pocock — TypeScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=YmxwicpROps"
             },
             {
               "title": "TypeScript Playground",
@@ -2408,8 +2408,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -2423,8 +2423,8 @@
           "weight": 0.8,
           "resources": [
             {
-              "title": "ByteByteGo (YouTube)",
-              "url": "https://www.youtube.com/@ByteByteGo"
+              "title": "ByteByteGo — System Design Guide (YouTube)",
+              "url": "https://www.youtube.com/watch?v=i7twT3x5yv8"
             },
             {
               "title": "System Design Primer (GitHub)",
@@ -2442,8 +2442,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "Amazon Web Services (YouTube)",
-              "url": "https://www.youtube.com/@amazonwebservices"
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
             },
             {
               "title": "AWS Getting Started",
@@ -2461,8 +2461,8 @@
           "weight": 0.6,
           "resources": [
             {
-              "title": "MongoDB (YouTube)",
-              "url": "https://www.youtube.com/@MongoDB"
+              "title": "MongoDB — MongoDB in 10 Minutes (YouTube)",
+              "url": "https://www.youtube.com/watch?v=GV9VBwH_h1U"
             },
             {
               "title": "MongoDB Developer Center",
@@ -2593,8 +2593,8 @@
               "url": "https://docs.python.org/3/tutorial/"
             },
             {
-              "title": "Corey Schafer (YouTube)",
-              "url": "https://www.youtube.com/@coreyms"
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
             },
             {
               "title": "LearnPython.org (Interactive)",
@@ -2638,8 +2638,8 @@
               "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
             },
             {
-              "title": "Alex The Analyst (YouTube)",
-              "url": "https://www.youtube.com/@AlexTheAnalyst"
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
             },
             {
               "title": "W3Schools SQL Tutorial",
@@ -2665,8 +2665,8 @@
               "url": "https://docs.docker.com/get-started/"
             },
             {
-              "title": "TechWorld with Nana (YouTube)",
-              "url": "https://www.youtube.com/@TechWorldwithNana"
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
             },
             {
               "title": "Docker Official Docs",
@@ -2688,8 +2688,8 @@
               "url": "https://www.atlassian.com/git/tutorials"
             },
             {
-              "title": "GitHub (YouTube)",
-              "url": "https://www.youtube.com/@github"
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
             },
             {
               "title": "Learn Git Branching",
@@ -2712,5 +2712,5 @@
     }
   ],
   "skillCount": 82,
-  "resourceCount": 189
+  "resourceCount": 192
 }

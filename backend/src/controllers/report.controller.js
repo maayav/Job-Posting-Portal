@@ -78,16 +78,21 @@ export async function getOwnHistory(req, res) {
   res.json({ history });
 }
 
-// GET /api/report/roadmap — the latest study roadmap for every role the student
-// has analyzed, so the dashboard can show what to study per role (including the
-// roles behind their job applications).
+// GET /api/report/roadmap — the latest report for every role the student has
+// analyzed, so the dashboard can show what to study per role (including the
+// roles behind their job applications). Roles whose latest report is not
+// completed are returned with their status and an empty plan.
 export async function getRoadmap(req, res) {
   const submissions = await ProfileSubmission.find({ user_id: req.user.id }).select('_id').lean();
+  if (submissions.length === 0) {
+    res.json({ roadmaps: [] });
+    return;
+  }
+
   const reports = await ReadinessReport.find({
     submission_id: { $in: submissions.map((s) => s._id) },
-    status: 'completed',
   })
-    .sort({ completedAt: -1 })
+    .sort({ createdAt: -1 })
     .lean();
 
   const latestByRole = new Map();
@@ -95,19 +100,42 @@ export async function getRoadmap(req, res) {
     if (!latestByRole.has(report.target_role)) latestByRole.set(report.target_role, report);
   }
 
-  const roadmaps = await Promise.all(
-    [...latestByRole.values()].map(async (report) => ({
-      target_role: report.target_role,
-      report_id: report._id.toString(),
-      score: report.score,
-      generated_at: report.generated_at,
-      gap_count: report.gaps?.length ?? 0,
-      gaps: (report.gaps ?? []).map((gap) => ({ skill: gap.skill, percent: gap.percent })),
-      study_plan: await hydrateStudyPlan(report.study_plan),
-    }))
-  );
+  const entries = [...latestByRole.values()];
+  const completed = entries.filter((report) => report.status === 'completed');
 
-  roadmaps.sort((a, b) => b.gap_count - a.gap_count || a.target_role.localeCompare(b.target_role));
+  // Hydrate every role's plan with one resource query instead of one per role.
+  const hydrated = await hydrateStudyPlan(completed.flatMap((report) => report.study_plan ?? []));
+  let cursor = 0;
+  const completedById = new Map();
+  for (const report of completed) {
+    const count = report.study_plan?.length ?? 0;
+    completedById.set(report._id.toString(), hydrated.slice(cursor, cursor + count));
+    cursor += count;
+  }
+
+  const roadmaps = entries.map((report) => {
+    const id = report._id.toString();
+    const plan = completedById.get(id) ?? [];
+    return {
+      target_role: report.target_role,
+      report_id: id,
+      status: report.status,
+      score: report.status === 'completed' ? report.score : null,
+      generated_at: report.generated_at,
+      gap_count: report.status === 'completed' ? report.gaps?.length ?? 0 : 0,
+      gaps: report.status === 'completed'
+        ? (report.gaps ?? []).map((gap) => ({ skill: gap.skill, percent: gap.percent }))
+        : [],
+      study_plan: plan,
+    };
+  });
+
+  const statusRank = { completed: 0, processing: 1, queued: 2, failed: 3 };
+  roadmaps.sort((a, b) => (
+    (statusRank[a.status] ?? 9) - (statusRank[b.status] ?? 9)
+    || b.gap_count - a.gap_count
+    || a.target_role.localeCompare(b.target_role)
+  ));
   res.json({ roadmaps });
 }
 

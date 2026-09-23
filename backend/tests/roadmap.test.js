@@ -100,6 +100,37 @@ describe('GET /api/report/roadmap', () => {
     expect(byRole['Data Analyst'].study_plan[0].resources[0].url).toBe('https://sqlbolt.com/');
   });
 
+  it('includes analyzed roles whose latest report is not completed', async () => {
+    const userId = student.user.id;
+    await makeReport({ userId, role: 'SDE', score: 40, gapSkill: 'React', completedAt: new Date('2026-01-01') });
+    const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+    const { ReadinessReport } = await import('../src/models/readinessReport.js');
+    const submission = await ProfileSubmission.create({
+      user_id: userId,
+      resume_text: 'test resume',
+      resume_file_ref: 'test.pdf',
+      target_role: 'DevOps Engineer',
+      extraction_status: 'completed',
+    });
+    await ReadinessReport.create({
+      submission_id: submission._id,
+      target_role: 'DevOps Engineer',
+      status: 'failed',
+      errorCode: 'analysis_failed',
+      completedAt: new Date('2026-02-01'),
+    });
+
+    const res = await request(app).get('/api/report/roadmap').set(authHeader(student.token));
+    expect(res.status).toBe(200);
+    const byRole = Object.fromEntries(res.body.roadmaps.map((r) => [r.target_role, r]));
+    expect(Object.keys(byRole).sort()).toEqual(['DevOps Engineer', 'SDE']);
+    expect(byRole.SDE.status).toBe('completed');
+    expect(byRole.SDE.study_plan).toHaveLength(1);
+    expect(byRole['DevOps Engineer'].status).toBe('failed');
+    expect(byRole['DevOps Engineer'].score).toBeNull();
+    expect(byRole['DevOps Engineer'].study_plan).toEqual([]);
+  });
+
   it('never leaks another student\'s roadmaps', async () => {
     await makeReport({ userId: student.user.id, role: 'SDE', score: 40, gapSkill: 'React', completedAt: new Date() });
     await makeReport({ userId: other.user.id, role: 'SDE', score: 90, gapSkill: 'React', completedAt: new Date() });

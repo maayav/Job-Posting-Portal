@@ -14,7 +14,14 @@ export default function ApplyDialog({ job, user, onClose, onApplied }) {
       if (event.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    // Freeze the page behind the dialog so wheel/touch scrolls the dialog body
+    // instead of the job list underneath.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [onClose]);
 
   async function submit(event) {
@@ -55,8 +62,8 @@ export default function ApplyDialog({ job, user, onClose, onApplied }) {
   }
 
   return (
-    <div className="apply-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <div className="card apply-dialog" role="dialog" aria-modal="true" aria-labelledby="apply-title">
+    <div className="apply-overlay" role="presentation" data-lenis-prevent onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <div className="card apply-dialog" role="dialog" aria-modal="true" aria-labelledby="apply-title" data-lenis-prevent>
         <div className="job-head">
           <div className="job-head-info">
             <p className="section-kicker">APPLY</p>

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  app, initDb, closeDb, clearDb, registerUser, loginUser, authHeader, uploadResume, minimalPdfBuffer, seedTestOntology,
+  app, initDb, closeDb, clearDb, registerUser, loginUser, authHeader, uploadResume, minimalPdfBuffer, nonResumePdfBuffer, seedTestOntology,
 } from './helpers.js';
 
 vi.mock('../src/services/geminiService.js', () => ({
@@ -108,6 +108,18 @@ describe('Profile ingestion & security', () => {
       .field('target_role', 'Data Scientist');
     expect(r.status).toBe(201);
     expect(r.body.target_role).toBe('Data Scientist');
+  });
+
+  it('rejects a PDF that does not look like a resume (422 not_a_resume)', async () => {
+    const res = await uploadResume(token, { buffer: nonResumePdfBuffer() });
+    expect(res.status).toBe(422);
+    expect(res.body.error).toBe('not_a_resume');
+  });
+
+  it('accepts a resume-like PDF converted to plain text', async () => {
+    const res = await uploadResume(token, { buffer: minimalPdfBuffer() });
+    expect(res.status).toBe(201);
+    expect(res.body.extraction_status).toBe('completed');
   });
 
   it('normalizes GitHub URL into a canonical username', async () => {

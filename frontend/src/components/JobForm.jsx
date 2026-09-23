@@ -1,10 +1,24 @@
 import { useState } from 'react';
-import { parseSkillsInput, duplicateNormalizedSkills } from '../utils/skills';
+import { normalizeSkillName, duplicateNormalizedSkills } from '../utils/skills';
+import SkillMultiSelect from './SkillMultiSelect';
+
+const SKILL_OPTIONS = [
+  'Large Language Models', 'Retrieval-Augmented Generation', 'Prompt Engineering',
+  'Vector Databases', 'LLM Evaluation', 'Fine-tuning', 'AI Safety',
+  'FastAPI', 'Python', 'Django', 'TypeScript', 'PostgreSQL', 'Redis',
+  'AWS', 'Docker', 'Kubernetes', 'GraphQL', 'PyTorch', 'TensorFlow',
+  'React', 'Node.js', 'UI/UX', 'Flask', 'Spring Boot', '.NET', 'Go',
+  'Java', 'SQL', 'MongoDB', 'Azure', 'GCP', 'Terraform', 'Jest', 'Cypress',
+  'React Native', 'Vue', 'Angular', 'Next.js', 'JavaScript', 'C#', 'C++',
+  'Playwright', 'Selenium', 'pytest', 'Postman', 'REST APIs', 'gRPC',
+  'Power BI', 'Apache Spark', 'Airflow', 'OpenCV', 'Transformers',
+  'Prometheus', 'Grafana', 'Firebase', 'Data Visualization', 'Networking',
+];
 
 export default function JobForm({ initial, onSubmit, onCancel, saving }) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [company, setCompany] = useState(initial?.company ?? '');
-  const [skills, setSkills] = useState(initial?.skills?.join(', ') ?? '');
+  const [skills, setSkills] = useState(() => (initial?.skills ?? []).map(normalizeSkillName).filter(Boolean));
   const [experienceLevel, setExperienceLevel] = useState(initial?.experienceLevel ?? '');
   const [city, setCity] = useState(initial?.city ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
@@ -13,7 +27,7 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
 
   function submit(e) {
     e.preventDefault();
-    const skillList = parseSkillsInput(skills);
+    const skillList = skills.map(normalizeSkillName).filter(Boolean);
 
     if (!title.trim()) return setError('Title is required.');
     if (skillList.length === 0) return setError('At least one skill is required.');
@@ -52,11 +66,17 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
           <input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Example Company" />
         </label>
         <label>
-          Skills (comma-separated)
-          <input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="React, Node.js, UI/UX, MongoDB, PyTorch" />
+          Skills
+          <SkillMultiSelect
+            id="job-form-skills"
+            label="Select skills"
+            value={skills}
+            onChange={setSkills}
+            options={SKILL_OPTIONS}
+          />
         </label>
         <p className="muted small field-hint">
-          Examples: “React” for frontend engineering, “UI/UX” for design roles, “PyTorch” for ML.
+          Pick several skills at once from the list, or type a custom skill and press Enter.
           Common synonyms (reactjs, nodejs, ui/ux, …) are normalized automatically.
         </p>
         <label>

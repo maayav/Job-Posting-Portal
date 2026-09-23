@@ -53,10 +53,47 @@ export async function uploadResume(token, { buffer, filename = 'resume.pdf', git
   return req;
 }
 
+function textPdf(lines) {
+  const content = lines
+    .map((line, index) => `BT /F1 12 Tf 72 ${712 - index * 20} Td (${line}) Tj ET`)
+    .join('\n');
+  const objects = [
+    '1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj',
+    '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj',
+    '3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>endobj',
+    `4 0 obj<</Length ${Buffer.byteLength(content)}>>stream\n${content}\nendstream\nendobj`,
+    '5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj',
+  ];
+  return Buffer.from(`%PDF-1.4\n${objects.join('\n')}\ntrailer<</Root 1 0 R>>\n%%EOF\n`);
+}
+
 export function minimalPdfBuffer() {
-  return Buffer.from(
-    '%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>endobj\n4 0 obj<</Length 44>>stream\nBT /F1 12 Tf 72 712 Td (Aarav Mehta - React and Node.js developer) Tj ET\nendstream\nendobj\n5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n'
-  );
+  return textPdf([
+    'Aarav Mehta',
+    'Software Development Engineer',
+    'aarav.mehta@example.com | +91 98765 43210 | github.com/maayav',
+    'Summary',
+    'Software engineer with 2 years of experience building web applications.',
+    'Skills',
+    '- React, Node.js, MongoDB, JavaScript',
+    'Experience',
+    '- Built dashboards and REST APIs for internal tools.',
+    'Education',
+    '- B.Tech Computer Science, 2020',
+  ]);
+}
+
+export function nonResumePdfBuffer() {
+  return textPdf([
+    'Machine Learning Resources Handout',
+    'Chapter 1 - Introduction to Supervised Learning',
+    'This document summarizes gradient descent, regularization, and evaluation metrics for coursework.',
+    'Chapter 2 - Model Evaluation',
+    'Precision, recall, and F1 are computed from the confusion matrix.',
+    'References',
+    '1. Bishop, Pattern Recognition and Machine Learning, 2006.',
+    '2. Goodfellow, Deep Learning, 2016.',
+  ]);
 }
 
 export function fakeVector(name) {

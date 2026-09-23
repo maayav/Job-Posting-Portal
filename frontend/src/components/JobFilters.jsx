@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { normalizeSkillName } from '../utils/skills';
 import { motion } from 'motion/react';
+import SkillMultiSelect from './SkillMultiSelect';
 
 const POPULAR_SKILLS = [
   'Large Language Models', 'Retrieval-Augmented Generation', 'Prompt Engineering',
@@ -17,7 +18,6 @@ const POPULAR_SKILLS = [
 
 export default function JobFilters({ onSearch, onClear, loading, initialFilters = {} }) {
   const [selectedSkills, setSelectedSkills] = useState(() => initialFilters.skills ? initialFilters.skills.split(',').map(normalizeSkillName).filter(Boolean) : []);
-  const [skillDraft, setSkillDraft] = useState('');
   const [search, setSearch] = useState(initialFilters.search ?? '');
   const [sort, setSort] = useState(initialFilters.sort ?? 'newest');
   const [experience, setExperience] = useState(initialFilters.experience ?? '');
@@ -30,7 +30,8 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
       setError('Experience must be a number of years (0 or more).');
       return;
     }
-    const submittedSkills = [...selectedSkills, normalizeSkillName(skillDraft)].filter(Boolean)
+    const submittedSkills = selectedSkills
+      .filter(Boolean)
       .filter((skill, index, values) => values.findIndex((item) => item.toLowerCase() === skill.toLowerCase()) === index);
     setError('');
     onSearch({
@@ -44,7 +45,6 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
 
   function clear() {
     setSelectedSkills([]);
-    setSkillDraft('');
     setSearch('');
     setSort('newest');
     setExperience('');
@@ -65,22 +65,6 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
       });
       return next;
     });
-  }
-
-  function handleSkillChange(value) {
-    const parts = value.split(',');
-    if (parts.length === 1) {
-      setSkillDraft(value);
-      return;
-    }
-    appendSkills(parts.slice(0, -1));
-    setSkillDraft(parts.at(-1) ?? '');
-  }
-
-  function commitSkillDraft() {
-    if (!skillDraft.trim()) return;
-    appendSkills([skillDraft]);
-    setSkillDraft('');
   }
 
   return (
@@ -109,33 +93,12 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
       <div className="filters">
         <label>
           Skills
-          <div className="job-filter-skill-entry">
-            <div className="job-filter-chips" aria-label="Selected skills">
-              {selectedSkills.map((skill) => (
-                <span className="job-filter-chip" key={skill}>
-                  {skill}
-                  <button type="button" aria-label={`Remove ${skill}`} onClick={() => setSelectedSkills((current) => current.filter((item) => item !== skill))}>×</button>
-                </span>
-              ))}
-            </div>
-            <input
-              value={skillDraft}
-              onChange={(e) => handleSkillChange(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ',') {
-                  e.preventDefault();
-                  commitSkillDraft();
-                }
-              }}
-              onBlur={commitSkillDraft}
-              aria-describedby="skill-filter-help"
-              list="vortex-skill-suggestions"
-              placeholder="React, FastAPI, Python, AWS"
-            />
-          </div>
-          <datalist id="vortex-skill-suggestions">
-            {POPULAR_SKILLS.map((skill) => <option value={skill} key={skill} />)}
-          </datalist>
+          <SkillMultiSelect
+            id="job-filter-skills"
+            value={selectedSkills}
+            onChange={setSelectedSkills}
+            options={POPULAR_SKILLS}
+          />
         </label>
         <label>
           Experience (years)
@@ -158,7 +121,7 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
         </label>
       </div>
       <div className="job-filter-suggestions" aria-label="Popular skills">
-        <span>Try a skill</span>
+        <span>Quick add</span>
         {POPULAR_SKILLS.slice(0, 10).map((skill) => (
           <button type="button" className="job-filter-suggestion" key={skill} onClick={() => addSkill(skill)}>
             {skill}
@@ -166,7 +129,7 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
         ))}
       </div>
       <p className="muted small field-hint" id="skill-filter-help">
-        Add one or more skills, including frameworks, cloud tools, data platforms, and languages. We’ll show roles requiring up to your experience level in your chosen city.
+        Open the picker to select several skills at once, or quick-add a popular one. We’ll show roles requiring up to your experience level in your chosen city.
       </p>
       {error && <p className="error">{error}</p>}
       <div className="filters-actions">

@@ -83,6 +83,17 @@ describe('Dashboard layout', () => {
           },
         });
       }
+      if (url === '/roles') {
+        return Promise.resolve({
+          data: {
+            roles: [
+              { id: 'SDE', label: 'Software Development Engineer' },
+              { id: 'Data Analyst', label: 'Data Analyst' },
+              { id: 'ML Engineer', label: 'ML Engineer' },
+            ],
+          },
+        });
+      }
       if (url === '/report/roadmap') {
         return Promise.resolve({
           data: {
@@ -90,6 +101,7 @@ describe('Dashboard layout', () => {
               {
                 target_role: 'SDE',
                 report_id: 'r1',
+                status: 'completed',
                 score: 77,
                 gap_count: 1,
                 gaps: [{ skill: 'Express', percent: 55 }],
@@ -106,6 +118,7 @@ describe('Dashboard layout', () => {
               {
                 target_role: 'Data Analyst',
                 report_id: 'r2',
+                status: 'completed',
                 score: 62,
                 gap_count: 1,
                 gaps: [{ skill: 'SQL', percent: 45 }],
@@ -140,11 +153,12 @@ describe('Dashboard layout', () => {
     );
 
     await screen.findByRole('heading', { name: /ats score/i });
+    await screen.findByRole('heading', { name: /readiness trend/i });
     const headings = Array.from(document.querySelectorAll('h2')).map((h) => h.textContent);
     expect(headings).toEqual([
       'ATS Score',
       'What to study for your target roles',
-      'SDE roadmap',
+      'Software Development Engineer roadmap',
       'Prepare for the roles you applied to',
       'Jobs applied',
       'Saved jobs',
@@ -159,10 +173,10 @@ describe('Dashboard layout', () => {
     const collapsedList = document.querySelector('.plan-list');
     expect(collapsedList.hidden).toBe(true);
 
-    const expandSde = screen.getByRole('button', { name: 'Expand SDE roadmap' });
+    const expandSde = screen.getByRole('button', { name: 'Expand Software Development Engineer roadmap' });
     expect(expandSde.getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(expandSde);
-    expect(screen.getByRole('button', { name: 'Collapse SDE roadmap' }).getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getByRole('button', { name: 'Collapse Software Development Engineer roadmap' }).getAttribute('aria-expanded')).toBe('true');
     expect(document.querySelector('.plan-title').textContent).toContain('Express');
 
     // Skills from applied jobs that are gaps in the roadmap are flagged.
@@ -173,19 +187,26 @@ describe('Dashboard layout', () => {
     // The roadmap is chosen from a role dropdown; switching roles swaps the plan.
     const roleSelect = screen.getByLabelText(/choose role for study plan/i);
     expect(Array.from(roleSelect.options).map((option) => option.textContent)).toEqual([
-      'SDE · 77/100 · 1 open',
+      'Software Development Engineer · 77/100 · 1 open',
       'Data Analyst · 62/100 · 1 open',
+      'ML Engineer · not analyzed',
     ]);
-    fireEvent.change(roleSelect, { target: { value: 'r2' } });
+    fireEvent.change(roleSelect, { target: { value: 'Data Analyst' } });
     expect(screen.getByRole('heading', { name: 'Data Analyst roadmap' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Expand Data Analyst roadmap' }));
     expect(document.querySelector('.plan-title').textContent).toContain('SQL');
-    fireEvent.change(roleSelect, { target: { value: 'r1' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Expand SDE roadmap' }));
+    fireEvent.change(roleSelect, { target: { value: 'SDE' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Software Development Engineer roadmap' }));
 
     api.patch.mockResolvedValueOnce({ data: { done: true } });
     fireEvent.click(screen.getByLabelText(/mark express complete/i));
     expect(api.patch).toHaveBeenCalledWith('/report/r1/study-plan/i1');
+
+    // Roles without an analysis still appear, with a clear next step.
+    fireEvent.change(roleSelect, { target: { value: 'ML Engineer' } });
+    expect(screen.getByRole('heading', { name: 'ML Engineer' })).toBeTruthy();
+    expect(screen.getByText(/have not analyzed your profile for this role/i)).toBeTruthy();
+    expect(screen.getByRole('link', { name: /start analysis/i }).getAttribute('href')).toBe('/analyze?role=ML%20Engineer');
 
     expect(screen.queryByText(/skill breakdown/i)).toBeNull();
     expect(screen.queryByText(/role readiness/i)).toBeNull();

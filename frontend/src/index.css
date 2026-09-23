@@ -563,7 +563,25 @@ button.link:hover { color: var(--accent); }
 .progress-card { min-height: 200px; }
 
 /* Apply dialog */
-.apply-overlay { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(10, 10, 10, .55); backdrop-filter: blur(6px); overflow-y: auto; }
+.apply-overlay { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(10, 10, 10, .55); backdrop-filter: blur(6px); overflow-y: auto; overscroll-behavior: contain; }
+
+/* Multi-select skill picker */
+.skill-multi { position: relative; margin-top: 8px; }
+.skill-multi-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.skill-multi .job-filter-chip { display: inline-flex; align-items: center; gap: 5px; min-height: 25px; padding: 3px 7px 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel-2); color: var(--text); font-size: .67rem; }
+.skill-multi .job-filter-chip button { display: inline-grid; width: 18px; height: 18px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: .9rem; line-height: 1; }
+.skill-multi .job-filter-chip button:hover { background: var(--line); color: var(--text); }
+.skill-multi-add { min-height: 28px; padding: 4px 11px; border: 1px dashed var(--line-bright); border-radius: 999px; background: transparent; color: var(--muted); font-size: .68rem; transition: border-color 150ms ease, color 150ms ease; }
+.skill-multi-add:hover { border-color: var(--text); color: var(--text); }
+.skill-multi-panel { position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; width: min(440px, 100%); padding: 12px; border: 1px solid var(--line-bright); border-radius: 12px; background: var(--panel); box-shadow: 0 18px 40px rgba(0, 0, 0, .18); }
+.skill-multi-search { min-height: 36px; margin: 0 0 10px; }
+.skill-multi-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; max-height: 220px; overflow-y: auto; overscroll-behavior: contain; }
+.skill-multi-option { display: flex; align-items: center; gap: 8px; padding: 5px 7px; border-radius: 7px; font-size: .72rem; cursor: pointer; }
+.skill-multi-option:hover { background: var(--panel-2); }
+.skill-multi-option input { width: auto; min-height: 0; margin: 0; }
+.skill-multi-empty { grid-column: 1 / -1; margin: 4px 0; }
+.skill-multi-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.skill-multi-actions .link { margin-left: 12px; }
 .apply-dialog { width: min(560px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; margin: 0; }
 .apply-dialog h2 { margin-bottom: 2px; }
 .apply-resume { margin: 4px 0 16px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; }

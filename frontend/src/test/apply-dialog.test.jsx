@@ -24,6 +24,13 @@ describe('ApplyDialog', () => {
     expect(screen.getByLabelText(/apply without a resume/i)).toBeTruthy();
   });
 
+  it('locks page scroll and lets the dialog handle its own scrolling', () => {
+    render(<ApplyDialog job={job} user={user} onClose={vi.fn()} onApplied={vi.fn()} />);
+    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.querySelector('.apply-overlay').hasAttribute('data-lenis-prevent')).toBe(true);
+    expect(document.querySelector('.apply-dialog').hasAttribute('data-lenis-prevent')).toBe(true);
+  });
+
   it('submits with the account resume by default', async () => {
     const onApplied = vi.fn();
     api.post.mockResolvedValue({ data: { application: { id: 'a1' } } });

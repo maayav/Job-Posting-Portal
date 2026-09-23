@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import Icon from '../components/Icon';
@@ -190,6 +190,7 @@ export default function AssistantPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const logRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -199,6 +200,12 @@ export default function AssistantPage() {
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
+
+  // Keep the newest message in view; the log is its own scroll container.
+  useEffect(() => {
+    const log = logRef.current;
+    if (log) log.scrollTop = log.scrollHeight;
+  }, [messages, sending]);
 
   const isAdminAssistant = context?.role === 'admin';
   const hasAnalysis = !!context?.analysisId;
@@ -273,7 +280,7 @@ export default function AssistantPage() {
           <section className="assistant-workspace">
             <div className="card assistant-thread">
               <div className="assistant-thread-heading"><div><span className="signal-dot" /> Grounded conversation</div><button className="link" onClick={clearConversation} disabled={!messages.length}>Clear conversation</button></div>
-              <div className="student-assistant-log" role="log" aria-live="polite" aria-relevant="additions text">
+              <div className="student-assistant-log" role="log" aria-live="polite" aria-relevant="additions text" data-lenis-prevent ref={logRef}>
                 {!messages.length && <div className="assistant-welcome"><span className="assistant-icon"><Icon name={isAdminAssistant ? 'users' : 'chart'} size={25} /></span><h2>{isAdminAssistant ? 'What do you need to know about the workspace?' : 'What would you like to work on?'}</h2><p className="muted">{isAdminAssistant ? 'Ask for role totals, pipeline counts, candidate summaries, or the latest application activity.' : 'Ask about your score, gaps, learning order, or a project that would create stronger evidence.'}</p></div>}
                 {messages.map((message, index) => <div className={`assistant-message assistant-message-${message.role}`} key={`${message.role}-${index}`}><span>{message.role === 'user' ? 'You' : 'Vortex AI'}</span>{message.role === 'assistant' ? <AssistantAnswer content={message.content} /> : <p className="assistant-user-copy">{message.content}</p>}</div>)}
                 {sending && <div className="assistant-message assistant-message-assistant"><span>Vortex AI</span><p className="muted">Thinking from your {isAdminAssistant ? 'workspace data' : 'analysis'}…</p></div>}
