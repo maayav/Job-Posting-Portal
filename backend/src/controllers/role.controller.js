@@ -21,3 +21,4 @@ export async function listRoles(req, res) {
 export async function availableRoleNames() {
   return SkillOntology.distinct('roles.role_name');
 }
+

@@ -23,7 +23,10 @@ describe('Public role guide', () => {
     expect(link.getAttribute('href')).toBe('https://docs.langchain.com/oss/python/deepagents/rag');
     expect(screen.getByRole('tab', { name: 'Learning resources' }).getAttribute('aria-selected')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'Next role' }));
-    expect(screen.getByLabelText('Choose a role').value).toBe('Backend Developer');
+    // The next role is whatever follows AI Engineer in the generated catalog.
+    const roleIds = catalog.roles.map((role) => role.id);
+    const nextRole = roleIds[(roleIds.indexOf('AI Engineer') + 1) % roleIds.length];
+    expect(screen.getByLabelText('Choose a role').value).toBe(nextRole);
   });
 
   it('includes an HTTPS learning resource for every AI Engineer skill', () => {

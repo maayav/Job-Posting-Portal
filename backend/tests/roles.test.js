@@ -52,3 +52,33 @@ describe('Target roles endpoint', () => {
     expect(res.body.roles).toEqual([]);
   });
 });
+
+describe('Skill keywords endpoint', () => {
+  let token;
+
+  beforeAll(initDb);
+  afterAll(closeDb);
+  beforeEach(async () => {
+    await clearDb();
+    token = (await registerUser({ email: 'skills@test.com' })).token;
+  });
+
+  it('requires authentication', async () => {
+    const res = await request(app).get('/api/skills');
+    expect(res.status).toBe(401);
+  });
+
+  it('returns canonical skills from the ontology and resource catalog', async () => {
+    await seedTestOntology();
+    const res = await request(app).get('/api/skills').set(authHeader(token));
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.skills)).toBe(true);
+    expect(res.body.skills).toContain('React');
+    expect(res.body.skills).toContain('Express');
+    // Sorted, unique, non-empty strings.
+    const skills = res.body.skills;
+    expect(new Set(skills).size).toBe(skills.length);
+    expect([...skills].sort((a, b) => a.localeCompare(b))).toEqual(skills);
+    expect(skills.every((skill) => typeof skill === 'string' && skill.length > 0)).toBe(true);
+  });
+});

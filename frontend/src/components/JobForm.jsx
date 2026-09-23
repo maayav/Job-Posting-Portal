@@ -1,21 +1,11 @@
 import { useState } from 'react';
 import { normalizeSkillName, duplicateNormalizedSkills } from '../utils/skills';
 import SkillMultiSelect from './SkillMultiSelect';
+import { useSkillOptions } from '../hooks/useSkillOptions';
 
-const SKILL_OPTIONS = [
-  'Large Language Models', 'Retrieval-Augmented Generation', 'Prompt Engineering',
-  'Vector Databases', 'LLM Evaluation', 'Fine-tuning', 'AI Safety',
-  'FastAPI', 'Python', 'Django', 'TypeScript', 'PostgreSQL', 'Redis',
-  'AWS', 'Docker', 'Kubernetes', 'GraphQL', 'PyTorch', 'TensorFlow',
-  'React', 'Node.js', 'UI/UX', 'Flask', 'Spring Boot', '.NET', 'Go',
-  'Java', 'SQL', 'MongoDB', 'Azure', 'GCP', 'Terraform', 'Jest', 'Cypress',
-  'React Native', 'Vue', 'Angular', 'Next.js', 'JavaScript', 'C#', 'C++',
-  'Playwright', 'Selenium', 'pytest', 'Postman', 'REST APIs', 'gRPC',
-  'Power BI', 'Apache Spark', 'Airflow', 'OpenCV', 'Transformers',
-  'Prometheus', 'Grafana', 'Firebase', 'Data Visualization', 'Networking',
-];
 
 export default function JobForm({ initial, onSubmit, onCancel, saving }) {
+  const skillOptions = useSkillOptions();
   const [title, setTitle] = useState(initial?.title ?? '');
   const [company, setCompany] = useState(initial?.company ?? '');
   const [skills, setSkills] = useState(() => (initial?.skills ?? []).map(normalizeSkillName).filter(Boolean));
@@ -72,7 +62,7 @@ export default function JobForm({ initial, onSubmit, onCancel, saving }) {
             label="Select skills"
             value={skills}
             onChange={setSkills}
-            options={SKILL_OPTIONS}
+            options={skillOptions}
           />
         </label>
         <p className="muted small field-hint">

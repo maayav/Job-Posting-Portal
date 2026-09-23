@@ -1,0 +1,125 @@
+{
+  "role": "UI/UX Designer",
+  "skills": [
+    {
+      "skill_name": "Figma",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "UI/UX",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "Design Systems",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Prototyping",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "User Research",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Wireframing",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Interaction Design",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Usability Testing",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Web Accessibility",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "HTML/CSS",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Responsive Design",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Visualization",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "UI/UX Designer",
+          "weight": 0.3
+        }
+      ]
+    }
+  ]
+}

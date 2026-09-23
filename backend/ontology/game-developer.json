@@ -1,0 +1,105 @@
+{
+  "role": "Game Developer",
+  "skills": [
+    {
+      "skill_name": "Unity",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Unreal Engine",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "C#",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "C++",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Game Physics",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "3D Mathematics",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Shaders",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Game Design",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Structures & Algorithms",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Game Developer",
+          "weight": 0.6
+        }
+      ]
+    }
+  ]
+}

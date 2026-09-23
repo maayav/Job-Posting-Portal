@@ -1,0 +1,732 @@
+{
+  "resources": [
+    {
+      "skill_name": "Solidity",
+      "title": "Solidity Documentation",
+      "url": "https://docs.soliditylang.org/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Ethereum",
+      "title": "Ethereum Developer Documentation",
+      "url": "https://ethereum.org/en/developers/docs/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Smart Contracts",
+      "title": "Ethereum — Introduction to Smart Contracts",
+      "url": "https://ethereum.org/en/developers/docs/smart-contracts/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Web3.js",
+      "title": "web3.js Documentation",
+      "url": "https://web3js.readthedocs.io/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Hardhat",
+      "title": "Hardhat Documentation",
+      "url": "https://hardhat.org/docs",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Cryptography",
+      "title": "CryptoHack — Learn Cryptography",
+      "url": "https://cryptohack.org/",
+      "type": "practice-set",
+      "verified": true
+    },
+    {
+      "skill_name": "Blockchain Security",
+      "title": "Consensys Smart Contract Best Practices",
+      "url": "https://consensys.github.io/smart-contract-best-practices/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "IPFS",
+      "title": "IPFS Documentation",
+      "url": "https://docs.ipfs.tech/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Requirements Gathering",
+      "title": "Atlassian — Requirements Gathering",
+      "url": "https://www.atlassian.com/agile/requirements",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Process Modeling",
+      "title": "BPMN Specification",
+      "url": "https://www.bpmn.org/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Stakeholder Communication",
+      "title": "ProjectManager — Stakeholder Communication",
+      "url": "https://www.projectmanager.com/blog/stakeholder-communication",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "User Stories",
+      "title": "Atlassian — User Stories",
+      "url": "https://www.atlassian.com/agile/project-management/user-stories",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Agile Methodologies",
+      "title": "Atlassian Agile Coach",
+      "url": "https://www.atlassian.com/agile",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "title": "Microsoft Excel Training",
+      "url": "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Business Process Modeling",
+      "title": "OMG BPMN 2.0 Specification",
+      "url": "https://www.omg.org/spec/BPMN/2.0/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "title": "Kaggle — Data Cleaning Course",
+      "url": "https://www.kaggle.com/learn/data-cleaning",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Dashboard Design",
+      "title": "NN/g — Dashboards: Preattentive Attributes",
+      "url": "https://www.nngroup.com/articles/dashboards-preattentive/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Storytelling",
+      "title": "Storytelling with Data",
+      "url": "https://www.storytellingwithdata.com/",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Database Tuning",
+      "title": "Use The Index, Luke — SQL Performance",
+      "url": "https://use-the-index-luke.com/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Query Optimization",
+      "title": "PostgreSQL Performance Tips",
+      "url": "https://www.postgresql.org/docs/current/performance-tips.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Backup and Recovery",
+      "title": "PostgreSQL Backup and Restore",
+      "url": "https://www.postgresql.org/docs/current/backup.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Database Replication",
+      "title": "PostgreSQL High Availability and Replication",
+      "url": "https://www.postgresql.org/docs/current/high-availability.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Indexing",
+      "title": "Use The Index, Luke — Anatomy of an Index",
+      "url": "https://use-the-index-luke.com/sql/anatomy",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "High Availability",
+      "title": "PostgreSQL Warm Standby",
+      "url": "https://www.postgresql.org/docs/current/warm-standby.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "HTML/CSS",
+      "title": "MDN — HTML Documentation",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Tailwind CSS",
+      "title": "Tailwind CSS Documentation",
+      "url": "https://tailwindcss.com/docs",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Web Accessibility",
+      "title": "W3C — Accessibility Fundamentals",
+      "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Web Performance",
+      "title": "web.dev — Learn Performance",
+      "url": "https://web.dev/learn/performance",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Responsive Design",
+      "title": "web.dev — Learn Responsive Design",
+      "url": "https://web.dev/learn/design",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Unity",
+      "title": "Unity Manual",
+      "url": "https://docs.unity3d.com/Manual/index.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Unreal Engine",
+      "title": "Unreal Engine Documentation",
+      "url": "https://dev.epicgames.com/documentation/en-us/unreal-engine",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Game Physics",
+      "title": "Gaffer On Games — Integration Basics",
+      "url": "https://gafferongames.com/post/integration_basics/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "3D Mathematics",
+      "title": "LearnOpenGL — Transformations",
+      "url": "https://learnopengl.com/Getting-started/Transformations",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Shaders",
+      "title": "The Book of Shaders",
+      "url": "https://thebookofshaders.com/",
+      "type": "course",
+      "verified": true
+    },
+    {
+      "skill_name": "Game Design",
+      "title": "Game Developer — Design",
+      "url": "https://www.gamedeveloper.com/design",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Flutter",
+      "title": "Flutter Documentation",
+      "url": "https://docs.flutter.dev/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Kotlin",
+      "title": "Kotlin Documentation",
+      "url": "https://kotlinlang.org/docs/home.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Swift",
+      "title": "Swift Documentation",
+      "url": "https://www.swift.org/documentation/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Mobile UI Design",
+      "title": "Material Design 3",
+      "url": "https://m3.material.io/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Push Notifications",
+      "title": "Firebase Cloud Messaging",
+      "url": "https://firebase.google.com/docs/cloud-messaging",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "App Store Deployment",
+      "title": "Publish Your App on Google Play",
+      "url": "https://developer.android.com/studio/publish",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "TCP/IP",
+      "title": "Cloudflare — What is TCP/IP?",
+      "url": "https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Routing and Switching",
+      "title": "Cisco — What Is Routing?",
+      "url": "https://www.cisco.com/c/en/us/solutions/enterprise-networks/what-is-routing.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "DNS",
+      "title": "Cloudflare — What is DNS?",
+      "url": "https://www.cloudflare.com/learning/dns/what-is-dns/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Network Monitoring",
+      "title": "Zabbix Documentation",
+      "url": "https://www.zabbix.com/documentation/current/en/manual",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Load Balancing",
+      "title": "NGINX Load Balancing",
+      "url": "https://nginx.org/en/docs/http/load_balancing.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Cloud Networking",
+      "title": "AWS VPC Documentation",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Observability",
+      "title": "OpenTelemetry Documentation",
+      "url": "https://opentelemetry.io/docs/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Service Level Objectives",
+      "title": "Google SRE Workbook — Implementing SLOs",
+      "url": "https://sre.google/workbook/implementing-slos/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Wireframing",
+      "title": "Figma — What is Wireframing?",
+      "url": "https://www.figma.com/resource-library/what-is-wireframing/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Interaction Design",
+      "title": "Interaction Design Foundation",
+      "url": "https://www.interaction-design.org/literature/topics/interaction-design",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Usability Testing",
+      "title": "NN/g — Usability Testing 101",
+      "url": "https://www.nngroup.com/articles/usability-testing-101/",
+      "type": "documentation",
+      "verified": true
+    },
+    {
+      "skill_name": "Solidity",
+      "title": "freeCodeCamp.org — Solidity Tutorial - A Full Course on Ethereum, Blockchain Development, Smart Contracts, and the EVM (YouTube)",
+      "url": "https://www.youtube.com/watch?v=ipwxYa-F1uY",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Ethereum",
+      "title": "edureka! — Ethereum Developer Tutorial | Ethereum Developer Training | Ethereum Explained | Edureka (YouTube)",
+      "url": "https://www.youtube.com/watch?v=_2_vsl82zAk",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Smart Contracts",
+      "title": "freeCodeCamp.org — Solidity, Blockchain, and Smart Contract Course – Beginner to Expert Python Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=M576WGiDBdQ",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Web3.js",
+      "title": "freeCodeCamp.org — Learn Blockchain, Solidity, and Full Stack Web3 Development with JavaScript – 32-Hour Course (YouTube)",
+      "url": "https://www.youtube.com/watch?v=gyMwXuJrbJQ",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Hardhat",
+      "title": "Daulat Hussain — Hardhat Testing Tutorial | Solidity Smart Contract Testing Developer | Hardhat Testing Course (YouTube)",
+      "url": "https://www.youtube.com/watch?v=H-yL6nloq3I",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Cryptography",
+      "title": "freeCodeCamp.org — Cryptography for Beginners - Full Python Course (SHA-256, AES, RSA, Passwords) (YouTube)",
+      "url": "https://www.youtube.com/watch?v=kb_scuDUHls",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Blockchain Security",
+      "title": "freeCodeCamp.org — Solidity, Blockchain, and Smart Contract Course – Beginner to Expert Python Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=M576WGiDBdQ",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "IPFS",
+      "title": "Simply Explained — IPFS: Interplanetary File Storage (YouTube)",
+      "url": "https://www.youtube.com/watch?v=5Uj6uR3fp-U",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Requirements Gathering",
+      "title": "Simplilearn — Business Analyst Requirement Gathering | Requirement Gathering in Business Analysis | Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=qZ8AtqJijrw",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Process Modeling",
+      "title": "IBM Technology — What is Business Process Modeling? (YouTube)",
+      "url": "https://www.youtube.com/watch?v=sUdhXn1w75Y",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Stakeholder Communication",
+      "title": "Adriana Girdler — Stakeholder Communication in Project Management [Stop Spinning Your Wheels] (YouTube)",
+      "url": "https://www.youtube.com/watch?v=bV9yUQV6D60",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "User Stories",
+      "title": "Simplilearn — Agile User Stories | How To Write User Stories | Epic And User Story Examples | Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=SRRQCDZQ6G4",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Agile Methodologies",
+      "title": "Simplilearn — Agile Scrum Full Course In 4 Hours | Agile Scrum Master Training | Agile Training Video |Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=VFQtSqChlsk",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "title": "freeCodeCamp.org — Microsoft Excel Tutorial for Beginners - Full Course (YouTube)",
+      "url": "https://www.youtube.com/watch?v=Vl0H-qTclOg",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Business Process Modeling",
+      "title": "IBM Technology — What is Business Process Modeling? (YouTube)",
+      "url": "https://www.youtube.com/watch?v=sUdhXn1w75Y",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "title": "Corey Schafer — Python Pandas Tutorial (Part 9): Cleaning Data - Casting Datatypes and Handling Missing Values (YouTube)",
+      "url": "https://www.youtube.com/watch?v=KdmPHEnPJPs",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Dashboard Design",
+      "title": "codebasics — How to Design an Effective Data Visualization Dashboard? (YouTube)",
+      "url": "https://www.youtube.com/watch?v=HuZiJ44_71M",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Data Storytelling",
+      "title": "Harvard Business Review — Telling Stories with Data in 3 Steps (YouTube)",
+      "url": "https://www.youtube.com/watch?v=r5_34YnCmMY",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Database Tuning",
+      "title": "ByteByteGo — 7 Must-know Strategies to Scale Your Database (YouTube)",
+      "url": "https://www.youtube.com/watch?v=_1IKwnbscQU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Query Optimization",
+      "title": "Simplilearn — SQL Query Optimization | SQL Query Optimization Techniques | SQL Basics | SQL Query | Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=MpczBuIk7R8",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Backup and Recovery",
+      "title": "IBM Technology — Disaster Recovery vs. Backup: What's the difference? (YouTube)",
+      "url": "https://www.youtube.com/watch?v=07EHsPuKXc0",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Database Replication",
+      "title": "Aced (formerly Exponent) — Database Replication Explained (in 5 Minutes) (YouTube)",
+      "url": "https://www.youtube.com/watch?v=bI8Ry6GhMSE",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Indexing",
+      "title": "Hussein Nasser — Database Indexing Explained (with PostgreSQL) (YouTube)",
+      "url": "https://www.youtube.com/watch?v=-qNSXK7s7_w",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "High Availability",
+      "title": "Shiran Afergan — High Availability | Eliminate Single Points of Failure | System Design Concepts for Beginners (YouTube)",
+      "url": "https://www.youtube.com/watch?v=USCCqS9MbHs",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "HTML/CSS",
+      "title": "Programming with Mosh — HTML Tutorial for Beginners: HTML Crash Course (YouTube)",
+      "url": "https://www.youtube.com/watch?v=qz0aGYrrlhU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Tailwind CSS",
+      "title": "JavaScript Mastery — Tailwind CSS v4 Full Course 2026 | Master Tailwind in One Hour (YouTube)",
+      "url": "https://www.youtube.com/watch?v=6biMWgD6_JY",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Web Accessibility",
+      "title": "freeCodeCamp.org — Learn Accessibility - Full a11y Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=e2nkq3h1P68",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Web Performance",
+      "title": "Beyond Fireship — The ultimate guide to web performance (YouTube)",
+      "url": "https://www.youtube.com/watch?v=0fONene3OIA",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Responsive Design",
+      "title": "Kevin Powell — A practical guide to responsive web design (YouTube)",
+      "url": "https://www.youtube.com/watch?v=x4u1yp3Msao",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Unity",
+      "title": "freeCodeCamp.org — Learn Unity - Beginner's Game Development Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=gB1F9G0JXOo",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Unreal Engine",
+      "title": "freeCodeCamp.org — Unreal Engine 5 – Full Course for Beginners (YouTube)",
+      "url": "https://www.youtube.com/watch?v=6UlU_FsicK8",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Game Physics",
+      "title": "freeCodeCamp.org — JavaScript GameDev Tutorial – Code an Animated Physics Game [Full Course] (YouTube)",
+      "url": "https://www.youtube.com/watch?v=U34l-Xz5ynU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "3D Mathematics",
+      "title": "javidx9 — Essential Mathematics For Aspiring Game Developers (YouTube)",
+      "url": "https://www.youtube.com/watch?v=DPfxjQ6sqrc",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Shaders",
+      "title": "Barney Codes — Introduction to shaders: Learn the basics! (YouTube)",
+      "url": "https://www.youtube.com/watch?v=3mfvZ-mdtZQ",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Game Design",
+      "title": "Indie Game Clinic — Game Design Theory: A Guided Tour (YouTube)",
+      "url": "https://www.youtube.com/watch?v=TATKLd1Q6ho",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Flutter",
+      "title": "Flutter Mapp — The Ultimate Flutter Tutorial for Beginners - 2025 Full Course (YouTube)",
+      "url": "https://www.youtube.com/watch?v=3kaGC_DrUnw",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Kotlin",
+      "title": "freeCodeCamp.org — Kotlin Course - Tutorial for Beginners (YouTube)",
+      "url": "https://www.youtube.com/watch?v=F9UC9DY-vIU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Swift",
+      "title": "freeCodeCamp.org — Swift Programming Tutorial – Full Course for Beginners (YouTube)",
+      "url": "https://www.youtube.com/watch?v=8Xg7E9shq0U",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Mobile UI Design",
+      "title": "freeCodeCamp.org — UI / UX Design Tutorial – Wireframe, Mockup & Design in Figma (YouTube)",
+      "url": "https://www.youtube.com/watch?v=c9Wg6Cb_YlU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Push Notifications",
+      "title": "Philipp Lackner — Firebase Push Notifications on Android (YouTube)",
+      "url": "https://www.youtube.com/watch?v=q6TL2RyysV4",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "App Store Deployment",
+      "title": "Code with me — How to Upload Your Android App to Google Play Store (Step-by-Step Guide) | 2025 Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=F74CNRDoiaY",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "TCP/IP",
+      "title": "CertBros — TCP/IP Model Explained | Cisco CCNA 200-301 (YouTube)",
+      "url": "https://www.youtube.com/watch?v=OTwp3xtd4dg",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Routing and Switching",
+      "title": "Vinsloev Academy — Introduction to Networking Part 4 | Network Basics for Beginners - Routing and Switching (YouTube)",
+      "url": "https://www.youtube.com/watch?v=xSiE0tahshI",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "DNS",
+      "title": "Fireship — DNS Explained in 100 Seconds (YouTube)",
+      "url": "https://www.youtube.com/watch?v=UVR9lhUGAyU",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Network Monitoring",
+      "title": "Auvik — Network Monitoring Tutorial with Auvik Software (YouTube)",
+      "url": "https://www.youtube.com/watch?v=Smn2vt6j1Do",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Load Balancing",
+      "title": "TechWorld with Nana — Proxy vs Reverse Proxy vs Load Balancer | Simply Explained (YouTube)",
+      "url": "https://www.youtube.com/watch?v=xo5V9g9joFs",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Cloud Networking",
+      "title": "freeCodeCamp.org — AWS VPC Beginner to Pro - Virtual Private Cloud Tutorial (YouTube)",
+      "url": "https://www.youtube.com/watch?v=g2JOHLHh4rI",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Observability",
+      "title": "IBM Technology — Observability vs. APM vs. Monitoring (YouTube)",
+      "url": "https://www.youtube.com/watch?v=CAQ_a2-9UOI",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Service Level Objectives",
+      "title": "CodeLucky — SLO & SLI Explained: Service Level Objectives & Indicators for Beginners (YouTube)",
+      "url": "https://www.youtube.com/watch?v=77woJoutNjE",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Wireframing",
+      "title": "Simplilearn — Figma Wireframe Tutorial For Beginners | How To Create Wireframes In Figma? | Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=mHoux2jITnE",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Interaction Design",
+      "title": "Simplilearn — UI/UX Explained In 8 Minutes | UI/UX Design For Beginners | UI/UX Design Basics | Simplilearn (YouTube)",
+      "url": "https://www.youtube.com/watch?v=ODpB9-MCa5s",
+      "type": "video",
+      "verified": true
+    },
+    {
+      "skill_name": "Usability Testing",
+      "title": "Interesting data — Usability Testing Tutorial | 6 Steps of Usability Testing Process | 10 Usability Testing Tools (YouTube)",
+      "url": "https://www.youtube.com/watch?v=JeeB8jEd_KQ",
+      "type": "video",
+      "verified": true
+    }
+  ]
+}

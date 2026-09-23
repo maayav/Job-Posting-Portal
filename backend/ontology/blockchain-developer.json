@@ -1,0 +1,125 @@
+{
+  "role": "Blockchain Developer",
+  "skills": [
+    {
+      "skill_name": "Solidity",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "Ethereum",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Smart Contracts",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Web3.js",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Hardhat",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Cryptography",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Blockchain Security",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "IPFS",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "JavaScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Node.js",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "REST APIs",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Blockchain Developer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

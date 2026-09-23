@@ -1,0 +1,125 @@
+{
+  "role": "Network Engineer",
+  "skills": [
+    {
+      "skill_name": "Networking",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "TCP/IP",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Routing and Switching",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Firewalls and VPNs",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Network Security",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Wireshark",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "DNS",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Network Monitoring",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Load Balancing",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Cloud Networking",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Network Engineer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

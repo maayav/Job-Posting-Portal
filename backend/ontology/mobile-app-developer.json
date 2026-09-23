@@ -1,0 +1,135 @@
+{
+  "role": "Mobile App Developer",
+  "skills": [
+    {
+      "skill_name": "React Native",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Flutter",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Kotlin",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Swift",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Mobile UI Design",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Push Notifications",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "App Store Deployment",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Firebase",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "REST APIs",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "SQLite",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "TypeScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "JavaScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Mobile App Developer",
+          "weight": 0.6
+        }
+      ]
+    }
+  ]
+}

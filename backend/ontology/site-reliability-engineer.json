@@ -1,0 +1,155 @@
+{
+  "role": "Site Reliability Engineer",
+  "skills": [
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Kubernetes",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Terraform",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Prometheus",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Grafana",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Observability",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "CI/CD Pipelines",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Incident Response",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "AWS",
+      "category": "cloud",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Go",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Load Balancing",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Service Level Objectives",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Bash",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Site Reliability Engineer",
+          "weight": 0.5
+        }
+      ]
+    }
+  ]
+}

@@ -940,6 +940,2021 @@
       ]
     },
     {
+      "id": "Frontend Developer",
+      "label": "Frontend Developer",
+      "skills": [
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "JavaScript Mastery — JavaScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g7T23Xzys-A"
+            },
+            {
+              "title": "JavaScript30 — 30 Day Challenge",
+              "url": "https://javascript30.com/"
+            },
+            {
+              "title": "MDN JavaScript Guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+            },
+            {
+              "title": "JavaScript.info",
+              "url": "https://javascript.info/"
+            }
+          ]
+        },
+        {
+          "name": "HTML/CSS",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "MDN CSS learning guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics"
+            },
+            {
+              "title": "MDN HTML learning guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content"
+            },
+            {
+              "title": "MDN — HTML Documentation",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+            },
+            {
+              "title": "Programming with Mosh — HTML Tutorial for Beginners: HTML Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qz0aGYrrlhU"
+            }
+          ]
+        },
+        {
+          "name": "React",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Net Ninja — React Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=j942wKiXFu8"
+            },
+            {
+              "title": "React Tutorial (official)",
+              "url": "https://react.dev/learn"
+            },
+            {
+              "title": "React Official Docs",
+              "url": "https://react.dev/"
+            },
+            {
+              "title": "freeCodeCamp React",
+              "url": "https://www.freecodecamp.org/learn/front-end-development-libraries/#react"
+            },
+            {
+              "title": "Frontend Mentor — Frontend Challenges",
+              "url": "https://www.frontendmentor.io/"
+            }
+          ]
+        },
+        {
+          "name": "TypeScript",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Matt Pocock — TypeScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=YmxwicpROps"
+            },
+            {
+              "title": "TypeScript Playground",
+              "url": "https://www.typescriptlang.org/play"
+            },
+            {
+              "title": "TypeScript Handbook",
+              "url": "https://www.typescriptlang.org/docs/handbook/intro.html"
+            }
+          ]
+        },
+        {
+          "name": "Responsive Design",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "web.dev — Learn Responsive Design",
+              "url": "https://web.dev/learn/design"
+            },
+            {
+              "title": "Kevin Powell — A practical guide to responsive web design (YouTube)",
+              "url": "https://www.youtube.com/watch?v=x4u1yp3Msao"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Next.js",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Next.js foundations course",
+              "url": "https://nextjs.org/learn"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Tailwind CSS Documentation",
+              "url": "https://tailwindcss.com/docs"
+            },
+            {
+              "title": "JavaScript Mastery — Tailwind CSS v4 Full Course 2026 | Master Tailwind in One Hour (YouTube)",
+              "url": "https://www.youtube.com/watch?v=6biMWgD6_JY"
+            }
+          ]
+        },
+        {
+          "name": "Web Accessibility",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "W3C accessible web design tutorials",
+              "url": "https://www.w3.org/WAI/tutorials/"
+            },
+            {
+              "title": "W3C — Accessibility Fundamentals",
+              "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/"
+            },
+            {
+              "title": "freeCodeCamp.org — Learn Accessibility - Full a11y Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=e2nkq3h1P68"
+            }
+          ]
+        },
+        {
+          "name": "Web Performance",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "web.dev — Learn Performance",
+              "url": "https://web.dev/learn/performance"
+            },
+            {
+              "title": "Beyond Fireship — The ultimate guide to web performance (YouTube)",
+              "url": "https://www.youtube.com/watch?v=0fONene3OIA"
+            }
+          ]
+        },
+        {
+          "name": "Jest",
+          "category": "testing",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Jest getting started",
+              "url": "https://jestjs.io/docs/getting-started"
+            }
+          ]
+        },
+        {
+          "name": "Redux",
+          "category": "framework",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Redux essentials tutorial",
+              "url": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts"
+            }
+          ]
+        },
+        {
+          "name": "UI/UX",
+          "category": "design",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Nielsen Norman Group UX fundamentals",
+              "url": "https://www.nngroup.com/articles/definition-user-experience/"
+            }
+          ]
+        },
+        {
+          "name": "Vite",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Vite getting started",
+              "url": "https://vite.dev/guide/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Mobile App Developer",
+      "label": "Mobile App Developer",
+      "skills": [
+        {
+          "name": "React Native",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "React Native introduction",
+              "url": "https://reactnative.dev/docs/getting-started"
+            }
+          ]
+        },
+        {
+          "name": "Flutter",
+          "category": "framework",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Flutter Documentation",
+              "url": "https://docs.flutter.dev/"
+            },
+            {
+              "title": "Flutter Mapp — The Ultimate Flutter Tutorial for Beginners - 2025 Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3kaGC_DrUnw"
+            }
+          ]
+        },
+        {
+          "name": "Kotlin",
+          "category": "language",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Kotlin Documentation",
+              "url": "https://kotlinlang.org/docs/home.html"
+            },
+            {
+              "title": "freeCodeCamp.org — Kotlin Course - Tutorial for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=F9UC9DY-vIU"
+            }
+          ]
+        },
+        {
+          "name": "Swift",
+          "category": "language",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Swift Documentation",
+              "url": "https://www.swift.org/documentation/"
+            },
+            {
+              "title": "freeCodeCamp.org — Swift Programming Tutorial – Full Course for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=8Xg7E9shq0U"
+            }
+          ]
+        },
+        {
+          "name": "Firebase",
+          "category": "cloud",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Firebase fundamentals",
+              "url": "https://firebase.google.com/docs/guides"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "JavaScript Mastery — JavaScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g7T23Xzys-A"
+            },
+            {
+              "title": "JavaScript30 — 30 Day Challenge",
+              "url": "https://javascript30.com/"
+            },
+            {
+              "title": "MDN JavaScript Guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+            },
+            {
+              "title": "JavaScript.info",
+              "url": "https://javascript.info/"
+            }
+          ]
+        },
+        {
+          "name": "Mobile UI Design",
+          "category": "design",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Material Design 3",
+              "url": "https://m3.material.io/"
+            },
+            {
+              "title": "freeCodeCamp.org — UI / UX Design Tutorial – Wireframe, Mockup & Design in Figma (YouTube)",
+              "url": "https://www.youtube.com/watch?v=c9Wg6Cb_YlU"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "App Store Deployment",
+          "category": "devops",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Publish Your App on Google Play",
+              "url": "https://developer.android.com/studio/publish"
+            },
+            {
+              "title": "Code with me — How to Upload Your Android App to Google Play Store (Step-by-Step Guide) | 2025 Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=F74CNRDoiaY"
+            }
+          ]
+        },
+        {
+          "name": "Push Notifications",
+          "category": "architecture",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Firebase Cloud Messaging",
+              "url": "https://firebase.google.com/docs/cloud-messaging"
+            },
+            {
+              "title": "Philipp Lackner — Firebase Push Notifications on Android (YouTube)",
+              "url": "https://www.youtube.com/watch?v=q6TL2RyysV4"
+            }
+          ]
+        },
+        {
+          "name": "TypeScript",
+          "category": "language",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Matt Pocock — TypeScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=YmxwicpROps"
+            },
+            {
+              "title": "TypeScript Playground",
+              "url": "https://www.typescriptlang.org/play"
+            },
+            {
+              "title": "TypeScript Handbook",
+              "url": "https://www.typescriptlang.org/docs/handbook/intro.html"
+            }
+          ]
+        },
+        {
+          "name": "SQLite",
+          "category": "database",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "SQLite getting started",
+              "url": "https://www.sqlite.org/quickstart.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Data Analyst",
+      "label": "Data Analyst",
+      "skills": [
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Microsoft Excel",
+          "category": "tools",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Microsoft Excel help and learning",
+              "url": "https://support.microsoft.com/en-us/excel"
+            },
+            {
+              "title": "Microsoft Excel Training",
+              "url": "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb"
+            },
+            {
+              "title": "freeCodeCamp.org — Microsoft Excel Tutorial for Beginners - Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Vl0H-qTclOg"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "Power BI",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Power BI getting started",
+              "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-getting-started"
+            }
+          ]
+        },
+        {
+          "name": "Data Cleaning",
+          "category": "data",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Kaggle — Data Cleaning Course",
+              "url": "https://www.kaggle.com/learn/data-cleaning"
+            },
+            {
+              "title": "Corey Schafer — Python Pandas Tutorial (Part 9): Cleaning Data - Casting Datatypes and Handling Missing Values (YouTube)",
+              "url": "https://www.youtube.com/watch?v=KdmPHEnPJPs"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Statistics",
+          "category": "core-cs",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Seeing Theory — Visual Statistics",
+              "url": "https://seeing-theory.brown.edu/"
+            },
+            {
+              "title": "StatQuest — Mean, Variance and Standard Deviation (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SzZ6GpcfoQY"
+            },
+            {
+              "title": "Khan Academy Statistics",
+              "url": "https://www.khanacademy.org/math/statistics-probability"
+            }
+          ]
+        },
+        {
+          "name": "Dashboard Design",
+          "category": "data",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "NN/g — Dashboards: Preattentive Attributes",
+              "url": "https://www.nngroup.com/articles/dashboards-preattentive/"
+            },
+            {
+              "title": "codebasics — How to Design an Effective Data Visualization Dashboard? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=HuZiJ44_71M"
+            }
+          ]
+        },
+        {
+          "name": "Data Storytelling",
+          "category": "data",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Storytelling with Data",
+              "url": "https://www.storytellingwithdata.com/"
+            },
+            {
+              "title": "Harvard Business Review — Telling Stories with Data in 3 Steps (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r5_34YnCmMY"
+            }
+          ]
+        },
+        {
+          "name": "Pandas",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Keith Galli — Pandas Data Science Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=2uvysYbKdjM"
+            },
+            {
+              "title": "Pandas Getting Started",
+              "url": "https://pandas.pydata.org/docs/getting_started/index.html"
+            },
+            {
+              "title": "Pandas User Guide",
+              "url": "https://pandas.pydata.org/docs/user_guide/index.html"
+            }
+          ]
+        },
+        {
+          "name": "Tableau",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Tableau getting started tutorial",
+              "url": "https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-home.htm"
+            }
+          ]
+        },
+        {
+          "name": "A/B Testing",
+          "category": "core-cs",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Firebase A/B testing guide",
+              "url": "https://firebase.google.com/docs/ab-testing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Site Reliability Engineer",
+      "label": "Site Reliability Engineer",
+      "skills": [
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "CI/CD Pipelines",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "GitHub Actions quickstart",
+              "url": "https://docs.github.com/en/actions/get-started/quickstart"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Observability",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "OpenTelemetry Documentation",
+              "url": "https://opentelemetry.io/docs/"
+            },
+            {
+              "title": "IBM Technology — Observability vs. APM vs. Monitoring (YouTube)",
+              "url": "https://www.youtube.com/watch?v=CAQ_a2-9UOI"
+            }
+          ]
+        },
+        {
+          "name": "Prometheus",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Prometheus getting started",
+              "url": "https://prometheus.io/docs/prometheus/latest/getting_started/"
+            }
+          ]
+        },
+        {
+          "name": "Grafana",
+          "category": "tools",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Grafana fundamentals tutorial",
+              "url": "https://grafana.com/tutorials/grafana-fundamentals/"
+            }
+          ]
+        },
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "NIST incident response recommendations",
+              "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+            }
+          ]
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "HashiCorp Terraform tutorials",
+              "url": "https://developer.hashicorp.com/terraform/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Go",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Go tutorials",
+              "url": "https://go.dev/doc/tutorial/"
+            }
+          ]
+        },
+        {
+          "name": "Load Balancing",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "NGINX Load Balancing",
+              "url": "https://nginx.org/en/docs/http/load_balancing.html"
+            },
+            {
+              "title": "TechWorld with Nana — Proxy vs Reverse Proxy vs Load Balancer | Simply Explained (YouTube)",
+              "url": "https://www.youtube.com/watch?v=xo5V9g9joFs"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Service Level Objectives",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Google SRE Workbook — Implementing SLOs",
+              "url": "https://sre.google/workbook/implementing-slos/"
+            },
+            {
+              "title": "CodeLucky — SLO & SLI Explained: Service Level Objectives & Indicators for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=77woJoutNjE"
+            }
+          ]
+        },
+        {
+          "name": "Bash",
+          "category": "language",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Ubuntu command-line tutorial",
+              "url": "https://ubuntu.com/tutorials/command-line-for-beginners"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Blockchain Developer",
+      "label": "Blockchain Developer",
+      "skills": [
+        {
+          "name": "Solidity",
+          "category": "language",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Solidity Documentation",
+              "url": "https://docs.soliditylang.org/"
+            },
+            {
+              "title": "freeCodeCamp.org — Solidity Tutorial - A Full Course on Ethereum, Blockchain Development, Smart Contracts, and the EVM (YouTube)",
+              "url": "https://www.youtube.com/watch?v=ipwxYa-F1uY"
+            }
+          ]
+        },
+        {
+          "name": "Ethereum",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Ethereum Developer Documentation",
+              "url": "https://ethereum.org/en/developers/docs/"
+            },
+            {
+              "title": "edureka! — Ethereum Developer Tutorial | Ethereum Developer Training | Ethereum Explained | Edureka (YouTube)",
+              "url": "https://www.youtube.com/watch?v=_2_vsl82zAk"
+            }
+          ]
+        },
+        {
+          "name": "Smart Contracts",
+          "category": "architecture",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Ethereum — Introduction to Smart Contracts",
+              "url": "https://ethereum.org/en/developers/docs/smart-contracts/"
+            },
+            {
+              "title": "freeCodeCamp.org — Solidity, Blockchain, and Smart Contract Course – Beginner to Expert Python Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=M576WGiDBdQ"
+            }
+          ]
+        },
+        {
+          "name": "Blockchain Security",
+          "category": "security",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Consensys Smart Contract Best Practices",
+              "url": "https://consensys.github.io/smart-contract-best-practices/"
+            },
+            {
+              "title": "freeCodeCamp.org — Solidity, Blockchain, and Smart Contract Course – Beginner to Expert Python Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=M576WGiDBdQ"
+            }
+          ]
+        },
+        {
+          "name": "Cryptography",
+          "category": "security",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "CryptoHack — Learn Cryptography",
+              "url": "https://cryptohack.org/"
+            },
+            {
+              "title": "freeCodeCamp.org — Cryptography for Beginners - Full Python Course (SHA-256, AES, RSA, Passwords) (YouTube)",
+              "url": "https://www.youtube.com/watch?v=kb_scuDUHls"
+            }
+          ]
+        },
+        {
+          "name": "Web3.js",
+          "category": "framework",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "web3.js Documentation",
+              "url": "https://web3js.readthedocs.io/"
+            },
+            {
+              "title": "freeCodeCamp.org — Learn Blockchain, Solidity, and Full Stack Web3 Development with JavaScript – 32-Hour Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=gyMwXuJrbJQ"
+            }
+          ]
+        },
+        {
+          "name": "Hardhat",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Hardhat Documentation",
+              "url": "https://hardhat.org/docs"
+            },
+            {
+              "title": "Daulat Hussain — Hardhat Testing Tutorial | Solidity Smart Contract Testing Developer | Hardhat Testing Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=H-yL6nloq3I"
+            }
+          ]
+        },
+        {
+          "name": "JavaScript",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "JavaScript Mastery — JavaScript Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g7T23Xzys-A"
+            },
+            {
+              "title": "JavaScript30 — 30 Day Challenge",
+              "url": "https://javascript30.com/"
+            },
+            {
+              "title": "MDN JavaScript Guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+            },
+            {
+              "title": "JavaScript.info",
+              "url": "https://javascript.info/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Node.js",
+          "category": "framework",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Traversy Media — Node.js Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=32M1al-Y6Ag"
+            },
+            {
+              "title": "The Odin Project — Node Path",
+              "url": "https://www.theodinproject.com/paths/full-stack-javascript"
+            },
+            {
+              "title": "Node.js Official Docs",
+              "url": "https://nodejs.org/docs/latest/api/"
+            },
+            {
+              "title": "Node.js Tutorial (W3Schools)",
+              "url": "https://www.w3schools.com/nodejs/"
+            }
+          ]
+        },
+        {
+          "name": "IPFS",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "IPFS Documentation",
+              "url": "https://docs.ipfs.tech/"
+            },
+            {
+              "title": "Simply Explained — IPFS: Interplanetary File Storage (YouTube)",
+              "url": "https://www.youtube.com/watch?v=5Uj6uR3fp-U"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Game Developer",
+      "label": "Game Developer",
+      "skills": [
+        {
+          "name": "C#",
+          "category": "language",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Microsoft C# tour",
+              "url": "https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/"
+            }
+          ]
+        },
+        {
+          "name": "Unity",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Unity Manual",
+              "url": "https://docs.unity3d.com/Manual/index.html"
+            },
+            {
+              "title": "freeCodeCamp.org — Learn Unity - Beginner's Game Development Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=gB1F9G0JXOo"
+            }
+          ]
+        },
+        {
+          "name": "C++",
+          "category": "language",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft C++ language guide",
+              "url": "https://learn.microsoft.com/en-us/cpp/cpp/"
+            }
+          ]
+        },
+        {
+          "name": "Unreal Engine",
+          "category": "framework",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Unreal Engine Documentation",
+              "url": "https://dev.epicgames.com/documentation/en-us/unreal-engine"
+            },
+            {
+              "title": "freeCodeCamp.org — Unreal Engine 5 – Full Course for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=6UlU_FsicK8"
+            }
+          ]
+        },
+        {
+          "name": "3D Mathematics",
+          "category": "core-cs",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "LearnOpenGL — Transformations",
+              "url": "https://learnopengl.com/Getting-started/Transformations"
+            },
+            {
+              "title": "javidx9 — Essential Mathematics For Aspiring Game Developers (YouTube)",
+              "url": "https://www.youtube.com/watch?v=DPfxjQ6sqrc"
+            }
+          ]
+        },
+        {
+          "name": "Game Physics",
+          "category": "core-cs",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Gaffer On Games — Integration Basics",
+              "url": "https://gafferongames.com/post/integration_basics/"
+            },
+            {
+              "title": "freeCodeCamp.org — JavaScript GameDev Tutorial – Code an Animated Physics Game [Full Course] (YouTube)",
+              "url": "https://www.youtube.com/watch?v=U34l-Xz5ynU"
+            }
+          ]
+        },
+        {
+          "name": "Data Structures & Algorithms",
+          "category": "core-cs",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "NeetCode — How to Learn Algorithms & Data Structures (YouTube)",
+              "url": "https://www.youtube.com/watch?v=aHZW7TuY_yo"
+            },
+            {
+              "title": "freeCodeCamp — Data Structures Easy to Advanced (YouTube)",
+              "url": "https://www.youtube.com/watch?v=RBSGKlAvoiM"
+            },
+            {
+              "title": "Visualgo — Algorithm Visualizations",
+              "url": "https://visualgo.net/en"
+            },
+            {
+              "title": "MIT Introduction to Algorithms",
+              "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/"
+            },
+            {
+              "title": "GeeksforGeeks DSA",
+              "url": "https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"
+            }
+          ]
+        },
+        {
+          "name": "Game Design",
+          "category": "design",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Game Developer — Design",
+              "url": "https://www.gamedeveloper.com/design"
+            },
+            {
+              "title": "Indie Game Clinic — Game Design Theory: A Guided Tour (YouTube)",
+              "url": "https://www.youtube.com/watch?v=TATKLd1Q6ho"
+            }
+          ]
+        },
+        {
+          "name": "Shaders",
+          "category": "framework",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "The Book of Shaders",
+              "url": "https://thebookofshaders.com/"
+            },
+            {
+              "title": "Barney Codes — Introduction to shaders: Learn the basics! (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3mfvZ-mdtZQ"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "UI/UX Designer",
+      "label": "UI/UX Designer",
+      "skills": [
+        {
+          "name": "Figma",
+          "category": "tools",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Figma design learning center",
+              "url": "https://help.figma.com/hc/en-us/categories/360002042553-Figma-Design"
+            }
+          ]
+        },
+        {
+          "name": "UI/UX",
+          "category": "design",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Nielsen Norman Group UX fundamentals",
+              "url": "https://www.nngroup.com/articles/definition-user-experience/"
+            }
+          ]
+        },
+        {
+          "name": "Design Systems",
+          "category": "design",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "GOV.UK Design System",
+              "url": "https://design-system.service.gov.uk/"
+            }
+          ]
+        },
+        {
+          "name": "Prototyping",
+          "category": "design",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "GOV.UK making prototypes",
+              "url": "https://www.gov.uk/service-manual/design/making-prototypes"
+            }
+          ]
+        },
+        {
+          "name": "User Research",
+          "category": "design",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "GOV.UK user research guidance",
+              "url": "https://www.gov.uk/service-manual/user-research"
+            }
+          ]
+        },
+        {
+          "name": "Interaction Design",
+          "category": "design",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Interaction Design Foundation",
+              "url": "https://www.interaction-design.org/literature/topics/interaction-design"
+            },
+            {
+              "title": "Simplilearn — UI/UX Explained In 8 Minutes | UI/UX Design For Beginners | UI/UX Design Basics | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=ODpB9-MCa5s"
+            }
+          ]
+        },
+        {
+          "name": "Usability Testing",
+          "category": "design",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "NN/g — Usability Testing 101",
+              "url": "https://www.nngroup.com/articles/usability-testing-101/"
+            },
+            {
+              "title": "Interesting data — Usability Testing Tutorial | 6 Steps of Usability Testing Process | 10 Usability Testing Tools (YouTube)",
+              "url": "https://www.youtube.com/watch?v=JeeB8jEd_KQ"
+            }
+          ]
+        },
+        {
+          "name": "Wireframing",
+          "category": "design",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Figma — What is Wireframing?",
+              "url": "https://www.figma.com/resource-library/what-is-wireframing/"
+            },
+            {
+              "title": "Simplilearn — Figma Wireframe Tutorial For Beginners | How To Create Wireframes In Figma? | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=mHoux2jITnE"
+            }
+          ]
+        },
+        {
+          "name": "Responsive Design",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "web.dev — Learn Responsive Design",
+              "url": "https://web.dev/learn/design"
+            },
+            {
+              "title": "Kevin Powell — A practical guide to responsive web design (YouTube)",
+              "url": "https://www.youtube.com/watch?v=x4u1yp3Msao"
+            }
+          ]
+        },
+        {
+          "name": "Web Accessibility",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "W3C accessible web design tutorials",
+              "url": "https://www.w3.org/WAI/tutorials/"
+            },
+            {
+              "title": "W3C — Accessibility Fundamentals",
+              "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/"
+            },
+            {
+              "title": "freeCodeCamp.org — Learn Accessibility - Full a11y Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=e2nkq3h1P68"
+            }
+          ]
+        },
+        {
+          "name": "HTML/CSS",
+          "category": "framework",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "MDN CSS learning guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics"
+            },
+            {
+              "title": "MDN HTML learning guide",
+              "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content"
+            },
+            {
+              "title": "MDN — HTML Documentation",
+              "url": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+            },
+            {
+              "title": "Programming with Mosh — HTML Tutorial for Beginners: HTML Crash Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qz0aGYrrlhU"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.3,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Network Engineer",
+      "label": "Network Engineer",
+      "skills": [
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Cisco networking basics",
+              "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html"
+            }
+          ]
+        },
+        {
+          "name": "Routing and Switching",
+          "category": "architecture",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Cisco — What Is Routing?",
+              "url": "https://www.cisco.com/c/en/us/solutions/enterprise-networks/what-is-routing.html"
+            },
+            {
+              "title": "Vinsloev Academy — Introduction to Networking Part 4 | Network Basics for Beginners - Routing and Switching (YouTube)",
+              "url": "https://www.youtube.com/watch?v=xSiE0tahshI"
+            }
+          ]
+        },
+        {
+          "name": "TCP/IP",
+          "category": "architecture",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Cloudflare — What is TCP/IP?",
+              "url": "https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/"
+            },
+            {
+              "title": "CertBros — TCP/IP Model Explained | Cisco CCNA 200-301 (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OTwp3xtd4dg"
+            }
+          ]
+        },
+        {
+          "name": "Firewalls and VPNs",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft Azure network security overview",
+              "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview"
+            }
+          ]
+        },
+        {
+          "name": "Network Security",
+          "category": "security",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "NIST zero trust architecture",
+              "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+            }
+          ]
+        },
+        {
+          "name": "DNS",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Cloudflare — What is DNS?",
+              "url": "https://www.cloudflare.com/learning/dns/what-is-dns/"
+            },
+            {
+              "title": "Fireship — DNS Explained in 100 Seconds (YouTube)",
+              "url": "https://www.youtube.com/watch?v=UVR9lhUGAyU"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Network Monitoring",
+          "category": "tools",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Zabbix Documentation",
+              "url": "https://www.zabbix.com/documentation/current/en/manual"
+            },
+            {
+              "title": "Auvik — Network Monitoring Tutorial with Auvik Software (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Smn2vt6j1Do"
+            }
+          ]
+        },
+        {
+          "name": "Wireshark",
+          "category": "tools",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Wireshark user guide",
+              "url": "https://www.wireshark.org/docs/wsug_html_chunked/"
+            }
+          ]
+        },
+        {
+          "name": "Cloud Networking",
+          "category": "cloud",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "AWS VPC Documentation",
+              "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+            },
+            {
+              "title": "freeCodeCamp.org — AWS VPC Beginner to Pro - Virtual Private Cloud Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=g2JOHLHh4rI"
+            }
+          ]
+        },
+        {
+          "name": "Load Balancing",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "NGINX Load Balancing",
+              "url": "https://nginx.org/en/docs/http/load_balancing.html"
+            },
+            {
+              "title": "TechWorld with Nana — Proxy vs Reverse Proxy vs Load Balancer | Simply Explained (YouTube)",
+              "url": "https://www.youtube.com/watch?v=xo5V9g9joFs"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Database Administrator",
+      "label": "Database Administrator",
+      "skills": [
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Database Tuning",
+          "category": "database",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Use The Index, Luke — SQL Performance",
+              "url": "https://use-the-index-luke.com/"
+            },
+            {
+              "title": "ByteByteGo — 7 Must-know Strategies to Scale Your Database (YouTube)",
+              "url": "https://www.youtube.com/watch?v=_1IKwnbscQU"
+            }
+          ]
+        },
+        {
+          "name": "PostgreSQL",
+          "category": "database",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "PostgreSQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html"
+            }
+          ]
+        },
+        {
+          "name": "Backup and Recovery",
+          "category": "database",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "PostgreSQL Backup and Restore",
+              "url": "https://www.postgresql.org/docs/current/backup.html"
+            },
+            {
+              "title": "IBM Technology — Disaster Recovery vs. Backup: What's the difference? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=07EHsPuKXc0"
+            }
+          ]
+        },
+        {
+          "name": "Indexing",
+          "category": "database",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Use The Index, Luke — Anatomy of an Index",
+              "url": "https://use-the-index-luke.com/sql/anatomy"
+            },
+            {
+              "title": "Hussein Nasser — Database Indexing Explained (with PostgreSQL) (YouTube)",
+              "url": "https://www.youtube.com/watch?v=-qNSXK7s7_w"
+            }
+          ]
+        },
+        {
+          "name": "Query Optimization",
+          "category": "database",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "PostgreSQL Performance Tips",
+              "url": "https://www.postgresql.org/docs/current/performance-tips.html"
+            },
+            {
+              "title": "Simplilearn — SQL Query Optimization | SQL Query Optimization Techniques | SQL Basics | SQL Query | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=MpczBuIk7R8"
+            }
+          ]
+        },
+        {
+          "name": "Data Modeling",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Microsoft dimensional modeling guidance",
+              "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema"
+            }
+          ]
+        },
+        {
+          "name": "Database Replication",
+          "category": "database",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "PostgreSQL High Availability and Replication",
+              "url": "https://www.postgresql.org/docs/current/high-availability.html"
+            },
+            {
+              "title": "Aced (formerly Exponent) — Database Replication Explained (in 5 Minutes) (YouTube)",
+              "url": "https://www.youtube.com/watch?v=bI8Ry6GhMSE"
+            }
+          ]
+        },
+        {
+          "name": "High Availability",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "PostgreSQL Warm Standby",
+              "url": "https://www.postgresql.org/docs/current/warm-standby.html"
+            },
+            {
+              "title": "Shiran Afergan — High Availability | Eliminate Single Points of Failure | System Design Concepts for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=USCCqS9MbHs"
+            }
+          ]
+        },
+        {
+          "name": "MongoDB",
+          "category": "database",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "MongoDB — MongoDB in 10 Minutes (YouTube)",
+              "url": "https://www.youtube.com/watch?v=GV9VBwH_h1U"
+            },
+            {
+              "title": "MongoDB Developer Center",
+              "url": "https://www.mongodb.com/developer/"
+            },
+            {
+              "title": "MongoDB University",
+              "url": "https://learn.mongodb.com/"
+            },
+            {
+              "title": "MongoDB Manual",
+              "url": "https://www.mongodb.com/docs/manual/"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "NoSQL",
+          "category": "database",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "MongoDB data modeling guide",
+              "url": "https://www.mongodb.com/docs/manual/data-modeling/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Business Analyst",
+      "label": "Business Analyst",
+      "skills": [
+        {
+          "name": "Requirements Gathering",
+          "category": "architecture",
+          "weight": 1,
+          "resources": [
+            {
+              "title": "Atlassian — Requirements Gathering",
+              "url": "https://www.atlassian.com/agile/requirements"
+            },
+            {
+              "title": "Simplilearn — Business Analyst Requirement Gathering | Requirement Gathering in Business Analysis | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qZ8AtqJijrw"
+            }
+          ]
+        },
+        {
+          "name": "Stakeholder Communication",
+          "category": "core-cs",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "ProjectManager — Stakeholder Communication",
+              "url": "https://www.projectmanager.com/blog/stakeholder-communication"
+            },
+            {
+              "title": "Adriana Girdler — Stakeholder Communication in Project Management [Stop Spinning Your Wheels] (YouTube)",
+              "url": "https://www.youtube.com/watch?v=bV9yUQV6D60"
+            }
+          ]
+        },
+        {
+          "name": "Microsoft Excel",
+          "category": "tools",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft Excel help and learning",
+              "url": "https://support.microsoft.com/en-us/excel"
+            },
+            {
+              "title": "Microsoft Excel Training",
+              "url": "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb"
+            },
+            {
+              "title": "freeCodeCamp.org — Microsoft Excel Tutorial for Beginners - Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Vl0H-qTclOg"
+            }
+          ]
+        },
+        {
+          "name": "Process Modeling",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "BPMN Specification",
+              "url": "https://www.bpmn.org/"
+            },
+            {
+              "title": "IBM Technology — What is Business Process Modeling? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=sUdhXn1w75Y"
+            }
+          ]
+        },
+        {
+          "name": "User Stories",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Atlassian — User Stories",
+              "url": "https://www.atlassian.com/agile/project-management/user-stories"
+            },
+            {
+              "title": "Simplilearn — Agile User Stories | How To Write User Stories | Epic And User Story Examples | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SRRQCDZQ6G4"
+            }
+          ]
+        },
+        {
+          "name": "Agile Methodologies",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Atlassian Agile Coach",
+              "url": "https://www.atlassian.com/agile"
+            },
+            {
+              "title": "Simplilearn — Agile Scrum Full Course In 4 Hours | Agile Scrum Master Training | Agile Training Video |Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=VFQtSqChlsk"
+            }
+          ]
+        },
+        {
+          "name": "Jira",
+          "category": "tools",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Atlassian Jira getting started guide",
+              "url": "https://www.atlassian.com/software/jira/guides/getting-started/introduction"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Business Process Modeling",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "OMG BPMN 2.0 Specification",
+              "url": "https://www.omg.org/spec/BPMN/2.0/"
+            },
+            {
+              "title": "IBM Technology — What is Business Process Modeling? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=sUdhXn1w75Y"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "Power BI",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Power BI getting started",
+              "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-getting-started"
+            }
+          ]
+        },
+        {
+          "name": "A/B Testing",
+          "category": "core-cs",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Firebase A/B testing guide",
+              "url": "https://firebase.google.com/docs/ab-testing"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "Backend Developer",
       "label": "Backend Developer",
       "skills": [
@@ -2711,6 +4726,6 @@
       ]
     }
   ],
-  "skillCount": 82,
-  "resourceCount": 192
+  "skillCount": 149,
+  "resourceCount": 293
 }

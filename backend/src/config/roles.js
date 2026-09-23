@@ -6,6 +6,16 @@ export const ROLE_LABELS = {
   SDE: 'Software Development Engineer',
   'ML Engineer': 'ML Engineer',
   'AI Engineer': 'AI Engineer',
+  'Frontend Developer': 'Frontend Developer',
+  'Mobile App Developer': 'Mobile App Developer',
+  'Data Analyst': 'Data Analyst',
+  'Site Reliability Engineer': 'Site Reliability Engineer',
+  'Blockchain Developer': 'Blockchain Developer',
+  'Game Developer': 'Game Developer',
+  'UI/UX Designer': 'UI/UX Designer',
+  'Network Engineer': 'Network Engineer',
+  'Database Administrator': 'Database Administrator',
+  'Business Analyst': 'Business Analyst',
 };
 
 export function roleLabel(roleName) {

@@ -7,10 +7,22 @@ import { loadOntologyFiles, loadResourceEntries } from './ontology-loader.js';
 
 async function seedOntology() {
   const entries = loadOntologyFiles();
-  const vectors = await embedSkillsBatch(entries.map((e) => e.skill_name));
 
-  for (let i = 0; i < entries.length; i += 1) {
-    const entry = entries[i];
+  // Reuse vectors already stored for the pinned model/version so expanding the
+  // ontology only embeds the new skills instead of re-embedding everything.
+  const existing = await SkillOntology.find({
+    embedding_model: env.EMBEDDING_MODEL,
+    embedding_version: env.EMBEDDING_VERSION,
+  }).select('skill_name embedding_vector').lean();
+  const vectorByName = new Map(existing.map((doc) => [doc.skill_name, doc.embedding_vector]));
+
+  const missing = entries.filter((entry) => !vectorByName.get(entry.skill_name)?.length);
+  if (missing.length) {
+    const vectors = await embedSkillsBatch(missing.map((entry) => entry.skill_name));
+    missing.forEach((entry, index) => vectorByName.set(entry.skill_name, vectors[index]));
+  }
+
+  for (const entry of entries) {
     await SkillOntology.findOneAndUpdate(
       { skill_name: entry.skill_name },
       {
@@ -19,14 +31,14 @@ async function seedOntology() {
           category: entry.category,
           embedding_model: env.EMBEDDING_MODEL,
           embedding_version: env.EMBEDDING_VERSION,
-          embedding_vector: vectors[i],
+          embedding_vector: vectorByName.get(entry.skill_name),
           roles: entry.roles,
         },
       },
       { upsert: true }
     );
   }
-  console.log(`Ontology: ${entries.length} skills embedded in 1 batch call (model=${env.EMBEDDING_MODEL}, version=${env.EMBEDDING_VERSION})`);
+  console.log(`Ontology: ${entries.length} skills (${missing.length} newly embedded, model=${env.EMBEDDING_MODEL}, version=${env.EMBEDDING_VERSION})`);
 }
 
 async function seedResources() {

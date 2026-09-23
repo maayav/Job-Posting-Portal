@@ -2,21 +2,10 @@ import { useState } from 'react';
 import { normalizeSkillName } from '../utils/skills';
 import { motion } from 'motion/react';
 import SkillMultiSelect from './SkillMultiSelect';
-
-const POPULAR_SKILLS = [
-  'Large Language Models', 'Retrieval-Augmented Generation', 'Prompt Engineering',
-  'Vector Databases', 'LLM Evaluation', 'Fine-tuning', 'AI Safety',
-  'FastAPI', 'Python', 'Django', 'TypeScript', 'PostgreSQL', 'Redis',
-  'AWS', 'Docker', 'Kubernetes', 'GraphQL', 'PyTorch', 'TensorFlow',
-  'React', 'Node.js', 'UI/UX', 'Flask', 'Spring Boot', '.NET', 'Go',
-  'Java', 'SQL', 'MongoDB', 'Azure', 'GCP', 'Terraform', 'Jest', 'Cypress',
-  'React Native', 'Vue', 'Angular', 'Next.js', 'JavaScript', 'C#', 'C++',
-  'Playwright', 'Selenium', 'pytest', 'Postman', 'REST APIs', 'gRPC',
-  'Power BI', 'Apache Spark', 'Airflow', 'OpenCV', 'Transformers',
-  'Prometheus', 'Grafana', 'Firebase', 'Data Visualization', 'Networking',
-];
+import { useSkillOptions } from '../hooks/useSkillOptions';
 
 export default function JobFilters({ onSearch, onClear, loading, initialFilters = {} }) {
+  const skillOptions = useSkillOptions();
   const [selectedSkills, setSelectedSkills] = useState(() => initialFilters.skills ? initialFilters.skills.split(',').map(normalizeSkillName).filter(Boolean) : []);
   const [search, setSearch] = useState(initialFilters.search ?? '');
   const [sort, setSort] = useState(initialFilters.sort ?? 'newest');
@@ -97,7 +86,7 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
             id="job-filter-skills"
             value={selectedSkills}
             onChange={setSelectedSkills}
-            options={POPULAR_SKILLS}
+            options={skillOptions}
           />
         </label>
         <label>
@@ -122,7 +111,7 @@ export default function JobFilters({ onSearch, onClear, loading, initialFilters 
       </div>
       <div className="job-filter-suggestions" aria-label="Popular skills">
         <span>Quick add</span>
-        {POPULAR_SKILLS.slice(0, 10).map((skill) => (
+        {skillOptions.slice(0, 10).map((skill) => (
           <button type="button" className="job-filter-suggestion" key={skill} onClick={() => addSkill(skill)}>
             {skill}
           </button>

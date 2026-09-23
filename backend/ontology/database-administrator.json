@@ -1,0 +1,125 @@
+{
+  "role": "Database Administrator",
+  "skills": [
+    {
+      "skill_name": "SQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "PostgreSQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "MongoDB",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Database Tuning",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Query Optimization",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Backup and Recovery",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Database Replication",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Indexing",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "High Availability",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Modeling",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "NoSQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Database Administrator",
+          "weight": 0.5
+        }
+      ]
+    }
+  ]
+}

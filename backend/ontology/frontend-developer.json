@@ -1,0 +1,155 @@
+{
+  "role": "Frontend Developer",
+  "skills": [
+    {
+      "skill_name": "HTML/CSS",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "JavaScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "TypeScript",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "React",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Next.js",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Redux",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Tailwind CSS",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Web Accessibility",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Web Performance",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Responsive Design",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Vite",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "REST APIs",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Jest",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "UI/UX",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "Frontend Developer",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

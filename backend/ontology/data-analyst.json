@@ -1,0 +1,125 @@
+{
+  "role": "Data Analyst",
+  "skills": [
+    {
+      "skill_name": "SQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Power BI",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Tableau",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Pandas",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Statistics",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Visualization",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Dashboard Design",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "A/B Testing",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Storytelling",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Data Analyst",
+          "weight": 0.6
+        }
+      ]
+    }
+  ]
+}
