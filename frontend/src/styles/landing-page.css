@@ -7,6 +7,8 @@
 }
 
 .landing-editorial {
+  position: relative;
+  isolation: isolate;
   --section-space: clamp(64px, 7vw, 104px);
   font-family: 'Manrope', sans-serif;
   font-size: 15px;
@@ -14,6 +16,57 @@
   background: var(--bg);
   color: var(--text);
   overflow-x: clip;
+}
+.landing-background {
+  position: fixed;
+  inset: 0;
+  height: 100lvh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--text);
+}
+.landing-background svg { width: 100%; height: 100%; }
+.landing-background path { vector-effect: non-scaling-stroke; }
+.landing-background-lines {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: .11;
+  transform-origin: center;
+  animation: landing-line-drift 10s ease-in-out -3s infinite alternate;
+  will-change: transform, opacity;
+}
+.landing-background-lines-secondary {
+  animation-duration: 13s;
+  animation-delay: -7s;
+  animation-direction: alternate-reverse;
+}
+@keyframes landing-line-drift {
+  from { transform: translate(-60px, -28px) rotate(-1deg); opacity: .07; }
+  to { transform: translate(60px, 36px) rotate(1deg); opacity: .14; }
+}
+@media (max-width: 600px) {
+  /* Keep travel noticeable after the SVG scales down to a phone viewport. */
+  .landing-background-lines { animation-name: landing-line-drift-mobile; }
+}
+@keyframes landing-line-drift-mobile {
+  from { transform: translate(-85px, -16px); opacity: .07; }
+  to { transform: translate(85px, 22px); opacity: .12; }
+}
+@keyframes landing-line-breathe {
+  from { opacity: .06; }
+  to { opacity: .13; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* A slow contrast change retains some life without moving the background. */
+  .landing-background-lines {
+    animation-name: landing-line-breathe;
+    animation-duration: 8s !important;
+    animation-iteration-count: infinite !important;
+    transform: none;
+    will-change: opacity;
+  }
 }
 .landing-editorial .landing-page {
   width: min(1160px, calc(100% - 80px));

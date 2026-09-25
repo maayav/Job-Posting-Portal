@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import Reveal from '../components/ScrollReveal';
 import RoleGuide from '../components/RoleGuide';
+import LandingBackground from '../components/LandingBackground';
 import { LandingMotionContext } from '../context/LandingMotionContext';
 import catalog from '../data/role-catalog.json';
 import '../styles/landing-page.css';
@@ -33,6 +34,7 @@ export default function LandingPage() {
 
   return <LandingMotionContext.Provider value={true}>
     <div className="vortex-landing-shell landing-editorial">
+      <LandingBackground />
       <header className="landing-masthead">
         <Link className="landing-brand" to="/" onClick={home} aria-label="Vortex home"><span>V</span>Vortex</Link>
         <nav aria-label="Landing page navigation">

@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vortex - Complete Project Explanation and Technical Guide</title>
+  <style>
+    @page { size: A4; margin: 15mm 15mm 18mm; }
+    :root {
+      --navy: #173a5b;
+      --navy-2: #234f73;
+      --ink: #1c1f23;
+      --muted: #59636d;
+      --line: #b8c5ce;
+      --soft: #f2f6f9;
+      --blue-soft: #e1edf5;
+      --green-soft: #e8f1eb;
+      --gold-soft: #f5ead6;
+      --accent: #b56b19;
+      --code: #f4f5f6;
+    }
+    * { box-sizing: border-box; }
+    html { background: #fff; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.45;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover {
+      min-height: 258mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 15mm 5mm 10mm;
+      page-break-after: always;
+    }
+    .cover-topline {
+      color: var(--accent);
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .cover-mark {
+      width: 65pt;
+      height: 65pt;
+      display: grid;
+      place-items: center;
+      margin: 15mm auto 9mm;
+      border: 2pt solid var(--navy);
+      color: var(--navy);
+      font-size: 36pt;
+      font-weight: 800;
+      letter-spacing: -.08em;
+    }
+    .cover h1 {
+      max-width: 175mm;
+      margin: 0 auto;
+      color: var(--navy);
+      font-size: 27pt;
+      line-height: 1.08;
+      letter-spacing: .01em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .cover h2 {
+      margin: 7mm auto 0;
+      color: #5c646b;
+      font-size: 14pt;
+      font-weight: 400;
+      text-align: center;
+    }
+    .cover-rule { width: 45mm; margin: 9mm auto; border-top: 2pt solid var(--accent); }
+    .cover-meta {
+      width: 135mm;
+      margin: 0 auto;
+      border-top: 1pt solid var(--line);
+      border-bottom: 1pt solid var(--line);
+      padding: 7mm 0;
+    }
+    .cover-meta p { margin: 2mm 0; font-size: 12pt; }
+    .cover-meta strong { display: inline-block; width: 41mm; color: var(--navy); }
+    .cover-bottom { color: var(--muted); text-align: center; }
+    .cover-bottom strong { color: var(--navy); }
+
+    .page { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    h1.section-title {
+      margin: 0 0 6mm;
+      padding-bottom: 2.5mm;
+      border-bottom: 2pt solid var(--navy);
+      color: var(--navy);
+      font-size: 20pt;
+      line-height: 1.15;
+    }
+    h2 {
+      margin: 6mm 0 2.5mm;
+      color: var(--navy);
+      font-size: 15pt;
+      line-height: 1.2;
+    }
+    h3 {
+      margin: 4mm 0 2mm;
+      color: var(--navy-2);
+      font-size: 11.5pt;
+    }
+    p { margin: 0 0 3mm; text-align: justify; }
+    ul, ol { margin: 2mm 0 4mm 6mm; padding-left: 5mm; }
+    li { margin: 1.3mm 0; }
+    .lead { font-size: 12pt; line-height: 1.55; }
+    .eyebrow {
+      margin: 0 0 2mm;
+      color: var(--accent);
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .muted { color: var(--muted); }
+    .small { font-size: 8.8pt; }
+    .center { text-align: center; }
+    .rule { border: 0; border-top: 1pt solid var(--line); margin: 5mm 0; }
+    .callout {
+      margin: 4mm 0;
+      border-left: 4pt solid var(--accent);
+      background: var(--gold-soft);
+      padding: 4mm 5mm;
+    }
+    .callout.blue { border-left-color: var(--navy-2); background: var(--blue-soft); }
+    .callout.green { border-left-color: #3c7250; background: var(--green-soft); }
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 5mm 0; }
+    .stat {
+      min-height: 25mm;
+      border: 1pt solid var(--line);
+      background: var(--soft);
+      padding: 4mm;
+    }
+    .stat strong { display: block; color: var(--navy); font-size: 18pt; line-height: 1; }
+    .stat span { display: block; margin-top: 2mm; color: var(--muted); font-size: 8.5pt; }
+    table { width: 100%; border-collapse: collapse; margin: 3mm 0 5mm; page-break-inside: avoid; }
+    th, td { border: .7pt solid var(--line); padding: 2.2mm 2.6mm; vertical-align: top; }
+    th { background: var(--blue-soft); color: #132e47; font-weight: 700; text-align: left; }
+    tr:nth-child(even) td { background: #fbfcfd; }
+    .green-table th { background: var(--green-soft); }
+    .gold-table th { background: var(--gold-soft); }
+    .tight th, .tight td { padding: 1.7mm 2mm; font-size: 8.7pt; }
+    .diagram {
+      margin: 4mm 0 2mm;
+      border: 1pt solid var(--line);
+      background: #fcfdfe;
+      padding: 5mm;
+      page-break-inside: avoid;
+    }
+    .diagram-title { margin-bottom: 4mm; color: var(--navy); font-size: 9pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .flow { display: flex; align-items: stretch; justify-content: center; gap: 2mm; }
+    .flow .node {
+      flex: 1;
+      min-height: 22mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1pt solid var(--navy-2);
+      background: var(--blue-soft);
+      padding: 3mm;
+      text-align: center;
+    }
+    .flow .node:nth-child(5n+1) { background: var(--green-soft); border-color: #557b60; }
+    .flow .node:nth-child(5n+3) { background: var(--gold-soft); border-color: #a4773f; }
+    .flow .node strong { color: var(--navy); font-size: 10pt; }
+    .flow .node span { color: var(--muted); font-size: 8pt; }
+    .flow .arrow { display: flex; align-items: center; color: var(--accent); font-size: 17pt; font-weight: 700; }
+    .stack { display: grid; gap: 2mm; }
+    .layer { display: grid; grid-template-columns: 38mm 1fr; border: 1pt solid var(--line); }
+    .layer strong { background: var(--blue-soft); color: var(--navy); padding: 3mm; }
+    .layer span { padding: 3mm; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+    .card { border: 1pt solid var(--line); background: var(--soft); padding: 4mm; page-break-inside: avoid; }
+    .card h3 { margin-top: 0; }
+    .code {
+      margin: 3mm 0 4mm;
+      border: 1pt solid #d0d5da;
+      background: var(--code);
+      padding: 3.5mm;
+      color: #27313a;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 8pt;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+    .formula {
+      margin: 4mm 0;
+      border: 1.2pt solid var(--navy);
+      background: #f1f6fa;
+      padding: 4mm;
+      color: var(--navy);
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10pt;
+      text-align: center;
+    }
+    .figure-caption { margin: 1.5mm 0 4mm; color: var(--muted); font-size: 8.5pt; text-align: center; }
+    .toc { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 12mm; }
+    .toc li { border-bottom: .5pt dotted var(--line); padding: 1.2mm 0; break-inside: avoid; }
+    .toc b { color: var(--navy); }
+    .checklist { list-style: none; margin-left: 0; padding-left: 0; }
+    .checklist li::before { content: "[ ] "; color: var(--accent); font-family: monospace; font-weight: 700; }
+    .status-ok { color: #2d6a43; font-weight: 700; }
+    .badge { display: inline-block; border: .7pt solid var(--line); border-radius: 3pt; padding: .5mm 1.8mm; color: var(--navy); background: #fff; font-size: 7.5pt; font-weight: 700; }
+    .mock-dashboard { border: 1.4pt solid #26313a; background: #1e2225; color: #f2f4f5; padding: 3mm; }
+    .mock-top { display: flex; justify-content: space-between; border-bottom: 1pt solid #596169; padding-bottom: 2mm; color: #c9d0d5; font-size: 8pt; }
+    .mock-score { display: grid; grid-template-columns: 1fr 35mm; gap: 3mm; margin: 2.5mm 0; }
+    .mock-score > div { border: 1pt solid #535c63; padding: 2.5mm; }
+    .mock-score strong { display: block; color: #fff; font-size: 19pt; }
+    .mock-roadmap { border: 1pt solid #69747c; padding: 2.5mm; }
+    .mock-roadmap header { display: flex; justify-content: space-between; color: #e4e7e9; font-weight: 700; }
+    .mock-roadmap small { color: #adb7be; }
+    .mock-plan { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; margin-top: 2mm; }
+    .mock-plan span { border: 1pt solid #505a62; padding: 1.5mm; color: #c9d0d5; font-size: 8pt; }
+    .footer-note { margin-top: 7mm; color: var(--muted); font-size: 8.5pt; }
+    @media print {
+      a { color: inherit; text-decoration: none; }
+      .page { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div>
+      <div class="cover-topline">Academic Project Report</div>
+      <div class="cover-mark">V</div>
+      <h1>AI-Assisted Job Posting Portal and Skill Gap Tracker</h1>
+      <h2>Complete Project Explanation and Technical Guide</h2>
+      <div class="cover-rule"></div>
+      <div class="cover-meta">
+        <p><strong>Project Member</strong> IJ Maayav (44110430)</p>
+        <p><strong>Guide</strong> Dr. N. UmaSankari</p>
+        <p><strong>Project Name</strong> Vortex</p>
+      </div>
+    </div>
+    <div class="cover-bottom">
+      <p><strong>Full-stack MERN application with grounded AI career guidance</strong></p>
+      <p>Prepared from the implemented repository and deployed system | September 2026</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">Executive Summary</p>
+    <h1 class="section-title">Project at a Glance</h1>
+    <p class="lead">Vortex combines a student job portal with an evidence-based career-readiness workspace. Students can discover opportunities, apply for jobs, upload a resume, connect optional GitHub and LeetCode evidence, inspect extracted skills, compare their profile against a selected role, and follow a personalized study roadmap. Placement administrators can manage job openings, review candidate evidence, and move applications through a structured pipeline.</p>
+    <p>The system is designed around a practical problem: a student may know the technologies listed on a job description but still lack a clear answer to three questions: which skills are actually demonstrated, which requirements remain weak, and what should be learned first. Vortex answers these questions through a controlled pipeline that combines text AI, embeddings, a curated role ontology, deterministic scoring, verified resources, and a grounded assistant.</p>
+    <div class="stat-grid">
+      <div class="stat"><strong>MERN</strong><span>React + Node.js + Express + MongoDB</span></div>
+      <div class="stat"><strong>AI</strong><span>Groq text generation and Gemini embeddings</span></div>
+      <div class="stat"><strong>RBAC</strong><span>Student and administrator workflows</span></div>
+      <div class="stat"><strong>Live</strong><span>Cloudflare Pages, Vercel, and Atlas</span></div>
+    </div>
+    <div class="callout green"><strong>Current catalog:</strong> 21 target roles, 149 ontology skills, 307 curated resource records, and 180 searchable keyword names are available in the deployed seed.</div>
+    <div class="callout blue"><strong>Core outcome:</strong> the application does not present readiness as a hiring guarantee. It presents a transparent, evidence-based decision-support signal and converts verified gaps into actionable preparation steps.</div>
+    <h2>Keywords</h2>
+    <p class="center"><span class="badge">Job Portal</span> <span class="badge">Skill Extraction</span> <span class="badge">Readiness Scoring</span> <span class="badge">Study Roadmap</span> <span class="badge">JWT</span> <span class="badge">MongoDB</span> <span class="badge">Grounded AI</span></p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">Document Map</p>
+    <h1 class="section-title">Contents</h1>
+    <ol class="toc">
+      <li><b>1.</b> Introduction and problem definition</li>
+      <li><b>2.</b> Objectives, scope, and requirements</li>
+      <li><b>3.</b> Technology stack</li>
+      <li><b>4.</b> System architecture</li>
+      <li><b>5.</b> Major modules and data flow</li>
+      <li><b>6.</b> Authentication, authorization, and security</li>
+      <li><b>7.</b> Job portal and application workflow</li>
+      <li><b>8.</b> Profile ingestion and skill extraction</li>
+      <li><b>9.</b> Analytics, matching, and scoring engine</li>
+      <li><b>10.</b> Study roadmap and resource curation</li>
+      <li><b>11.</b> Grounded AI Assistant</li>
+      <li><b>12.</b> REST API design</li>
+      <li><b>13.</b> Frontend design and user experience</li>
+      <li><b>14.</b> Database design and relationships</li>
+      <li><b>15.</b> Deployment architecture</li>
+      <li><b>16.</b> Deployment guide and runbook</li>
+      <li><b>17.</b> Testing and verification</li>
+      <li><b>18.</b> Security, limitations, and future work</li>
+      <li><b>19.</b> Conclusion and viva summary</li>
+      <li><b>Appendix A.</b> Repository structure</li>
+      <li><b>Appendix B.</b> API examples</li>
+      <li><b>Appendix C.</b> Deployment checklist</li>
+    </ol>
+    <hr class="rule">
+    <h2>Document Control</h2>
+    <table class="tight">
+      <tr><th>Item</th><th>Value</th></tr>
+      <tr><td>Product name</td><td>Vortex</td></tr>
+      <tr><td>Repository</td><td>Job-Posting-Portal, branch <code>main</code></td></tr>
+      <tr><td>Source of truth</td><td>Implemented backend, frontend, tests, seed data, and deployment configuration</td></tr>
+      <tr><td>Report purpose</td><td>Academic explanation, technical reference, viva preparation, and deployment handover</td></tr>
+      <tr><td>Security note</td><td>Secrets, API keys, database credentials, and passwords are intentionally excluded</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">1 / Foundation</p>
+    <h1 class="section-title">Introduction and Problem Definition</h1>
+    <h2>1.1 Background</h2>
+    <p>Campus placement systems commonly separate opportunity discovery from preparation. A student may find a job posting, submit an application, and receive a status update, but the system often does not explain how the student's demonstrated profile compares with the role requirements. This creates a gap between applying and improving.</p>
+    <p>Vortex closes this gap by combining job discovery, application tracking, profile evidence, role-specific analytics, and preparation guidance in one authenticated workspace. It is intended for students, placement teams, and academic demonstrations where explainability and secure ownership are important.</p>
+    <h2>1.2 Problem Statement</h2>
+    <div class="callout"><strong>Problem:</strong> students need an understandable and actionable method to assess their readiness for a target job, while placement administrators need a controlled way to manage openings and review candidates without exposing private profile data.</div>
+    <h2>1.3 Proposed Solution</h2>
+    <p>Vortex accepts a resume and optional public coding profiles, extracts structured skills with supporting evidence, validates and normalizes those skills, compares them against a curated target-role ontology, calculates readiness categories, and produces a prioritized roadmap backed by verified learning resources. The same platform supports job search, wishlist, applications, notifications, and administrator review.</p>
+    <h2>1.4 Design Principles</h2>
+    <div class="grid2">
+      <div class="card"><h3>Evidence before claims</h3><p>Extracted skills carry source and evidence excerpts. Confidence is derived by application rules rather than blindly accepted from the model.</p></div>
+      <div class="card"><h3>Server-side ownership</h3><p>User identity, applicant ownership, report access, and administrator permissions are derived from verified JWT claims and backend middleware.</p></div>
+      <div class="card"><h3>Deterministic decision layer</h3><p>AI helps structure and explain information, while scoring, thresholds, priorities, and resource selection remain controlled by application code.</p></div>
+      <div class="card"><h3>Actionable output</h3><p>The final result is not only a number. It includes gaps, priorities, learning resources, practice suggestions, and a completion state.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">2 / Requirements</p>
+    <h1 class="section-title">Objectives, Scope, and Requirements</h1>
+    <h2>2.1 Objectives</h2>
+    <ol>
+      <li>Provide a secure job board for authenticated students and administrators.</li>
+      <li>Support job search by skill, experience, city, and pagination.</li>
+      <li>Allow students to apply, save jobs, review application stages, and receive notifications.</li>
+      <li>Extract technical skills from resumes and optional public developer profiles.</li>
+      <li>Compare candidate evidence with a role-specific skill ontology.</li>
+      <li>Generate a transparent readiness score, gap list, and personalized study roadmap.</li>
+      <li>Give administrators a candidate review workspace with application filters and status transitions.</li>
+      <li>Keep AI responses grounded in stored reports and prevent invented candidate claims.</li>
+    </ol>
+    <h2>2.2 Functional Requirements</h2>
+    <table class="tight">
+      <tr><th>ID</th><th>Requirement</th><th>Implemented behavior</th></tr>
+      <tr><td>FR-01</td><td>Authentication</td><td>Register and login with bcrypt password hashing and JWT sessions.</td></tr>
+      <tr><td>FR-02</td><td>Role access</td><td>Public registration creates students; admin capabilities are protected by server-side role middleware.</td></tr>
+      <tr><td>FR-03</td><td>Job management</td><td>Students search jobs; administrators create, edit, close, and delete postings.</td></tr>
+      <tr><td>FR-04</td><td>Applications</td><td>One application per student/job pair, status history, optional cover letter and resume.</td></tr>
+      <tr><td>FR-05</td><td>Profile analysis</td><td>PDF validation, text extraction, optional GitHub/LeetCode collection, and role selection.</td></tr>
+      <tr><td>FR-06</td><td>Readiness report</td><td>Score, strong areas, developing areas, gaps, study plan, and report history.</td></tr>
+      <tr><td>FR-07</td><td>Roadmap progress</td><td>Per-role roadmap selection and collapsible study-plan cards with completion toggles.</td></tr>
+      <tr><td>FR-08</td><td>AI guidance</td><td>Assistant answers only from the latest owned report context.</td></tr>
+      <tr><td>FR-09</td><td>Catalog expansion</td><td>Dynamic target roles, canonical skill keywords, curated documentation, courses, practice links, and specific tutorial videos.</td></tr>
+      <tr><td>FR-10</td><td>Resume plausibility</td><td>Readable PDF extraction plus a server-side heuristic rejects course handouts and unrelated PDFs before AI analysis.</td></tr>
+    </table>
+    <h2>2.3 Non-functional Requirements</h2>
+    <div class="grid2">
+      <div class="card"><h3>Security</h3><p>Secrets remain server-side; sensitive resume text is not returned; upload magic bytes and size are checked; ownership is enforced.</p></div>
+      <div class="card"><h3>Reliability</h3><p>Central error handling, validation, rate limiting, idempotent analysis jobs, cached embeddings, and controlled provider fallbacks.</p></div>
+      <div class="card"><h3>Usability</h3><p>Responsive React interface, clear loading/error states, accessible controls, dashboard summaries, and separate student/admin navigation.</p></div>
+      <div class="card"><h3>Maintainability</h3><p>Separated routes, controllers, services, models, tests, seed scripts, documentation, and deployment configuration.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">3 / Technology</p>
+    <h1 class="section-title">Technology Stack</h1>
+    <table>
+      <tr><th>Technology</th><th>Purpose in Vortex</th></tr>
+      <tr><td>React 19 + Vite</td><td>Interactive frontend, protected routes, forms, dashboards, job browsing, analysis flow, and AI Assistant.</td></tr>
+      <tr><td>React Router</td><td>Client-side routing for landing, authentication, jobs, dashboard, analysis, applications, and admin pages.</td></tr>
+      <tr><td>Motion + Lenis</td><td>Reduced, intentional page transitions, scroll reveals, and interaction feedback.</td></tr>
+      <tr><td>Recharts</td><td>Readiness history visualization and progress trend presentation.</td></tr>
+      <tr><td>Node.js + Express 5</td><td>REST API, middleware, controllers, error handling, authentication, and business services.</td></tr>
+      <tr><td>Mongoose 9</td><td>MongoDB models, validation, relationships, indexes, and aggregation-backed dashboard queries.</td></tr>
+      <tr><td>Zod</td><td>Strict request validation and structured AI response validation.</td></tr>
+      <tr><td>MongoDB Atlas</td><td>Cloud persistence for users, jobs, applications, profile submissions, reports, ontology, and resource catalog.</td></tr>
+      <tr><td>Groq</td><td>Text generation for structured skill extraction, study-plan enrichment, explanations, and assistant responses.</td></tr>
+      <tr><td>Gemini</td><td>Skill embeddings and semantic vector storage using a pinned model/version.</td></tr>
+      <tr><td>GitHub API</td><td>Best-effort collection of public repositories, languages, topics, and bounded README evidence.</td></tr>
+      <tr><td>unpdf + file-type + Multer</td><td>Server-side PDF extraction, magic-byte validation, and bounded multipart uploads.</td></tr>
+      <tr><td>Vitest + Supertest</td><td>Backend integration tests and frontend component tests.</td></tr>
+    </table>
+    <h2>3.1 Versioned Runtime Baseline</h2>
+    <div class="code">Frontend: React 19, Vite 8, React Router 7, Axios 1.x, Recharts 3.x
+Backend: Node.js 22.x or later, Express 5, Mongoose 9, Zod 4
+Database: MongoDB 7-compatible deployment
+AI text provider: Groq, model selected through environment configuration
+Embedding provider: Gemini, model gemini-embedding-2, version 2026-09
+Test tooling: Vitest 5, Supertest 7, Testing Library</div>
+    <div class="callout green"><strong>Separation of concerns:</strong> the browser knows the public API base URL, but never connects directly to MongoDB and never receives Groq, Gemini, GitHub, JWT-signing, or database credentials.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">4 / Architecture</p>
+    <h1 class="section-title">Overall System Architecture</h1>
+    <div class="diagram">
+      <div class="diagram-title">Figure 1 - Production request architecture</div>
+      <div class="flow">
+        <div class="node"><strong>Student / Admin</strong><span>Browser and responsive UI</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Cloudflare Pages</strong><span>React + Vite static frontend</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Vercel API</strong><span>Express serverless entry</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>MongoDB Atlas</strong><span>Users, jobs, reports, data</span></div>
+      </div>
+      <div class="flow" style="margin-top:3mm;">
+        <div class="node"><strong>REST + JWT</strong><span>Authenticated HTTPS requests</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>AI Services</strong><span>Groq text + Gemini vectors</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>GitHub</strong><span>Optional public evidence</span></div>
+      </div>
+    </div>
+    <p class="figure-caption">The frontend is a client of the API. Data ownership, validation, AI calls, and database access remain in the backend.</p>
+    <h2>4.1 Layer Responsibilities</h2>
+    <div class="stack">
+      <div class="layer"><strong>Client layer</strong><span>Pages, navigation, protected routes, forms, loading states, dashboards, charts, application controls, and the AI Assistant view.</span></div>
+      <div class="layer"><strong>API layer</strong><span>Express routes, authentication middleware, role checks, upload handling, request validation, rate limits, and centralized errors.</span></div>
+      <div class="layer"><strong>Domain layer</strong><span>Profile processing, skill normalization, ontology lookup, deterministic scoring, study-plan generation, application transitions, and notifications.</span></div>
+      <div class="layer"><strong>Persistence layer</strong><span>Mongoose models and indexes for users, profile submissions, extracted skills, reports, jobs, applications, wishlists, notifications, ontology, and resources.</span></div>
+      <div class="layer"><strong>Provider layer</strong><span>Groq text generation, Gemini embeddings, GitHub public-data collection, and verified resource catalog hydration.</span></div>
+    </div>
+    <h2>4.2 Request Lifecycle</h2>
+    <div class="code">Browser -> Axios client -> CORS and rate limiter -> JWT middleware -> Zod/controller validation
+        -> domain service -> Mongoose query / AI provider -> safe response -> React state update</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">5 / Modules</p>
+    <h1 class="section-title">Major Modules and Data Flow</h1>
+    <div class="grid2">
+      <div class="card"><h3>Module 1 - Data Space</h3><p>Stores users, roles, jobs, saved jobs, applications, status history, profile submissions, extracted skills, reports, notifications, ontology entries, and verified resources.</p></div>
+      <div class="card"><h3>Module 2 - Analytics</h3><p>Reads resume and public profile evidence, extracts structured skills, normalizes names, caches vectors, and compares candidate evidence with the selected role.</p></div>
+      <div class="card"><h3>Module 3 - Scoring Engine</h3><p>Calculates ATS/readiness output, categorizes skills, ranks gaps, hydrates resources, and creates a durable report.</p></div>
+      <div class="card"><h3>Module 4 - AI Assistant</h3><p>Loads trusted context from the latest owned report and generates grounded explanations without inventing skills, experience, or scores.</p></div>
+    </div>
+    <div class="diagram">
+      <div class="diagram-title">Figure 2 - End-to-end product flow</div>
+      <div class="flow">
+        <div class="node"><strong>Discover</strong><span>Browse and filter roles</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Apply</strong><span>Save or submit application</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Analyze</strong><span>Resume and profile evidence</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Compare</strong><span>Candidate versus ontology</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Improve</strong><span>Roadmap and assistant</span></div>
+      </div>
+    </div>
+    <h2>5.1 Student Journey</h2>
+    <ol>
+      <li>Register or log in as a student.</li>
+      <li>Browse jobs and filter by canonical skills, experience, or city.</li>
+      <li>Save a job or submit an application with optional contact email, cover letter, and resume.</li>
+      <li>Start New Analysis for a target role and upload a PDF resume.</li>
+      <li>Review extracted skills and evidence before scoring.</li>
+      <li>Open the dashboard to inspect score, role roadmaps, application preparation, and history.</li>
+      <li>Expand a roadmap, complete study items, and ask the grounded Assistant for next steps.</li>
+    </ol>
+    <h2>5.2 Administrator Journey</h2>
+    <p>Administrators log in through the same JWT system, manage job postings, view applications, filter candidate records, inspect evaluation context, and transition applications through Applied, Under Review, Shortlisted, Interview Scheduled, Rejected, or Selected.</p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">6 / Security</p>
+    <h1 class="section-title">Authentication, Authorization, and Security</h1>
+    <h2>6.1 Authentication Flow</h2>
+    <div class="diagram">
+      <div class="diagram-title">Figure 3 - JWT authentication and authorization</div>
+      <div class="flow">
+        <div class="node"><strong>Login</strong><span>Email + password</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>bcrypt verify</strong><span>Password hash comparison</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>JWT issued</strong><span>User id + role claims</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Bearer request</strong><span>Axios Authorization header</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Route policy</strong><span>Owner or admin check</span></div>
+      </div>
+    </div>
+    <h2>6.2 Access Matrix</h2>
+    <table class="tight">
+      <tr><th>Action</th><th>Student</th><th>Admin</th><th>Enforcement</th></tr>
+      <tr><td>Register / login</td><td>Yes</td><td>Yes</td><td>Auth controller; public registration always creates student.</td></tr>
+      <tr><td>View and filter jobs</td><td>Yes</td><td>Yes</td><td>Authenticated job route.</td></tr>
+      <tr><td>Create or edit jobs</td><td>No</td><td>Yes</td><td><code>requireRole('admin')</code>.</td></tr>
+      <tr><td>Apply / save jobs</td><td>Yes</td><td>Optional</td><td>Student route derives applicant from JWT.</td></tr>
+      <tr><td>Read own reports</td><td>Yes</td><td>Own/admin scoped access</td><td>Ownership middleware and report access.</td></tr>
+      <tr><td>View all applications</td><td>No</td><td>Yes</td><td>Admin-only routes.</td></tr>
+      <tr><td>Run New Analysis</td><td>Yes</td><td>Optional</td><td>Protected student flow and owned submission.</td></tr>
+    </table>
+    <h2>6.3 Security Controls</h2>
+    <ul class="checklist">
+      <li>Passwords are stored using bcrypt hashes and never returned.</li>
+      <li>JWT secrets, MongoDB credentials, Groq keys, Gemini keys, and GitHub tokens remain in server environment variables.</li>
+      <li>Resume files require PDF magic bytes, are size-limited, and are stored outside the public frontend.</li>
+      <li>Resume text is sensitive: it is not returned by profile APIs and is not written to logs.</li>
+      <li>Student ownership is checked for profiles, reports, applications, wishlists, and notifications.</li>
+      <li>Rate limits protect authentication, analysis, and the general API.</li>
+      <li>Validation rejects unknown or malformed fields before domain logic.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">7 / Job Portal</p>
+    <h1 class="section-title">Job Portal and Application Workflow</h1>
+    <h2>7.1 Job Search</h2>
+    <p>Job records contain title, company, canonical skills, experience level, city, description, status, and server-derived creator ownership. A normalized search projection supports case-insensitive skill search and city matching. Skill synonyms such as ReactJS, NodeJS, and UI/UX are normalized explicitly while unrelated categories remain separate.</p>
+    <table class="tight">
+      <tr><th>Filter</th><th>Semantics</th></tr>
+      <tr><td>Skills</td><td>Comma-separated ANY-match, normalized and case-insensitive.</td></tr>
+      <tr><td>Experience</td><td>Returns jobs whose required level is less than or equal to the query.</td></tr>
+      <tr><td>City</td><td>Case-insensitive exact match after trimming.</td></tr>
+      <tr><td>Pagination</td><td>Default page 1, limit 20, maximum 50.</td></tr>
+      <tr><td>Sorting</td><td>Newest postings first.</td></tr>
+    </table>
+    <h2>7.2 Application State Machine</h2>
+    <div class="diagram">
+      <div class="diagram-title">Figure 4 - Application lifecycle</div>
+      <div class="flow">
+        <div class="node"><strong>Applied</strong><span>Initial student submission</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Under Review</strong><span>Administrator begins review</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Shortlisted</strong><span>Candidate advances</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Interview</strong><span>Interview scheduled</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Selected / Rejected</strong><span>Final outcome</span></div>
+      </div>
+    </div>
+    <h2>7.3 Application Integrity</h2>
+    <ul>
+      <li>A compound unique index prevents duplicate applications for the same student and job.</li>
+      <li>The applicant is derived from the verified JWT, never trusted from the request body.</li>
+      <li>Every status transition records a history entry and administrator identity when applicable.</li>
+      <li>Students see only their own applications; administrators can filter and review all applications.</li>
+      <li>Notifications are created for application confirmation and administrator status changes.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">8 / Profile Intelligence</p>
+    <h1 class="section-title">Profile Ingestion and Skill Extraction</h1>
+    <h2>8.1 Inputs</h2>
+    <div class="grid2">
+      <div class="card"><h3>Required</h3><p>PDF resume and target role selected from the live role ontology.</p></div>
+      <div class="card"><h3>Optional</h3><p>GitHub username or URL and LeetCode profile identifier. Public profile failure degrades gracefully.</p></div>
+    </div>
+    <h2>8.2 Ingestion Pipeline</h2>
+    <div class="diagram">
+      <div class="diagram-title">Figure 5 - Profile ingestion pipeline</div>
+      <div class="flow">
+        <div class="node"><strong>Upload</strong><span>Multer memory buffer</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Validate</strong><span>PDF type and size</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Extract</strong><span>unpdf text extraction</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Collect</strong><span>GitHub / LeetCode evidence</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Structure</strong><span>Groq JSON + validation</span></div>
+      </div>
+    </div>
+    <h2>8.3 Structured Skill Record</h2>
+    <p>Each extracted skill is stored with a display name, category, source list, evidence excerpts, and proficiency signals. The application merges casing duplicates and derives confidence using fixed rules: high confidence requires evidence from multiple sources, medium confidence requires one source with evidence, and low confidence represents a weak or bare mention.</p>
+    <div class="code">{
+  "name": "React",
+  "category": "frontend_framework",
+  "sources": ["resume", "github"],
+  "evidence": [{ "source": "resume", "text": "Built a dashboard using React" }],
+  "proficiency_signals": {
+    "projects_count": 2,
+    "has_production_usage": true,
+    "mentions_depth": "high"
+  },
+  "confidence": "high"
+}</div>
+    <div class="callout blue"><strong>Important matching rule:</strong> related-looking technologies are not automatically interchangeable. React does not prove PyTorch; JavaScript does not prove Python; Node.js does not prove Machine Learning; UI/UX does not automatically prove frontend engineering. Upload validation also screens PDFs for resume signals before AI runs.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">9 / Analytics</p>
+    <h1 class="section-title">Analytics, Matching, and Scoring Engine</h1>
+    <h2>9.1 Role Ontology</h2>
+    <p>The ontology is the controlled definition of role expectations. Each skill includes a canonical name, category, embedding model/version, vector, and one or more role weights. The role list is derived from the stored ontology rather than hard-coded in the upload form. The current seed contains 21 roles: SDE, ML Engineer, AI Engineer, Frontend Developer, Mobile App Developer, Data Analyst, Site Reliability Engineer, Blockchain Developer, Game Developer, UI/UX Designer, Network Engineer, Database Administrator, Business Analyst, Backend Developer, Cloud Engineer, Cybersecurity Analyst, Data Engineer, Data Scientist, DevOps Engineer, Full-Stack Developer, and QA/Test Engineer.</p>
+    <h2>9.2 Candidate Vector Cache</h2>
+    <p>Candidate skill vectors are generated in batches and cached on the extracted profile together with the configured embedding model and version. Analysis reuses a compatible cache and re-embeds only when the cache is missing or the model/version changes. Stored ontology vectors are checked for model/version and dimension compatibility before scoring.</p>
+    <h2>9.3 Deterministic Formula</h2>
+    <div class="formula">score = round(100 x sum(weight_i x match_i) / sum(weight_i))</div>
+    <p>Each role skill receives a normalized match value. Explicit canonical names and safe aliases are considered first, and category gates prevent unrelated categories from satisfying one another. Candidate evidence and proficiency can cap a match when the supporting signal is weak.</p>
+    <table class="tight">
+      <tr><th>Category</th><th>Threshold</th><th>Meaning</th></tr>
+      <tr><td>Strong</td><td>80% or above</td><td>Skill is strongly aligned with the role requirement.</td></tr>
+      <tr><td>Developing</td><td>60% to 79%</td><td>Skill is present but needs depth, evidence, or practice.</td></tr>
+      <tr><td>Gap</td><td>Below 60%</td><td>Skill should be considered for the prioritized roadmap.</td></tr>
+    </table>
+    <h2>9.4 Gap Priority</h2>
+    <p>Gap priority is calculated from role importance and missing strength: <code>raw = weight x (1 - match)</code>. The raw values are normalized by the largest gap so the highest-impact missing skill receives priority 1.0. This provides a ranking without pretending that every gap has identical urgency.</p>
+    <div class="code">const raw = gap.weight * (1 - gap.m);
+priority = raw / maxRaw;
+study_plan = gaps.sort((a, b) =&gt; b.priority - a.priority);</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">10 / Preparation</p>
+    <h1 class="section-title">Study Roadmap and Resource Curation</h1>
+    <h2>10.1 Roadmap Structure</h2>
+    <p>A completed report contains a study plan entry for each gap or selected developing area. The current catalog contains 307 curated records across 180 searchable skill names. Each entry can include the skill, priority, reason, learning objectives, practice problems, project recommendations, estimated effort, completion state, and verified resources.</p>
+    <table class="tight">
+      <tr><th>Field</th><th>Purpose</th></tr>
+      <tr><td>skill</td><td>Canonical gap or developing skill name.</td></tr>
+      <tr><td>priority</td><td>Relative urgency derived from role weight and match deficit.</td></tr>
+      <tr><td>resources</td><td>Human-curated documentation, courses, videos, or practice sets.</td></tr>
+      <tr><td>done</td><td>Student-owned completion state toggled from the dashboard.</td></tr>
+      <tr><td>learningObjectives</td><td>Concrete knowledge outcomes when AI enrichment is available.</td></tr>
+      <tr><td>projectRecommendations</td><td>Practical implementation ideas connected to the gap.</td></tr>
+      <tr><td>estimatedEffortHours</td><td>Planning estimate for a focused learning block.</td></tr>
+    </table>
+    <h2>10.2 Dashboard Interaction</h2>
+    <div class="mock-dashboard">
+      <div class="mock-top"><span>VORTEX / YOUR DASHBOARD</span><span>ROADMAPS</span></div>
+      <div class="mock-score"><div><small>READINESS</small><strong>53 / 100</strong><span>SDE</span></div><div><small>OPEN ITEMS</small><strong>9</strong></div></div>
+      <div class="mock-roadmap"><header><span>SCORE 53/100 - 7 GAPS</span><span>9 open</span></header><strong style="display:block;margin-top:2mm;">SDE roadmap</strong><small>Click the card header to expand the learning items.</small><div class="mock-plan"><span>System Design</span><span>TypeScript</span><span>Docker</span><span>AWS</span></div></div>
+    </div>
+    <p class="figure-caption">Figure 6 - Dashboard roadmap concept: role selection, collapsible roadmap summary, and actionable items.</p>
+    <h2>10.3 Resource Safety</h2>
+    <p>ResourceCatalog serves verified HTTP/HTTPS links, including specific video watch URLs; arbitrary model-generated links are not final resources. The dedicated <code>GET /api/skills</code> endpoint keeps filters synchronized.</p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">11 / Assistant</p>
+    <h1 class="section-title">Grounded AI Assistant</h1>
+    <h2>11.1 Context Boundary</h2>
+    <p>The Assistant is not a general chatbot with unrestricted access to the database. The backend first loads the student's latest completed owned report and constructs a constrained context containing the target role, scores, demonstrated skills, gaps, evidence summaries, and study plan. The user's message is then sent to the configured text provider with grounding instructions.</p>
+    <div class="diagram">
+      <div class="diagram-title">Figure 7 - Grounded assistant flow</div>
+      <div class="flow">
+        <div class="node"><strong>User question</strong><span>What should I learn first?</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Owned report</strong><span>Role, score, gaps, evidence</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Safe context</strong><span>Structured, bounded facts</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Groq response</strong><span>Helpful explanation</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Student action</strong><span>Roadmap next step</span></div>
+      </div>
+    </div>
+    <h2>11.2 Allowed Questions</h2>
+    <ul>
+      <li>Which gap should I learn first?</li>
+      <li>Why is my readiness score low?</li>
+      <li>What project can I build to practice this gap?</li>
+      <li>Which skills are already supported by my evidence?</li>
+      <li>How should I prepare for the selected role?</li>
+    </ul>
+    <h2>11.3 Guardrails</h2>
+    <ul class="checklist">
+      <li>Do not invent skills, projects, experience, certifications, or scores.</li>
+      <li>Do not claim that unrelated technologies satisfy a requirement.</li>
+      <li>Do not expose another student's analysis or private resume text.</li>
+      <li>If no completed analysis exists, direct the student to New Analysis.</li>
+      <li>Return a controlled error when provider configuration is unavailable.</li>
+    </ul>
+    <div class="callout"><strong>Interpretation:</strong> the Assistant explains stored analysis; it does not replace the deterministic scoring layer or human evaluation.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">12 / API</p>
+    <h1 class="section-title">REST API Design</h1>
+    <p>The API uses a consistent JSON error shape, authenticated Bearer tokens, route-level ownership, and strict validation. The public health route and authentication routes are intentionally minimal; scoped data routes require a JWT.</p>
+    <table class="tight">
+      <tr><th>Area</th><th>Representative endpoints</th><th>Access</th></tr>
+      <tr><td>Health</td><td><code>GET /api/health</code></td><td>Public</td></tr>
+      <tr><td>Auth</td><td><code>POST /api/auth/register</code><br><code>POST /api/auth/login</code></td><td>Public</td></tr>
+      <tr><td>Roles</td><td><code>GET /api/roles</code></td><td>Authenticated</td></tr>
+      <tr><td>Skills</td><td><code>GET /api/skills</code></td><td>Authenticated; cached keyword catalog</td></tr>
+      <tr><td>Profile</td><td><code>POST /api/profile</code><br><code>GET /api/profile/:id</code><br><code>DELETE /api/profile/:id</code></td><td>Owner/admin</td></tr>
+      <tr><td>Analysis</td><td><code>POST /api/analyze</code><br><code>GET /api/analyze/:id/status</code></td><td>Owner/admin</td></tr>
+      <tr><td>Reports</td><td><code>GET /api/report/:id</code><br><code>GET /api/report/history</code><br><code>GET /api/report/roadmap</code></td><td>Owner/admin as scoped</td></tr>
+      <tr><td>Study plan</td><td><code>PATCH /api/report/:id/study-plan/:itemId</code></td><td>Owner/admin</td></tr>
+      <tr><td>Jobs</td><td><code>GET /api/jobs</code><br><code>POST /api/jobs</code><br><code>PUT /api/jobs/:id</code><br><code>DELETE /api/jobs/:id</code></td><td>Read authenticated; write admin</td></tr>
+      <tr><td>Applications</td><td><code>POST /api/applications</code><br><code>GET /api/applications/me</code></td><td>Student / own data</td></tr>
+      <tr><td>Admin review</td><td><code>GET /api/admin/dashboard</code><br><code>GET /api/admin/applications</code><br><code>PATCH /api/admin/applications/:id/status</code></td><td>Admin only</td></tr>
+      <tr><td>Assistant</td><td><code>GET /api/assistant/context</code><br><code>POST /api/assistant/chat</code></td><td>Authenticated, own context</td></tr>
+      <tr><td>Notifications</td><td><code>GET /api/notifications</code><br><code>PATCH /api/notifications/:id/read</code></td><td>Authenticated, own data</td></tr>
+      <tr><td>Wishlist</td><td><code>GET /api/wishlist</code><br><code>POST /api/wishlist</code><br><code>DELETE /api/wishlist/:jobId</code></td><td>Student, own data</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">13 / Frontend</p>
+    <h1 class="section-title">Frontend Design and User Experience</h1>
+    <h2>13.1 Main Routes</h2>
+    <table class="tight">
+      <tr><th>Route</th><th>Purpose</th><th>Protection</th></tr>
+      <tr><td><code>/</code></td><td>Public Vortex landing page.</td><td>Public</td></tr>
+      <tr><td><code>/login</code></td><td>Login and account entry.</td><td>Public</td></tr>
+      <tr><td><code>/jobs</code></td><td>Job search, filters, save, and apply.</td><td>Authenticated</td></tr>
+      <tr><td><code>/dashboard</code></td><td>Student readiness, roadmaps, applications, wishlist, and progress.</td><td>Authenticated</td></tr>
+      <tr><td><code>/analyze</code></td><td>Upload, review skills, analyze, and poll report state.</td><td>Student</td></tr>
+      <tr><td><code>/applications</code></td><td>Student application history and status.</td><td>Authenticated</td></tr>
+      <tr><td><code>/assistant</code></td><td>Grounded AI guidance.</td><td>Authenticated</td></tr>
+      <tr><td><code>/admin/jobs</code></td><td>Job CRUD.</td><td>Admin</td></tr>
+      <tr><td><code>/admin/applications</code></td><td>Candidate review dashboard and pipeline.</td><td>Admin</td></tr>
+    </table>
+    <h2>13.2 Dashboard Information Hierarchy</h2>
+    <ol>
+      <li>Readiness score for the latest report.</li>
+      <li>Role-based roadmap selector and collapsible roadmap header.</li>
+      <li>Preparation prompts based on skills in applied jobs.</li>
+      <li>Application count and link to the full application page.</li>
+      <li>Saved jobs with apply and unsave actions.</li>
+      <li>Historical readiness trend.</li>
+    </ol>
+    <h2>13.3 UX and Accessibility Decisions</h2>
+    <ul>
+      <li>Loading, empty, error, and retry states are explicit in analysis and dashboard flows.</li>
+      <li>Roadmap cards use an accessible expanded/collapsed control and preserve the selected role.</li>
+      <li>Job filters and administrator job forms use a searchable multi-select keyword picker with custom skill entry.</li>
+      <li>Forms use labels, validation messages, disabled states, and direct action wording.</li>
+      <li>Responsive layout supports desktop and mobile widths without hiding core destinations.</li>
+      <li>Theme preference persists through the application and remains readable in both modes.</li>
+      <li>Motion is intentionally reduced when the user requests reduced motion.</li>
+      <li>Route-level lazy loading and deferred chart loading reduce the initial JavaScript payload.</li>
+    </ul>
+    <h2>13.4 Loading Performance</h2>
+    <p>Lazy routes and deferred Recharts reduce initial JavaScript from 969 kB to 466 kB; role caching and one-query roadmap hydration reduce request overhead.</p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">14 / Data</p>
+    <h1 class="section-title">Database Design and Relationships</h1>
+    <div class="diagram">
+      <div class="diagram-title">Figure 8 - Core MongoDB relationships</div>
+      <div class="flow">
+        <div class="node"><strong>User</strong><span>student / admin</span></div>
+        <div class="arrow">1 -&gt; N</div>
+        <div class="node"><strong>ProfileSubmission</strong><span>resume + target role</span></div>
+        <div class="arrow">1 -&gt; 1</div>
+        <div class="node"><strong>ExtractedSkillProfile</strong><span>skills + evidence + vectors</span></div>
+        <div class="arrow">1 -&gt; N</div>
+        <div class="node"><strong>ReadinessReport</strong><span>score + gaps + plan</span></div>
+      </div>
+      <div class="flow" style="margin-top:3mm;">
+        <div class="node"><strong>User</strong><span>applicant</span></div>
+        <div class="arrow">N -&gt; 1</div>
+        <div class="node"><strong>Application</strong><span>status history</span></div>
+        <div class="arrow">N -&gt; 1</div>
+        <div class="node"><strong>Job</strong><span>canonical requirements</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Admin review</strong><span>pipeline transitions</span></div>
+      </div>
+    </div>
+    <table class="tight">
+      <tr><th>Collection</th><th>Key responsibility</th><th>Important protection/index</th></tr>
+      <tr><td>users</td><td>Identity, password hash, role.</td><td>Unique lowercase email; password excluded by default.</td></tr>
+      <tr><td>profilesubmissions</td><td>Resume metadata, sensitive text, profile links, target role.</td><td>User index; ownership checks; text never returned.</td></tr>
+      <tr><td>extractedskillprofiles</td><td>One extracted profile per submission.</td><td>Unique submission id; cached vector model/version.</td></tr>
+      <tr><td>readinessreports</td><td>Analysis lifecycle, score, gaps, roadmap, generation metadata.</td><td>Partial unique index for one active job per submission.</td></tr>
+      <tr><td>skillontologies</td><td>Role requirements, weights, pinned vectors.</td><td>Canonical role/skill source and version drift checks.</td></tr>
+      <tr><td>resourcecatalogs</td><td>Verified study links.</td><td>Unique skill/url index; exact normalized matching.</td></tr>
+      <tr><td>jobs</td><td>Portal postings and search projections.</td><td>Normalized skills/city; creator derived server-side.</td></tr>
+      <tr><td>applications</td><td>Student/job relationship and status history.</td><td>Unique applicant/job compound index.</td></tr>
+      <tr><td>wishlists / notifications</td><td>Saved jobs and user-facing status events.</td><td>User-scoped queries and update routes.</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">15 / Operations</p>
+    <h1 class="section-title">Deployment Architecture</h1>
+    <p>The current deployed system uses a free-tier, no-card arrangement: the React/Vite frontend is hosted on Cloudflare Pages, the Express backend is deployed as a Vercel serverless API, and MongoDB Atlas provides persistence. Groq, Gemini, and GitHub are external provider dependencies called only by the backend.</p>
+    <div class="diagram">
+      <div class="diagram-title">Figure 9 - Current production deployment</div>
+      <div class="flow">
+        <div class="node"><strong>Cloudflare Pages</strong><span>vortex-6g7.pages.dev</span></div>
+        <div class="arrow">HTTPS</div>
+        <div class="node"><strong>Vercel Serverless</strong><span>vortex-api-eta.vercel.app/api</span></div>
+        <div class="arrow">TLS</div>
+        <div class="node"><strong>MongoDB Atlas</strong><span>placement_skill_gap</span></div>
+      </div>
+      <div class="flow" style="margin-top:3mm;">
+        <div class="node"><strong>Frontend env</strong><span>VITE_API_URL</span></div>
+        <div class="arrow">&lt;-</div>
+        <div class="node"><strong>Backend env</strong><span>JWT, Mongo, AI, CORS</span></div>
+        <div class="arrow">-&gt;</div>
+        <div class="node"><strong>Provider APIs</strong><span>Groq / Gemini / GitHub</span></div>
+      </div>
+    </div>
+    <h2>15.1 Production URLs</h2>
+    <table class="tight">
+      <tr><th>Service</th><th>URL</th><th>Purpose</th></tr>
+      <tr><td>Frontend</td><td><code>https://vortex-6g7.pages.dev</code></td><td>Student and administrator web application.</td></tr>
+      <tr><td>Backend API</td><td><code>https://vortex-api-eta.vercel.app/api</code></td><td>Authenticated REST API and AI workflows.</td></tr>
+      <tr><td>Health check</td><td><code>https://vortex-api-eta.vercel.app/api/health</code></td><td>Public deployment and API health verification.</td></tr>
+    </table>
+    <div class="callout"><strong>Operational caveat:</strong> Vercel serverless functions can cold-start. The frontend sends a lightweight health request on application load, and the dashboard fetches independent data concurrently to reduce perceived wait time.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">16 / Runbook</p>
+    <h1 class="section-title">Deployment Guide</h1>
+    <h2>16.1 Prerequisites</h2>
+    <ul>
+      <li>Node.js 22.12 or later and npm.</li>
+      <li>GitHub repository access.</li>
+      <li>MongoDB Atlas project and database user.</li>
+      <li>Groq API key for text generation.</li>
+      <li>Gemini API key for embeddings.</li>
+      <li>Vercel account for the backend.</li>
+      <li>Cloudflare account and Pages project for the frontend.</li>
+      <li>Optional GitHub token for higher public API limits.</li>
+    </ul>
+    <h2>16.2 Local Verification Before Deployment</h2>
+    <div class="code"># From repository root
+npm run setup
+npm run install:all
+docker compose up -d mongo
+npm --prefix backend run seed
+npm run dev
+
+# In a second shell, verify quality gates
+npm --prefix backend test
+npm --prefix frontend test
+npm --prefix frontend run lint
+npm --prefix frontend run build</div>
+    <p>Open <code>http://localhost:5173</code>, register or use a development account, confirm login, jobs, applications, New Analysis, report generation, roadmap toggles, and the Assistant before deploying.</p>
+    <h2>16.3 Create MongoDB Atlas</h2>
+    <ol>
+      <li>Create a free Atlas project and cluster.</li>
+      <li>Create a database user with a strong password.</li>
+      <li>Allow the backend deployment to connect through Network Access. For a production system, prefer a restricted IP strategy; a broad allowlist is only suitable for a disposable demonstration.</li>
+      <li>Create the database name <code>placement_skill_gap</code> through the connection string.</li>
+      <li>Store the URI only in a deployment secret; never commit it or place it in a <code>VITE_</code> variable.</li>
+    </ol>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">16 / Runbook</p>
+    <h1 class="section-title">Deployment Guide: Backend</h1>
+    <h2>16.4 Configure Vercel</h2>
+    <ol>
+      <li>Create or link a Vercel project for the <code>backend</code> directory.</li>
+      <li>Confirm the serverless entry is <code>backend/api/index.js</code> and the project configuration is compatible with the current Vercel function setup.</li>
+      <li>Add environment variables in Vercel. Use secret values through the Vercel dashboard or CLI secret mechanism.</li>
+    </ol>
+    <table class="tight">
+      <tr><th>Variable</th><th>Purpose</th><th>Example shape</th></tr>
+      <tr><td><code>MONGO_URI</code> or <code>MONGODB_URI</code></td><td>Atlas connection string.</td><td><code>mongodb+srv://.../placement_skill_gap</code></td></tr>
+      <tr><td><code>JWT_SECRET</code></td><td>JWT signing secret.</td><td>Long random value</td></tr>
+      <tr><td><code>CLIENT_URL</code></td><td>Allowed frontend origins.</td><td>Cloudflare Pages URL(s), comma-separated</td></tr>
+      <tr><td><code>GROQ_API_KEY</code></td><td>Text extraction, enrichment, assistant.</td><td>Secret</td></tr>
+      <tr><td><code>GROQ_MODEL</code></td><td>Primary text model.</td><td>Configured Groq model name</td></tr>
+      <tr><td><code>GEMINI_API_KEY</code></td><td>Embedding provider.</td><td>Secret</td></tr>
+      <tr><td><code>EMBEDDING_MODEL</code></td><td>Embedding model pin.</td><td><code>gemini-embedding-2</code></td></tr>
+      <tr><td><code>EMBEDDING_VERSION</code></td><td>Vector compatibility baseline.</td><td><code>2026-09</code></td></tr>
+      <tr><td><code>AI_TEXT_PROVIDER</code></td><td>Text provider selector.</td><td><code>groq</code></td></tr>
+      <tr><td><code>AI_EMBEDDING_PROVIDER</code></td><td>Embedding provider selector.</td><td><code>gemini</code></td></tr>
+    </table>
+    <h2>16.5 Deploy and Verify the Backend</h2>
+    <div class="code"># Do not place the token in source control or the report.
+cd backend
+vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+
+# Public health check
+curl https://YOUR-API-DOMAIN/api/health
+
+# Expected shape
+{"status":"ok","timestamp":"..."}</div>
+    <p>After deployment, verify login, roles, job listing, a student-owned profile/report, the roadmap endpoint, and an admin-only endpoint. A successful health response proves the function is reachable; it does not by itself prove that MongoDB or AI credentials are valid.</p>
+    <div class="callout blue"><strong>Deployment safety:</strong> inspect <code>.vercelignore</code> and confirm that <code>.env</code>, <code>.env.render</code>, local resume storage, and secret files are not bundled.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">16 / Runbook</p>
+    <h1 class="section-title">Deployment Guide: Frontend</h1>
+    <h2>16.6 Build with the API URL</h2>
+    <p>The frontend reads its API base URL from <code>VITE_API_URL</code>. Only public URLs belong in Vite variables. Never put MongoDB, JWT, Groq, Gemini, or GitHub secrets in the frontend environment.</p>
+    <div class="code">cd frontend
+VITE_API_URL="https://YOUR-API-DOMAIN/api" npm run build
+
+# Upload the generated dist directory to Cloudflare Pages
+wrangler pages deploy dist \
+  --project-name=vortex \
+  --branch=main \
+  --commit-dirty=true</div>
+    <h2>16.7 Configure CORS</h2>
+    <ol>
+      <li>Copy the production Cloudflare Pages URL.</li>
+      <li>Set the backend <code>CLIENT_URL</code> to the exact origin, including any stable deployment alias that must be allowed.</li>
+      <li>Redeploy the backend after changing CORS configuration.</li>
+      <li>Open the frontend and confirm that login and authenticated API requests succeed in the browser.</li>
+    </ol>
+    <h2>16.8 Seed or Refresh Data Safely</h2>
+    <div class="code"># Run against the intended database, not the local .env by accident.
+MONGO_URI="mongodb+srv://.../placement_skill_gap" \
+  npm --prefix backend run seed
+
+MONGO_URI="mongodb+srv://.../placement_skill_gap" \
+  npm --prefix backend run seed:resources</div>
+    <p>Environment precedence matters: the backend resolves <code>MONGO_URI</code> before <code>MONGODB_URI</code>. When seeding Atlas from a machine that has a local <code>backend/.env</code>, set <code>MONGO_URI</code> explicitly for the command so data is not accidentally written to local MongoDB.</p>
+    <h2>16.9 Smoke Test Checklist</h2>
+    <ul class="checklist">
+      <li>Frontend opens at the public Pages URL.</li>
+      <li><code>/api/health</code> returns HTTP 200.</li>
+      <li>Student login and admin login work.</li>
+      <li>Student can list jobs, save a job, apply, and see notifications.</li>
+      <li>New Analysis extracts skills and creates a completed report.</li>
+      <li>Dashboard roadmap endpoint returns the student's own role plans.</li>
+      <li>Admin can manage jobs and transition application status.</li>
+      <li>Student cannot access admin routes or another user's report.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">16 / Runbook</p>
+    <h1 class="section-title">Deployment Troubleshooting</h1>
+    <table class="tight">
+      <tr><th>Symptom</th><th>Likely cause</th><th>Action</th></tr>
+      <tr><td>Health works, login fails</td><td>Mongo URI, JWT secret, or database network access.</td><td>Inspect Vercel runtime logs and verify Atlas access without exposing secrets.</td></tr>
+      <tr><td>Browser CORS error</td><td>Cloudflare origin missing from <code>CLIENT_URL</code>.</td><td>Add the exact origin, redeploy backend, and retry from a clean browser session.</td></tr>
+      <tr><td>Jobs load but analysis fails</td><td>Groq/Gemini variables, quota, model mismatch, or ontology not seeded.</td><td>Check AI configuration, provider quota, embedding model/version, and resource/ontology seeds.</td></tr>
+      <tr><td>Analysis is slow on first request</td><td>Serverless cold start or provider latency.</td><td>Use the health warm-up, wait for the bounded job status, and inspect lifecycle logs.</td></tr>
+      <tr><td>Roadmap is empty</td><td>No completed report for the user/role, or report has no gaps.</td><td>Run New Analysis and confirm <code>GET /api/report/roadmap</code> with the same JWT.</td></tr>
+      <tr><td>Seeded data missing from Atlas</td><td>Local <code>MONGO_URI</code> overrode the exported Atlas URI.</td><td>Set <code>MONGO_URI</code> explicitly for the seed command and verify the target database.</td></tr>
+      <tr><td>Resume upload rejected</td><td>Not a real PDF, too large, or serverless upload cap.</td><td>Use a valid PDF within the configured limit; do not bypass magic-byte validation.</td></tr>
+      <tr><td>Vercel deploy configuration error</td><td>Invalid function config or bundled environment files.</td><td>Keep the current valid <code>vercel.json</code>; ensure ignored files stay out of the bundle.</td></tr>
+    </table>
+    <div class="callout green"><strong>Rollback process:</strong> keep the previous known-good deployment URL and use the hosting provider's deployment history to promote the previous build. Do not edit production secrets to compensate for an application code regression.</div>
+    <h2>16.10 Operational Boundaries</h2>
+    <ul>
+      <li>Vercel temporary filesystem storage is not durable; persistent resume storage should be moved to object storage for production.</li>
+      <li>Free-tier AI providers have quotas and transient overload; provider errors are mapped to controlled API responses.</li>
+      <li>Cold starts and external provider latency mean a first request can be slower than a warm request.</li>
+      <li>Atlas Network Access and demo credentials must be hardened before any non-academic use.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">17 / Quality</p>
+    <h1 class="section-title">Testing and Verification</h1>
+    <h2>17.1 Automated Test Coverage</h2>
+    <table class="tight">
+      <tr><th>Area</th><th>Coverage examples</th><th>Current result</th></tr>
+      <tr><td>Authentication</td><td>Registration, login, hashing, JWT, invalid credentials, expiry behavior.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Upload security</td><td>Missing file, spoofed extension, magic bytes, oversized PDF, ownership, delete cleanup.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>AI extraction</td><td>Structured schema, merging, confidence rules, provider errors, graceful public-profile failure.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Scoring</td><td>Formula, thresholds, gap priority, exact normalized resources, finite score guard.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Analysis jobs</td><td>Idempotency, cooldown, status polling, failure path, cached embedding compatibility.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Jobs</td><td>CRUD, RBAC, filters, normalization, pagination, invalid ids, empty results.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Applications</td><td>Duplicate prevention, ownership, status transitions, history, admin summary.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Roadmaps</td><td>Latest report per role, resource hydration, own-only access, empty state.</td><td class="status-ok">Passed</td></tr>
+      <tr><td>Frontend</td><td>Routes, auth views, dashboard, roadmap selector/collapse, upload form, assistant answer, theme.</td><td class="status-ok">Passed</td></tr>
+    </table>
+    <h2>17.2 Latest Quality Gate</h2>
+    <div class="stat-grid">
+      <div class="stat"><strong>154</strong><span>Backend tests passed</span></div>
+      <div class="stat"><strong>2</strong><span>Opt-in backend tests skipped</span></div>
+      <div class="stat"><strong>41</strong><span>Frontend tests passed</span></div>
+      <div class="stat"><strong>0</strong><span>Frontend lint errors</span></div>
+    </div>
+    <p>The production frontend build completed successfully. The current expansion was committed as <code>09788b3</code> and pushed to the main branch. Live smoke checks confirmed 21 roles, 180 keyword names, new-role job filters, specific video resources, a new Frontend Developer analysis, API health, roadmap status handling, and cached embeddings.</p>
+    <h2>17.3 Manual Verification</h2>
+    <ul>
+      <li>Student and administrator login verified against the deployed system.</li>
+      <li>Job listing, filters, applications, wishlist, notifications, and admin pipeline verified.</li>
+      <li>New Analysis produced extracted skills, readiness score, study items, and curated resource links.</li>
+      <li>Per-role roadmap returned the latest completed report for each role and preserved completion toggles.</li>
+      <li>Candidate skill embedding cache persisted model, version, and vector dimensions.</li>
+      <li>Non-resume PDFs were rejected with <code>422 not_a_resume</code>; converter-generated resume PDFs were accepted and extracted.</li>
+      <li>New role analysis completed for Frontend Developer with documentation and video resources in the plan.</li>
+    </ul>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">18 / Evaluation</p>
+    <h1 class="section-title">Security, Limitations, and Future Work</h1>
+    <h2>18.1 Current Limitations</h2>
+    <ul>
+      <li>Readiness scores are guidance signals, not proof of ability or a guarantee of employment.</li>
+      <li>Public GitHub and LeetCode data can be unavailable, stale, rate-limited, or incomplete.</li>
+      <li>AI output quality depends on provider availability, prompt constraints, and source evidence quality.</li>
+      <li>Vercel temporary storage is not a durable long-term resume store.</li>
+      <li>Free-tier provider quotas and serverless cold starts can increase response time.</li>
+      <li>Current application review is a workflow tool, not a replacement for human hiring decisions.</li>
+    </ul>
+    <h2>18.2 Future Enhancements</h2>
+    <ol>
+      <li>Move resume files to durable object storage with signed, time-limited download URLs.</li>
+      <li>Add background job infrastructure for resilient analysis retries and larger workloads.</li>
+      <li>Add model drift dashboards and scheduled ontology/resource refresh audits.</li>
+      <li>Support institution-level placement analytics with privacy-preserving aggregation.</li>
+      <li>Add calendar-based study scheduling, reminders, and milestone analytics.</li>
+      <li>Add richer interview preparation linked to verified gaps and application role.</li>
+      <li>Introduce automated CI for tests, lint, build, dependency audits, and deployment previews.</li>
+      <li>Improve internationalization, accessibility audits, and screen-reader regression coverage.</li>
+    </ol>
+    <h2>18.3 Responsible AI Position</h2>
+    <div class="callout"><strong>Responsible use:</strong> Vortex should help a student understand and act on evidence. It should not fabricate achievements, rank people as objectively employable, expose private data, or replace a qualified human decision-maker.</div>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">19 / Conclusion</p>
+    <h1 class="section-title">Conclusion and Viva Summary</h1>
+    <p class="lead">Vortex demonstrates how a conventional job board can be extended into an evidence-based preparation system. Its value comes from the connection between the application lifecycle and the learning lifecycle: a student can discover a role, apply, inspect readiness for that role, follow a roadmap, and receive grounded guidance without leaving the same workspace.</p>
+    <p>The implementation keeps responsibilities separated. React presents the workflow, Express protects and coordinates it, MongoDB stores durable state, Groq structures and explains text, Gemini provides pinned vector representations, and deterministic application code controls scoring, thresholds, ownership, and verified resources. This design makes the system suitable for academic demonstration while also exposing clear paths for production hardening.</p>
+    <div class="formula">Jobs + Evidence + Role Ontology + Deterministic Scoring + Grounded Guidance = Actionable Career Preparation</div>
+    <h2>One-sentence Explanation</h2>
+    <div class="callout blue"><strong>Vortex stores job postings and candidate profiles, extracts evidence-based technical skills from resumes and public coding profiles, compares them with role requirements, calculates readiness, identifies skill gaps, and provides personalized preparation through a verified study roadmap and grounded AI Assistant.</strong></div>
+    <h2>Viva Questions to Prepare</h2>
+    <ol>
+      <li>Why is public registration restricted to the student role?</li>
+      <li>Why should the frontend never decide ownership or admin access?</li>
+      <li>What is the difference between extraction, matching, scoring, and explanation?</li>
+      <li>Why are embeddings cached and why is model/version metadata stored?</li>
+      <li>How does the system prevent React from satisfying a PyTorch requirement?</li>
+      <li>What happens if GitHub, Groq, or Gemini is unavailable?</li>
+      <li>How does the compound application index prevent duplicates?</li>
+      <li>How would you make resume storage durable beyond a serverless filesystem?</li>
+    </ol>
+    <p class="footer-note">End of main report. Appendices provide the repository map, example requests, and a deployment handover checklist.</p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">Appendix A</p>
+    <h1 class="section-title">Repository Structure</h1>
+    <div class="code">pride_proj/
+├── backend/
+│   ├── api/                    # Vercel serverless entry
+│   ├── src/
+│   │   ├── config/             # env, database, CORS, roles
+│   │   ├── controllers/        # request handlers
+│   │   ├── middleware/         # auth, upload, ownership, errors
+│   │   ├── models/             # Mongoose schemas
+│   │   ├── routes/             # REST route modules
+│   │   └── services/           # AI, extraction, scoring, storage
+│   ├── ontology/               # role skill matrices
+│   ├── resources/              # verified docs, courses, practice, and videos
+│   ├── scripts/                # seed, admin, server, audits
+│   ├── tests/                  # Vitest + Supertest
+│   └── vercel.json             # serverless function configuration
+├── frontend/
+│   ├── src/
+│   │   ├── components/         # reusable UI and controls
+│   │   ├── hooks/               # shared keyword/catalog hooks
+│   │   ├── context/            # auth and theme state
+│   │   ├── pages/              # route-level screens
+│   │   ├── test/               # frontend component tests
+│   │   └── api/                # Axios client
+│   ├── public/                 # redirects and static assets
+│   └── vite.config.js
+├── docs/                       # API, schema, setup, reports
+├── scripts/                    # root setup and dev launchers
+├── docker-compose.yml          # local MongoDB
+└── README.md</div>
+    <h2>Appendix A.1 Important Source Files</h2>
+    <table class="tight">
+      <tr><th>File</th><th>Responsibility</th></tr>
+      <tr><td><code>backend/src/app.js</code></td><td>Express app, middleware, health route, router mounting.</td></tr>
+      <tr><td><code>backend/src/services/analysisService.js</code></td><td>Analysis lifecycle, cache reuse, ontology checks, report persistence.</td></tr>
+      <tr><td><code>backend/src/services/scoringService.js</code></td><td>Matching, score, categories, priority, study-plan base.</td></tr>
+      <tr><td><code>backend/src/services/skillService.js</code></td><td>Resume/profile extraction, merging, confidence, embedding cache.</td></tr>
+      <tr><td><code>backend/src/controllers/skill.controller.js</code></td><td>Cached canonical keyword catalog for filters and job forms.</td></tr>
+      <tr><td><code>frontend/src/pages/DashboardPage.jsx</code></td><td>Score, role selector, collapsible roadmap, application preparation, wishlist.</td></tr>
+      <tr><td><code>frontend/src/components/StudyPlan.jsx</code></td><td>Accessible collapsible roadmap card and completion toggles.</td></tr>
+      <tr><td><code>frontend/src/components/SkillMultiSelect.jsx</code></td><td>Searchable multi-select keyword picker for job search and admin job creation.</td></tr>
+      <tr><td><code>frontend/src/pages/UploadPage.jsx</code></td><td>Upload, extraction review, analyze, polling, dashboard handoff.</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">Appendix B</p>
+    <h1 class="section-title">Representative API Examples</h1>
+    <h2>B.1 Login</h2>
+    <div class="code">POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "your-password"
+}
+
+200 OK
+{
+  "token": "&lt;JWT&gt;",
+  "user": { "id": "...", "name": "Student", "role": "student" }
+}</div>
+    <h2>B.2 Roadmap</h2>
+    <div class="code">GET /api/report/roadmap
+Authorization: Bearer &lt;JWT&gt;
+
+200 OK
+{
+  "roadmaps": [{
+    "target_role": "AI Engineer",
+    "report_id": "...",
+    "status": "completed",
+    "score": 21,
+    "gap_count": 12,
+    "study_plan": [{
+      "skill": "PyTorch",
+      "priority": 1,
+      "done": false,
+      "resources": [{ "title": "PyTorch Tutorials", "type": "documentation", "verified": true }]
+    }]
+  }]
+}</div>
+    <h2>B.3 Skills for Job Filters</h2>
+    <div class="code">GET /api/skills
+Authorization: Bearer &lt;JWT&gt;
+
+200 OK
+{
+  "skills": ["AI Safety", "AWS", "Flutter", "React", "Solidity", "..." ]
+}</div>
+    <h2>B.4 Toggle Roadmap Item</h2>
+    <div class="code">PATCH /api/report/&lt;reportId&gt;/study-plan/&lt;itemId&gt;
+Authorization: Bearer &lt;JWT&gt;
+
+200 OK
+{ "report_id": "...", "item_id": "...", "done": true }</div>
+    <h2>B.5 Create Job as Administrator</h2>
+    <div class="code">POST /api/jobs
+Authorization: Bearer &lt;ADMIN_JWT&gt;
+Content-Type: application/json
+
+{
+  "title": "Backend Engineer",
+  "company": "Example Labs",
+  "skills": ["Node.js", "Express", "MongoDB"],
+  "experienceLevel": 1,
+  "city": "Chennai",
+  "description": "Build reliable API services."
+}</div>
+    <h2>B.6 Common Status Codes</h2>
+    <table class="tight">
+      <tr><th>Status</th><th>Meaning in Vortex</th></tr>
+      <tr><td>200</td><td>Successful read, update, or health response.</td></tr>
+      <tr><td>201</td><td>Resource created, such as a user, profile, job, or application.</td></tr>
+      <tr><td>400</td><td>Malformed request or validation failure.</td></tr>
+      <tr><td>401 / 403</td><td>Missing/invalid authentication or insufficient permissions.</td></tr>
+      <tr><td>409 / 429</td><td>Business conflict, active report, cooldown, or rate limit.</td></tr>
+    </table>
+    <p class="footer-note">All examples use placeholders. Real tokens, passwords, connection strings, and provider keys must be supplied through secure environment configuration.</p>
+  </section>
+
+  <section class="page">
+    <p class="eyebrow">Appendix C</p>
+    <h1 class="section-title">Deployment Handover Checklist</h1>
+    <ul class="checklist">
+      <li>Repository is on the intended branch and the working tree is clean.</li>
+      <li>Backend environment variables are configured in Vercel, not committed.</li>
+      <li>Atlas database user, database name, and network access are confirmed.</li>
+      <li>Backend CORS allows the exact Cloudflare Pages origin.</li>
+      <li>Vercel function entry, max duration, and ignore rules are valid.</li>
+      <li>Ontology and verified resource catalog are seeded in the intended database.</li>
+      <li>Frontend <code>VITE_API_URL</code> points to the deployed API base path.</li>
+      <li>Cloudflare Pages deployment completes and SPA redirects are present.</li>
+      <li>Health endpoint returns HTTP 200.</li>
+      <li>Student login, admin login, job listing, application, and notification flows work.</li>
+      <li>New Analysis completes and the dashboard roadmap appears.</li>
+      <li>Roadmap role selector and collapse/expand behavior work on desktop and mobile.</li>
+      <li>Admin application status transition produces a student notification.</li>
+      <li>Cross-user report and admin-route authorization checks return 403.</li>
+      <li>Production logs contain no passwords, tokens, resume text, or API keys.</li>
+      <li>Previous deployment is retained for rollback.</li>
+    </ul>
+    <h2>C.1 Final Verification Commands</h2>
+    <div class="code"># Backend
+npm --prefix backend test
+
+# Frontend
+npm --prefix frontend test
+npm --prefix frontend run lint
+VITE_API_URL="https://YOUR-API-DOMAIN/api" npm --prefix frontend run build
+
+# Live health
+curl -i https://YOUR-API-DOMAIN/api/health</div>
+    <div class="callout green"><strong>Handover result:</strong> a future maintainer should be able to identify the two deployed services, configure secrets without committing them, seed the intended database, run the quality gates, smoke-test both roles, and roll back safely.</div>
+    <p class="center muted small">End of document</p>
+  </section>
+</body>
+</html>
