@@ -1,6 +1,6 @@
 # API Reference
 
-Base URL: `http://localhost:5000/api` (dev). All endpoints except `/api/health`, `/api/auth/*` require `Authorization: Bearer <JWT>`.
+Base URL: `http://localhost:5000/api` (dev). All endpoints except `/api/health`, `/api/auth/register`, and `/api/auth/login` require `Authorization: Bearer <JWT>`.
 
 ## Error shape
 
@@ -17,10 +17,13 @@ Public. Canonical shape, no extra fields:
 ## Auth
 
 ### `POST /api/auth/register`
-Body: `{ "name", "email", "password" }` (password ≥ 6 chars). Returns `201 { token, user }`. Duplicate email → `409 email_taken`.
+Body: `{ "name", "email", "password" }` (password ≥ 6 chars). Returns `201 { token, user }` and starts the account's single active session. Duplicate email → `409 email_taken`.
 
 ### `POST /api/auth/login`
-Body: `{ "email", "password" }`. Returns `200 { token, user }`. Bad credentials → `401 invalid_credentials`.
+Body: `{ "email", "password" }`. Returns `200 { token, user }`. Bad credentials → `401 invalid_credentials`. A second login while the account already has an active session → `409 already_logged_in` until that session logs out or its token expires.
+
+### `POST /api/auth/logout` — authenticated
+Ends the current session and returns `204`. The token is rejected afterwards (`401 session_ended`). Each account allows one active session at a time; tokens whose session was ended or replaced fail with `401 session_ended`, and expired sessions fail with `401 session_expired`. To release a stuck session without the user's token, run `npm --prefix backend run release-session -- <email>`.
 
 ## Profile (submissions)
 

@@ -54,13 +54,71 @@ describe('Auth', () => {
   });
 
   it('rejects expired tokens', async () => {
-    const { signTokenForUser } = await import('../src/middleware/auth.middleware.js');
     const { env } = await import('../src/config/env.js');
     const jwt = (await import('jsonwebtoken')).default;
     const token = jwt.sign({ id: '000000000000000000000000', role: 'student' }, env.JWT_SECRET, { expiresIn: -10 });
-    void signTokenForUser;
     const res = await request(app).get('/api/profile/000000000000000000000000').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(401);
+  });
+
+  it('blocks a second login while a session is active', async () => {
+    await registerUser({ email: 'single@test.com' });
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'single@test.com', password: 'secret123' });
+    expect(res.status).toBe(409);
+    expect(res.body.error).toBe('already_logged_in');
+  });
+
+  it('rejects a token whose session has ended', async () => {
+    const registered = await registerUser({ email: 'ended@test.com' });
+    const { User } = await import('../src/models/user.js');
+    await User.updateOne({ email: 'ended@test.com' }, { $set: { activeSessionId: null } });
+    const res = await request(app).get('/api/profile/000000000000000000000000').set('Authorization', `Bearer ${registered.token}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('session_ended');
+  });
+
+  it('rejects a token without a session id', async () => {
+    const registered = await registerUser({ email: 'nosid@test.com' });
+    const { env } = await import('../src/config/env.js');
+    const jwt = (await import('jsonwebtoken')).default;
+    const token = jwt.sign({ id: registered.user.id, role: 'student' }, env.JWT_SECRET, { expiresIn: '1h' });
+    const res = await request(app).get('/api/profile/000000000000000000000000').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('invalid_token');
+  });
+
+  it('logs out the active session and allows a fresh login', async () => {
+    const registered = await registerUser({ email: 'logout@test.com' });
+    const loggedOut = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${registered.token}`);
+    expect(loggedOut.status).toBe(204);
+
+    const stale = await request(app)
+      .get('/api/profile/000000000000000000000000')
+      .set('Authorization', `Bearer ${registered.token}`);
+    expect(stale.status).toBe(401);
+
+    const again = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'logout@test.com', password: 'secret123' });
+    expect(again.status).toBe(200);
+    expect(again.body.token).toBeTruthy();
+  });
+
+  it('allows a login after the previous session expires', async () => {
+    await registerUser({ email: 'expired-session@test.com' });
+    const { User } = await import('../src/models/user.js');
+    await User.updateOne(
+      { email: 'expired-session@test.com' },
+      { $set: { sessionExpiresAt: new Date(Date.now() - 1000) } }
+    );
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'expired-session@test.com', password: 'secret123' });
+    expect(res.status).toBe(200);
   });
 
   it('requires a token for protected routes', async () => {

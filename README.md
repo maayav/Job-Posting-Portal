@@ -25,38 +25,98 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 | AI | Groq for text generation; Gemini for skill embeddings |
 | Tests | Vitest and Supertest |
 
-## Quick start
+## Setup
 
-### Prerequisites
+Follow these steps in order on a fresh machine. Every command runs from the repository root unless stated otherwise.
+
+### 1. Prerequisites
 
 - Node.js **22.12 or later** and npm
 - Docker Desktop (Windows/macOS) or Docker Engine (Linux), for local MongoDB
-- A Groq API key for resume extraction and the AI assistant
-- A Google AI / Gemini API key for embedding the skill ontology during setup
-- Optional: a GitHub token for higher GitHub API rate limits
+- Git
 
-### Install and configure
+### 2. Clone the repository
 
-Run these commands from the repository root:
+```sh
+git clone https://github.com/maayav/Job-Posting-Portal.git
+cd Job-Posting-Portal
+```
+
+### 3. Install dependencies
+
+```sh
+npm run install:all
+```
+
+### 4. Create and fill in `backend/.env`
 
 ```sh
 npm run setup
-npm run install:all
+```
+
+This copies `backend/.env.example` to `backend/.env`, but only the first time — re-running never overwrites an existing file. Open `backend/.env` and set at least these values:
+
+```dotenv
+MONGO_URI=mongodb://127.0.0.1:27017/placement_skill_gap   # local Docker default
+JWT_SECRET=<generated-secret>
+GROQ_API_KEY=<your-groq-key>
+GEMINI_API_KEY=<your-gemini-key>
+```
+
+| Key | How to get it |
+|---|---|
+| `MONGO_URI` | Pre-filled for local Docker. For a cloud database, paste a MongoDB Atlas URI (or set `MONGODB_URI` instead). |
+| `JWT_SECRET` | Any long random string. Generate one with the command below. |
+| `GROQ_API_KEY` | Free key from <https://console.groq.com/keys> — text generation for resume extraction, study plans, and the AI assistant. |
+| `GEMINI_API_KEY` | Free key from <https://aistudio.google.com/apikey> — skill embeddings only. |
+| `GITHUB_TOKEN` | Optional. Raises the GitHub API rate limit from 60 to 5,000 requests/hour when collecting profile evidence. |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Optional. Persistent resume storage in production; locally resumes stay on disk in `backend/storage`. |
+
+Generate the JWT secret with Node:
+
+```sh
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
+**About the JWT.** On login or registration the backend signs a token containing the user id, role, and session id with `JWT_SECRET`, expiring after `JWT_EXPIRES_IN` (default `7d`). The browser stores it in `localStorage` and sends it as `Authorization: Bearer <token>` on every API call. When the token expires or is rejected, the API answers `401`, and the frontend clears it and redirects to the login page. Changing `JWT_SECRET` invalidates every existing session, so all users must sign in again.
+
+**One session per account.** An account can be signed in on only one device at a time. While a session is active, a second login is rejected with `409 already_logged_in` until the first session logs out (the app's **Log out** button calls `POST /api/auth/logout`) or its token expires. If a session gets stuck — for example, the browser was closed without logging out — release it from the backend:
+
+```sh
+npm --prefix backend run release-session -- user@example.com
+```
+
+Set `MONGO_URI` in the shell to target a deployed database instead of local MongoDB.
+
+Missing `JWT_SECRET` or `MONGO_URI` stops the server at startup with a clear error. Missing AI keys do not: the API still serves health, auth, jobs, and applications, and AI endpoints return a configuration error until the keys are added.
+
+### 5. Start MongoDB
+
+```sh
 docker compose up -d mongo
 ```
 
-Open `backend/.env` and set at least `MONGO_URI`, a strong `JWT_SECRET`, `GROQ_API_KEY`, and `GEMINI_API_KEY`. `npm run setup` creates this file from `backend/.env.example` only when it does not already exist. Keep real keys in this ignored local file; never commit them.
+Docker must be running first. Data lives in the `mongo_data` volume; `docker compose down` keeps it, `docker compose down -v` deletes it.
 
-Seed the skill ontology and start both services:
+### 6. Seed the skill ontology
 
 ```sh
 npm --prefix backend run seed
+```
+
+This embeds the skill ontology with Gemini and loads the learning-resource catalog, so it needs a valid `GEMINI_API_KEY`. The seed is idempotent and can be re-run at any time.
+
+### 7. Run the app
+
+```sh
 npm run dev
 ```
 
 Open <http://localhost:5173>. The frontend proxies `/api` requests to the backend at `http://localhost:5000`.
 
 The frontend uses port `5173` and the backend uses port `5000`. Both fail fast when the port is already taken, so stop any previous dev server or free the port first.
+
+### 8. Create an administrator
 
 Create a student account from the app. Public registration cannot create administrators. To promote an existing account or create an administrator, use the backend CLI:
 
@@ -70,7 +130,7 @@ node backend/scripts/create-admin.js admin@example.com --name "Placement Admin"
 
 On PowerShell, set it for the current shell with `$env:ADMIN_PASSWORD = 'your-local-password'`; on Bash, use `export ADMIN_PASSWORD='your-local-password'`. Clear it after creating the account (`Remove-Item Env:ADMIN_PASSWORD` in PowerShell, `unset ADMIN_PASSWORD` in Bash).
 
-### Demo data
+### 9. Seed demo data (optional)
 
 For a local walkthrough, create an administrator first, then seed sample jobs and applications:
 
@@ -89,20 +149,30 @@ On a fresh local database, the application seed creates demo students `demo.stud
 
 ## Environment variables
 
-The backend reads configuration from `backend/.env`. Important settings:
+The backend reads configuration from `backend/.env` (created by `npm run setup`). The complete reference:
 
-| Variable | Purpose |
-|---|---|
-| `MONGO_URI` | MongoDB connection string; local default is `mongodb://127.0.0.1:27017/placement_skill_gap` |
-| `JWT_SECRET` | Long, random secret used to sign sessions |
-| `GROQ_API_KEY` | Groq text generation for extraction and assistant responses |
-| `GROQ_MODEL` | Text model; defaults to `openai/gpt-oss-120b` |
-| `GEMINI_API_KEY` | Gemini embedding requests for the skill ontology |
-| `GEMINI_EMBEDDING_MODEL` | Embedding model; defaults to `gemini-embedding-2` |
-| `GITHUB_TOKEN` | Optional token for GitHub profile collection |
-| `PORT` | Backend port; defaults to `5000` |
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `MONGO_URI` or `MONGODB_URI` | yes | — | MongoDB connection string; either name works (`MONGODB_URI` matches Atlas/Render docs) |
+| `JWT_SECRET` | yes | — | Signs login tokens; the server exits at startup if it is missing |
+| `JWT_EXPIRES_IN` | no | `7d` | Token lifetime |
+| `PORT` | no | `5000` | Backend port |
+| `NODE_ENV` | no | `development` | `development`, `test`, or `production` |
+| `CLIENT_URL` | no | empty | Comma-separated browser origins allowed to call the API (set in production) |
+| `GROQ_API_KEY` | for AI | empty | Groq text generation for extraction, study plans, and the assistant |
+| `GROQ_MODEL` | no | `openai/gpt-oss-120b` | Text model |
+| `GROQ_FALLBACK_MODELS` | no | `openai/gpt-oss-20b,qwen/qwen3.8-27b` | Fallback text models, tried in order |
+| `GEMINI_API_KEY` | for AI | empty | Gemini embeddings for the skill ontology and analysis |
+| `GEMINI_MODEL` | no | `gemini-3.5-flash` | Used only when `AI_TEXT_FALLBACK_PROVIDER=gemini` |
+| `EMBEDDING_MODEL` / `GEMINI_EMBEDDING_MODEL` | no | `gemini-embedding-2` | Embedding model; changing it requires re-seeding the ontology and a new drift baseline |
+| `EMBEDDING_VERSION` | no | `2026-09` | Drift baseline tag stored with the seeded ontology |
+| `AI_TEXT_PROVIDER` | no | `groq` | Text provider (`groq` or `gemini`) |
+| `AI_EMBEDDING_PROVIDER` | no | `gemini` | Embedding provider (Gemini only) |
+| `AI_TEXT_FALLBACK_PROVIDER` | no | `none` | Optional text fallback provider |
+| `GITHUB_TOKEN` | no | empty | Raises the GitHub API rate limit for profile evidence collection |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | no | empty | Persistent resume storage in production; local disk is used when blank |
 
-The text and embedding providers are configured separately. Changing the embedding model requires re-seeding the ontology and updating its embedding-version baseline. See `backend/.env.example` for all supported settings.
+The text and embedding providers are configured separately. The frontend needs no variables for local development — the Vite dev server proxies `/api` to `http://localhost:5000`. For a production build, set `VITE_API_URL` to the deployed API including the `/api` path (see `frontend/.env.example`); only public values belong in `VITE_` variables.
 
 ## Useful commands
 
@@ -121,7 +191,7 @@ Stop a development server with **Ctrl+C** in the terminal that started it. The f
 
 ## Platform setup
 
-The same four commands work everywhere; the differences are only in the shell and in how you free a busy port.
+The same commands work everywhere; the differences are only in the shell and in how you free a busy port.
 
 ### Linux and macOS
 

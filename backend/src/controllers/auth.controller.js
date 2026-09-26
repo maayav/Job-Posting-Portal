@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { User } from '../models/user.js';
 import { AppError } from '../utils/errors.js';
-import { signTokenForUser } from '../middleware/auth.middleware.js';
+import { startSession, endSession } from '../services/sessionService.js';
 
 const registerSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100),
@@ -28,7 +28,7 @@ export async function register(req, res) {
     password: data.password,
   });
 
-  const token = signTokenForUser(user);
+  const token = await startSession(user);
 
   res.status(201).json({
     token,
@@ -44,10 +44,15 @@ export async function login(req, res) {
     throw new AppError('Invalid email or password', 401, 'invalid_credentials');
   }
 
-  const token = signTokenForUser(user);
+  const token = await startSession(user);
 
   res.json({
     token,
     user: { id: user._id.toString(), name: user.name, email: user.email, role: user.role },
   });
+}
+
+export async function logout(req, res) {
+  await endSession(req.user.id);
+  res.status(204).end();
 }

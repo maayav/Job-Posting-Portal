@@ -36,7 +36,12 @@ export function AuthProvider({ children }) {
     [setSession]
   );
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // The token may already be invalid or the API unreachable; local cleanup still applies.
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('report_id');

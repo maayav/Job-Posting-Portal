@@ -27,8 +27,17 @@ export async function registerUser({ name = 'Test Student', email, password = 's
 }
 
 export async function loginUser(email, password = 'secret123') {
+  await releaseSession(email);
   const res = await request(app).post('/api/auth/login').send({ email, password });
   return res.body;
+}
+
+export async function releaseSession(email) {
+  const { User } = await import('../src/models/user.js');
+  await User.updateOne(
+    { email: email.toLowerCase() },
+    { $set: { activeSessionId: null, sessionExpiresAt: null } }
+  );
 }
 
 export function authHeader(token) {

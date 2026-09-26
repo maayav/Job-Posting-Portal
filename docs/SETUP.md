@@ -140,6 +140,12 @@ node scripts/create-admin.js you@example.com
 ADMIN_PASSWORD='...' node scripts/create-admin.js you@example.com --name "Placement Admin"
 ```
 
+Release a stuck single-session lock (each account allows one active login; useful when a browser was closed without logging out):
+
+```bash
+node scripts/release-session.js you@example.com
+```
+
 Seed demo job postings (development/demo only, idempotent, requires an existing admin):
 
 ```bash

@@ -1,18 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { AppError } from '../utils/errors.js';
+import { User } from '../models/user.js';
 
-function signToken(user) {
-  return jwt.sign({ id: user._id.toString(), role: user.role }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
-  });
-}
-
-export function signTokenForUser(user) {
-  return signToken(user);
-}
-
-export function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const [scheme, token] = header.split(' ');
 
@@ -27,11 +18,20 @@ export function requireAuth(req, res, next) {
     throw new AppError('Invalid or expired token', 401, 'invalid_token');
   }
 
-  if (!payload.id) {
+  if (!payload.id || !payload.sid) {
     throw new AppError('Invalid or expired token', 401, 'invalid_token');
   }
 
-  req.user = { id: payload.id, role: payload.role };
+  const user = await User.findById(payload.id).select('+activeSessionId +sessionExpiresAt');
+  if (!user || user.activeSessionId !== payload.sid) {
+    throw new AppError('Your session has ended. Please sign in again.', 401, 'session_ended');
+  }
+
+  if (user.sessionExpiresAt && user.sessionExpiresAt.getTime() <= Date.now()) {
+    throw new AppError('Your session has expired. Please sign in again.', 401, 'session_expired');
+  }
+
+  req.user = { id: payload.id, role: user.role };
   next();
 }
 
