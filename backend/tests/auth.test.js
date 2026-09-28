@@ -55,7 +55,7 @@ describe('Auth', () => {
       .post('/api/auth/login')
       .send({ email: 'session@test.com', password: 'secret123' });
     expect(second.status).toBe(409);
-    expect(second.body.error).toBe('account_in_use');
+    expect(second.body.error).toBe('already_logged_in');
     expect(second.body.message).toMatch(/already logged in/i);
 
     const { Notification } = await import('../src/models/notification.js');
