@@ -139,20 +139,22 @@ export default function LoginPage() {
           </label>
           <label>
             Password
-            <input
-              placeholder="At least 6 characters"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              autoComplete={
-                mode === 'login' ? 'current-password' : 'new-password'
-              }
-            />
-            <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+            <span className="password-field">
+              <input
+                placeholder="At least 6 characters"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete={
+                  mode === 'login' ? 'current-password' : 'new-password'
+                }
+              />
+              <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </span>
           </label>
 
           {error && (

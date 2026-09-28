@@ -382,7 +382,11 @@ button.link:hover { color: var(--accent); }
 .tabs { display: flex; gap: 4px; margin-bottom: 25px; padding: 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); }
 .tabs button { flex: 1; padding: 8px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: .8rem; }
 .tabs button.active { background: var(--panel); color: var(--text); box-shadow: 0 1px 4px #0000000d; font-weight: 550; } .auth-card > .primary { width: 100%; margin-top: 4px; }
-.password-toggle { float: right; margin-top: -42px; margin-right: 10px; padding: 7px 0; border: 0; background: transparent; color: var(--muted); font-size: .72rem; text-decoration: underline; text-underline-offset: 3px; }
+.password-field { position: relative; display: block; }
+.password-field input { width: 100%; padding-right: 72px; }
+.password-toggle { position: absolute; top: 12px; right: 6px; min-width: 58px; min-height: 34px; margin: 0; padding: 7px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: .72rem; text-decoration: underline; text-underline-offset: 3px; }
+.password-toggle:hover { background: var(--panel-2); color: var(--text); }
+.password-toggle:focus-visible { outline-offset: 1px; }
 .spinner { width: 32px; height: 32px; margin: 0 auto 16px; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 /* Responsive layouts retain all actions and keep tables inside their own scroll areas. */

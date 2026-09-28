@@ -56,6 +56,25 @@ describe('Login page', () => {
     });
   });
 
+  it('toggles the password field from the full button hit area', () => {
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <ThemeProvider>
+            <LoginPage />
+          </ThemeProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    const password = screen.getByLabelText('Password');
+    const toggle = screen.getByRole('button', { name: 'Show password' });
+    expect(password.type).toBe('password');
+    fireEvent.click(toggle);
+    expect(password.type).toBe('text');
+    expect(screen.getByRole('button', { name: 'Hide password' })).toBeTruthy();
+  });
+
   it('calls the logout endpoint and clears local storage on logout', async () => {
     localStorage.setItem('token', 'test-token');
     localStorage.setItem('user', JSON.stringify({ id: 'u1', name: 'Test User', role: 'admin' }));
