@@ -5,6 +5,7 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 ## What you can do
 
 - **Explore opportunities:** search jobs by skills, experience, and city; apply with a chosen contact email and either your saved profile resume or a different PDF.
+- **Search precisely:** use the searchable multi-select skill picker to choose several keywords at once; free-text search also matches normalized job skills and synonyms.
 - **Track your progress:** the student dashboard shows your ATS score, how many jobs you have applied to, and a readiness trend graph.
 - **Stay informed:** in-app notifications tell you when an administrator moves your application through the pipeline.
 - **Save for later:** bookmark jobs into a wishlist and apply from the dashboard when you are ready.
@@ -13,6 +14,19 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 - **Review candidates:** see application totals, filter by role or candidate, inspect a candidate’s profile and evaluation, and move an application through review stages.
 - **Manage the job board:** administrators can create, edit, and remove postings.
 - **Choose your theme:** a persistent monochrome light/dark theme is available throughout the app.
+
+## Current catalog
+
+- **21 target roles** are loaded from `backend/ontology/*.json`.
+- **149 ontology skills** power readiness scoring and role matching.
+- **307 curated resources** cover documentation, courses, practice sets, and specific tutorial videos.
+- **180 searchable keyword names** are served by `GET /api/skills` and used by job filters and administrator job forms.
+
+## Current deployment
+
+- Frontend: <https://vortex-6g7.pages.dev>
+- Backend API: <https://vortex-api-eta.vercel.app/api>
+- Health check: <https://vortex-api-eta.vercel.app/api/health>
 
 ## Technology
 
@@ -139,7 +153,7 @@ node backend/scripts/seed-jobs.js --admin=admin@example.com
 node backend/scripts/seed-applications.js --admin=admin@example.com
 ```
 
-The job seed is idempotent and includes a broad 26-role demo catalog across frontend, backend, Python, Java, .NET, Go, mobile, data, ML, cloud, QA, security, design, and delivery. Skills such as FastAPI, Flask, Django, React Native, GraphQL, Kubernetes, Playwright, Power BI, Apache Spark, OpenCV, and Terraform are available in the skills filter; add comma-separated skills to combine them.
+The job seed is idempotent and includes 35 demo postings across the 21-role catalog: frontend, backend, mobile, data, ML, cloud, reliability, blockchain, games, design, networking, databases, QA, security, and business analysis. Skills such as Flutter, Kotlin, Solidity, Unity, Figma, Tailwind CSS, Power BI, TCP/IP, Database Tuning, and Requirements Gathering are available in the searchable multi-select picker and the `GET /api/skills` catalog.
 
 Refresh curated learning resources independently of AI embeddings with `npm --prefix backend run seed:resources`. This covers every skill in the demo jobs and analysis ontology. Existing reports load the latest matching links while keeping their completion state. Run `npm --prefix backend run check:resources` to check external link availability; remote sites can occasionally block automated checks.
 
@@ -187,7 +201,7 @@ Run from the repository root:
 | `npm run lint` | Run the frontend linter |
 | `npm run build` | Build the production frontend |
 
-Stop a development server with **Ctrl+C** in the terminal that started it. The frontend uses a fixed port (`5173`, strict) so a second instance fails fast instead of hiding on another port — free the port or keep using the running server.
+Stop a development server with **Ctrl+C** in the terminal that started it. The frontend prefers port `5173` and can use the next available port if it is occupied; the API remains on port `5000` by default.
 
 ## Platform setup
 
@@ -244,7 +258,7 @@ npm run dev
 ## Repository layout
 
 ```text
-backend/    Express API, MongoDB models, AI services, seed scripts, and tests
+backend/    Express API, MongoDB models, provider services, seed scripts, and tests
 frontend/   React application, pages, components, and shared design system
 docs/       Setup guide, API reference, schemas, and development notes
 scripts/    Cross-platform root setup and development launchers

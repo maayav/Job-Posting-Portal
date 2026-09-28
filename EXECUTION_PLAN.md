@@ -1,6 +1,6 @@
 # AI-Assisted Placement & Skill-Gap Tracker — Execution Plan (v7)
 
-**Purpose of this document:** This is a build spec for an AI coding agent (Claude Code, Cursor, etc.) to implement this project end-to-end, phase by phase. Each phase has a goal, concrete tasks, and an acceptance check before moving to the next. Feed this whole file to the agent as its starting context, then work through phases in order.
+**Purpose of this document:** This is an implementation specification for the project team. Each phase has a goal, concrete tasks, and an acceptance check before moving to the next.
 
 **v2 changes:** revised after a technical review of v1. The main shifts: scoring is now a deterministic formula (not delegated to Gemini), skill extraction now carries evidence, analysis runs as an async job with lifecycle states, authorization holes are closed, file-upload and resume-text handling are hardened, and the build order + scope are trimmed to a realistic MVP with everything else explicitly deferred.
 

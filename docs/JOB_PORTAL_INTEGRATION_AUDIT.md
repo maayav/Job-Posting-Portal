@@ -34,7 +34,7 @@ pride_proj/                              # Git root
 │   ├── ontology/
 │   │   ├── sde.json
 │   │   ├── ml-engineer.json
-│   │   └── drafts/new-roles-draft.json  # 8 drafted roles (not live)
+│   │   └── drafts/new-roles-draft.json  # legacy draft source (not live)
 │   ├── resources/
 │   │   ├── resources.json
 │   │   └── resources-extra.json

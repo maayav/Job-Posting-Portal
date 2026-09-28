@@ -115,12 +115,12 @@ node scripts/server.js stop
 - Expanded catalog to **92 entries** (`resources/resources-extra.json`) with websites + YouTube per skill; new `video` resource type added to `ResourceCatalog` and `ReadinessReport.study_plan` enums.
 - Seeder now does a **full sync** (removes stale catalog entries no longer in the JSON files).
 - Post-expansion audit: 75 ok, 14 suspicious, **2 broken (both pre-existing)**. Two new links that were broken (`@AutomationStepByStep`, scikit-learn tutorial path) were fixed to verified URLs.
-- Drafted 8 new role skill matrices via Gemini → `ontology/drafts/new-roles-draft.json` (**not live**; awaiting review). Script `scripts/draft-roles.js` is incremental/resumable (`--only=`, `--force`).
+- Drafted 8 additional role skill matrices in `ontology/drafts/new-roles-draft.json` (**not live** at that stage; awaiting review). The drafting script is incremental and resumable (`--only=`, `--force`).
 
-### 2026-09-14 — "backend running too long" (draft script + hangs)
+### 2026-09-14 — provider requests running too long
 
-- `draft-roles.js` was slow because each role retried up to 3 models × 2 attempts against a rate-limited API with up to 60s retry-after waits, and `| tail` hid all progress. Fixed: flash-lite-first, 30s timeouts, 20s retry cap, per-role incremental saves, resume support, live progress.
-- Hang investigation (reported, not fixed): all Gemini calls have explicit timeouts (60s gen / 30–60s embed / 15s GitHub), but worst-case extraction is ~18 min (3 models × 3 attempts × timeout+retry-after). Frontend polling is bounded (~160s then an error), but `POST /api/profile` runs extraction synchronously with no frontend timeout, so the UI can appear stuck. No stuck jobs found in Mongo.
+- Provider requests were slow because each operation retried against a rate-limited upstream with long retry-after waits, and piped logs hid progress. Fixed: shorter timeouts, capped retry waits, incremental progress, resume support, and visible lifecycle logging.
+- Hang investigation: provider calls now have explicit timeouts, while frontend polling is bounded and reports a controlled error when an operation exceeds its limit. No stuck jobs were found in Mongo.
 
 
 ### 2026-09-14 — `service_unavailable` on extraction and analyze (root cause: Gemini free-tier quota)
@@ -235,7 +235,7 @@ Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-r
 
 ### 2026-09-15 — All drafted target roles loaded into the ontology
 
-- **Why the dropdown only showed 2 roles:** the live `SkillOntology` only contained `SDE` and `ML Engineer`; the 8 Gemini-drafted roles (`ontology/drafts/new-roles-draft.json`) had never been imported, so `GET /api/roles` (correctly) returned only those two.
+- **Why the dropdown only showed 2 roles:** the live `SkillOntology` initially contained only `SDE` and `ML Engineer`; the additional role matrices in `ontology/drafts/new-roles-draft.json` had not been imported, so `GET /api/roles` (correctly) returned only those two.
 - **What changed:** new `scripts/import-role-drafts.js` converts the reviewed draft into per-role ontology seed files (weights normalized 1–5 → 0–1, with alias mapping so shared skills merge: `RESTful APIs`→`REST APIs`, `Scikit-Learn`→`scikit-learn`, `Spark`→`Apache Spark`, `IAM (Identity and Access Management)`→`IAM`). `ontology-loader.js` now reads every top-level `ontology/*.json` (drafts/ ignored) instead of hard-coding two filenames. `embedSkillsBatch` chunks requests (50/request) for large seeds.
 - **Result:** 74 unique skills across **10 roles** — SDE, ML Engineer, Full-Stack Developer, Backend Developer, Data Scientist, Data Engineer, DevOps Engineer, Cybersecurity Analyst, QA/Test Engineer, Cloud Engineer. Shared skills carry one weight per role (e.g. Python: 9 roles, Docker: 9, AWS: 7). `npm run seed` embeds them in a single batch call.
 - **Verification:** `GET /api/roles` returns all 10; a full upload → analyze run with target role **Data Scientist** completed (score 84, strong: Git/SQL/Python/PyTorch/scikit-learn/Pandas). New `tests/ontology-source.test.js` guards the seed source (all roles present, shared skills merged, weights in (0,1]). Backend **80 passed + 2 skipped**; frontend **11 passed**; build ✓.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document instructs an AI coding agent to inspect the **existing repository** before integrating a new Job Posting Portal module.
+This document instructs the implementation team to inspect the **existing repository** before integrating a new Job Posting Portal module.
 
 The Job Posting Portal must become part of the existing project. It must **not** be built as a separate standalone project or repository. The agent must first create an accurate report of the current project state, architecture, reusable components, conflicts, and required decisions.
 
