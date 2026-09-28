@@ -47,6 +47,38 @@ describe('Auth', () => {
     expect(bad.body.error).toBe('invalid_credentials');
   });
 
+  it('blocks a second active login and notifies the existing account', async () => {
+    await registerUser({ email: 'session@test.com' });
+    const first = await loginUser('session@test.com', 'secret123');
+
+    const second = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'session@test.com', password: 'secret123' });
+    expect(second.status).toBe(409);
+    expect(second.body.error).toBe('account_in_use');
+    expect(second.body.message).toMatch(/already logged in/i);
+
+    const { Notification } = await import('../src/models/notification.js');
+    const notification = await Notification.findOne({ user: first.user.id }).lean();
+    expect(notification).toMatchObject({ type: 'system', title: 'Blocked login attempt', read: false });
+  });
+
+  it('releases the active login session on logout', async () => {
+    await registerUser({ email: 'logout@test.com' });
+    const first = await loginUser('logout@test.com', 'secret123');
+
+    const logout = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${first.token}`);
+    expect(logout.status).toBe(204);
+
+    const second = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'logout@test.com', password: 'secret123' });
+    expect(second.status).toBe(200);
+    expect(second.body.token).toBeTruthy();
+  });
+
   it('rejects invalid tokens', async () => {
     const res = await request(app).get('/api/profile/000000000000000000000000').set('Authorization', 'Bearer not.a.jwt');
     expect(res.status).toBe(401);

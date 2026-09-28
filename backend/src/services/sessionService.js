@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { User } from '../models/user.js';
 import { AppError } from '../utils/errors.js';
+import { Notification } from '../models/notification.js';
 
 export function signSessionToken(user, sessionId) {
   return jwt.sign(
@@ -32,6 +33,12 @@ export async function startSession(user) {
   );
 
   if (!claimed) {
+    await Notification.create({
+      user: user._id,
+      type: 'system',
+      title: 'Blocked login attempt',
+      message: 'Someone tried to log in while your account already had an active session.',
+    });
     throw new AppError(
       'This account is already logged in on another device. Log out there first, or wait for that session to expire.',
       409,
