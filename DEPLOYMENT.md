@@ -42,7 +42,7 @@ npm run dev
 
 For Windows, use the root Node scripts rather than Linux-only process commands. See `docs/SETUP.md` for local environment and MongoDB setup.
 
-The latest local frontend run passed 51 tests and production build; lint reported 17 existing warnings and no errors. Backend/runtime and frontend dependency audits both reported zero vulnerabilities. Full backend verification after the latest concurrency/snapshot fixes is still pending its final result.
+The latest local frontend run passed 51 tests and production build; lint reported 17 existing warnings and no errors. Backend/runtime and frontend dependency audits both reported zero vulnerabilities. The final isolated backend suite passed 306 tests with two drift skips; an isolated unit run passed 141 tests. These test counts overlap and must not be summed.
 
 Run frontend tests, lint, and build before release. Backend tests must use the disposable test database described in `docs/BASELINE_AUDIT.md`; never point database-drop hooks at a shared or production database. Normal automated tests mock provider calls and do not need real AI keys.
 
@@ -168,7 +168,7 @@ The local audit changes align serverless shortcut CORS handling. Its deployed re
 
 Profile upload performs PDF extraction, optional external enrichment, text extraction, and embedding work. PDFs are limited to 30 pages and 60,000 extracted characters; files are capped at 4 MiB on Vercel and 5 MiB elsewhere. Analysis uses the saved profile, ontology, and curated resource catalog.
 
-On Vercel, analysis is awaited within the request because work scheduled after a response may be frozen. The database stores `queued`, `processing`, `completed`, and `failed` states. The active-job index is unique on submission alone, and an `E11000` race follows the winning active job with HTTP 202; production requires the manual index procedure above. Stale active reports are reconciled to `analysis_timeout` after ten minutes so an interrupted request can be retried.
+On Vercel, analysis is awaited within the request because work scheduled after a response may be frozen. The database stores `queued`, `processing`, `completed`, and `failed` states. The active-job index is unique on submission alone, and an `E11000` race follows the winning active job with HTTP 202; production requires the manual index procedure above. Reconciliation marks active reports older than ten minutes as `analysis_timeout` when the long-lived server starts, on the first Vercel database connection, or when a new analysis is requested. Polling status does not trigger reconciliation, and no cron/reaper is configured. An interrupted request becomes retryable when one of those reconciliation triggers runs.
 
 This is recovery from abandoned work, not a durable worker queue. Provider latency, retries, and cold starts can still exceed the configured 60-second function limit. GitHub enrichment is bounded by a 25-second overall deadline, LeetCode by a 10-second request timeout, and provider calls have their own timeouts. These separate limits do not guarantee an entire upload/analysis finishes within 60 seconds.
 
@@ -197,7 +197,7 @@ A future adapter must preserve protected downloads, deletion behavior, old refer
 6. Use approved demo credentials/data for authenticated workflows. Never print JWTs, passwords, profile contents, or provider keys.
 7. Record the deployed revision and actual results in `docs/INTEGRATION_STATUS.md`.
 
-The cached Cloudflare/Wrangler login was expired and could not be refreshed, and no cached Vercel authentication was available. Safe demo credentials, public test usernames, and durable storage credentials were not configured. Git-linked auto-deployment must still be checked after the authorized commit/push attempt; CLI authentication failure alone does not establish that auto-deployment is unavailable. The release result remains pending.
+The cached Cloudflare/Wrangler login was expired and could not be refreshed, and Vercel CLI explicitly reported Logged out (exit 1). Safe demo credentials, public test usernames, and durable storage credentials were not configured. Git-linked auto-deployment must still be checked after the authorized commit/push attempt; CLI authentication failure alone does not establish that auto-deployment is unavailable. Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` was pushed successfully. Public checks still return SPA HTML for `/build-info.json`, no backend revision header, and the old health preflight behavior. No successful deployment of this release is established; provider authentication must be restored to continue.
 
 ## Safe public checks
 

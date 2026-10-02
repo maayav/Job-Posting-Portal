@@ -85,10 +85,10 @@ Server control script (recommended for demos): `node scripts/server.js start|sto
 |---|---|---|
 | `MONGO_URI` | yes | |
 | `JWT_SECRET` | yes | |
-| `GROQ_API_KEY` | yes (non-test) | Used for extraction and assistant responses; keep it in `.env` only |
+| `GROQ_API_KEY` | for AI text features | Used for extraction and assistant responses; keep it in `.env` only |
 | `GROQ_MODEL` | no | default `openai/gpt-oss-120b` |
 | `GROQ_FALLBACK_MODELS` | no | comma-separated, default `openai/gpt-oss-20b,qwen/qwen3.8-27b` |
-| `GEMINI_API_KEY` | yes (non-test) | Used only for skill embeddings |
+| `GEMINI_API_KEY` | for AI embedding features | Used only for skill embeddings |
 | `EMBEDDING_MODEL` | no | default `gemini-embedding-2` — pinned; changing requires re-seeding + new drift baseline |
 | `EMBEDDING_VERSION` | no | default `2026-09` |
 | `GITHUB_TOKEN` | no | authenticated GitHub calls (5,000 req/hr) |

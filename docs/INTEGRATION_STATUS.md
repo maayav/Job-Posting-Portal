@@ -17,11 +17,11 @@ Verification date: 2 October 2026. This record distinguishes safe live checks, i
 | Health shortcut CORS | Baseline issue; local fix awaiting deployment | Baseline health OPTIONS returned 200 without CORS headers |
 | Groq text AI | Configured in code; not verified live | Default text provider; no production generation call |
 | Gemini embeddings | Configured in code; not verified live | Actual environment/model/quota not established |
-| Local audit/security changes | Not confirmed deployed | Commit/push and provider revision verification pending |
+| Local audit/security changes | Not confirmed deployed | Source commit pushed; public revision markers absent, deployment not confirmed |
 | Frontend CSP | Implemented locally; not verified live | Self-only scripts; inline styles for Motion; API connection allowlist needs an update if origin changes |
 | Production indexes | Unknown; not migrated | `autoIndex` disabled; named stronger active-job index requires reviewed operator migration |
 | Revision instrumentation | Configured locally; not verified live | Frontend `/build-info.json`; backend `X-Vortex-Revision` if platform commit is supplied |
-| Direct deployment access | Unavailable in inspected CLI sessions | Cloudflare login expired/unrefreshable; no cached Vercel auth; Git-linked deployment not yet checked |
+| Direct deployment access | Unavailable in inspected CLI sessions | Cloudflare login expired/unrefreshable; Vercel CLI reported Logged out; provider Git-link settings unknown; public checks do not confirm this release |
 | Durable resume storage | Not configured or verified | Active fallback is local filesystem/Vercel `/tmp` |
 
 Confirmed repository: https://github.com/maayav/Job-Posting-Portal. The deployment-source relationship must be checked rather than assumed from a Git push.
@@ -81,7 +81,7 @@ Classification: **Configured and tested locally with mocks; production completio
 - Groq handles text by default; Gemini handles embeddings.
 - Normal readiness scoring uses exact canonical skill/category matches, not semantic substitution.
 - Curated resource URLs are server-controlled.
-- Reports store queued/processing/completed/failed states; ten-minute stale reconciliation restores retryability after abandoned work.
+- Reports store queued/processing/completed/failed states; reconciliation marks active reports older than ten minutes failed on startup, first Vercel DB connection, or a new analysis request. It does not run on status polls or a schedule.
 - Vercel awaits analysis inside the request. This still has a 60-second deployment limit and is not a durable worker queue.
 - Students require a completed owner-accessible analysis; the no-analysis response is HTTP 409 `analysis_required` with a useful frontend state.
 - Admin assistant context covers job/application/status/candidate data; exact totals are aggregated across all records, while detail queries are limited to 200 recent jobs and 250 recent applications with coverage disclosed. Reviews use per-application captures; missing/deleted/null captures stay absent, and only legacy uncaptured records use latest-profile compatibility.
@@ -121,19 +121,20 @@ The Vercel fallback is ephemeral and unshared. Provider abstraction, Cloudinary/
 | Frontend tests | 45 passed | 51 passed after latest edits |
 | Frontend lint | Passed with existing warnings | 17 existing warnings, no errors |
 | Isolated frontend production build | Passed | Passed after latest edits |
-| Isolated backend integration fixtures | 8 passed | Pending final run |
-| Isolated backend AI/source-schema fixtures | 9 passed | Pending final run |
-| Full backend suite | Not run with destructive fixed-DB setup | Interim guarded container run: 293 passed, 2 drift skipped; final count pending after later regressions |
+| Isolated backend integration fixtures | 8 passed | Included in passing final full suite |
+| Isolated backend AI/source-schema fixtures | 9 passed | Included in passing final full suite |
+| Full backend suite | Not run with destructive fixed-DB setup | Guarded container run: 306 passed, 2 drift skipped; 26 passing files/one skipped |
 | Focused regression suites | Not in baseline | Latest snapshot/concurrency/application/assistant run: 52 passed |
 | Isolated backend units | Not in baseline | 141 passed |
 | Backend/runtime dependency audit | 2 moderate runtime vulnerabilities plus dev advisory | Nonbreaking fixes applied; 0 reported vulnerabilities |
 | Frontend dependency audit | Not recorded in baseline | 0 reported vulnerabilities |
-| Syntax/diff/secret-ignore review | Baseline inspected | Pending final review |
-| Commit/push | Starting commit `9c4b2e0` | Pending release attempt |
-| Frontend/backend deployed revision | Unknown | Pending provider/source evidence |
-| Post-release public checks | Baseline checks above | Pending repeat |
+| Syntax/diff/secret-ignore review | Baseline inspected | Passed; 80 release files scanned, only generic env-example placeholder found; real `.env` ignored |
+| CSP/external theme-init checks | Not in baseline | Passed locally; no live header claim |
+| Commit/push | Starting commit `9c4b2e0` | Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` committed and pushed to `origin/main`; evidence-only documentation follows |
+| Frontend/backend deployed revision | Unknown | Unknown: frontend build-info returns SPA HTML, backend revision header absent |
+| Post-release public checks | Baseline checks above | 2 October 2026, 09:33 UTC: all five frontend routes 200 with identical HTML; health 200 `{status,timestamp}`; jobs preflight allowed origin 204/exact origin, unknown origin 401/no allow-origin; health preflight still 200/no CORS |
 
-Final results must replace pending entries with command output/evidence, not assumptions. The interim full suite, later focused run, and unit run overlap and are recorded separately; their counts must not be added to invent a final full-suite result. Revision markers are configured locally: the frontend build uses its hosting/CI commit variable or Git HEAD, and the backend emits a revision only when `VERCEL_GIT_COMMIT_SHA` is present. Their live presence is not yet verified.
+Final local results and post-push checks are recorded from command output; provider deployment remains unverified. The final full suite, focused run, and unit run overlap and are recorded separately; their counts must not be added. Revision markers are configured locally: the frontend build uses its hosting/CI commit variable or Git HEAD, and the backend emits a revision only when `VERCEL_GIT_COMMIT_SHA` is present. Their live presence is not yet verified.
 
 ## Manual verification coverage
 
@@ -142,11 +143,19 @@ Final results must replace pending entries with command output/evidence, not ass
 | Valid resume and optional GitHub | Generated/mocked fixtures | Not tested |
 | LinkedIn URL/text grounding | Validation/extraction fixtures | Not tested |
 | Optional LeetCode failure | Mocked failure fixtures | Not tested |
-| Analysis scoring/plan saved | Guarded disposable DB tests; final run pending | Not tested |
-| Completed-report assistant | Context/validation fixtures; final run pending | Not tested |
-| Resume ownership/admin access | Authorization/privacy fixtures; final run pending | Not tested |
-| Application-associated review | Captured-reference regression fixtures; final run pending | Not tested |
+| Analysis scoring/plan saved | Passing guarded disposable DB tests | Not tested |
+| Completed-report assistant | Passing context/validation fixtures | Not tested |
+| Resume ownership/admin access | Passing authorization/privacy fixtures | Not tested |
+| Application-associated review | Passing captured-reference regressions | Not tested |
 | Themes/navigation | Frontend tests/build | Authenticated browser review pending |
 | SPA routes/CORS/health | Safe HTTP checks | Confirmed within limits above |
 
 No private data, tokens, passwords, or API keys are included in fixtures or this record. Public GET/OPTIONS checks do not prove production authentication, AI success, database persistence, or storage durability. See `BASELINE_AUDIT.md` for approved/rejected/deferred findings and `PROJECT_TECHNICAL_DOCUMENTATION.md` for the implementation boundaries.
+
+## Post-push deployment evidence
+
+Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` was pushed to `main`. Safe curl checks at 09:33 UTC on 2 October 2026 confirmed the five frontend routes return 200 with the same HTML. `/build-info.json` also returns that HTML instead of JSON; CSP is absent. API health returns 200 with only `status` and `timestamp`, with no `X-Vortex-Revision`. Health OPTIONS still returns 200 without CORS; the local corrected handler returns 204. Thus the release revision cannot be verified and its deployment must not be claimed.
+
+GitHub returned no commit statuses, check runs or deployment records. This does not establish whether a hosting webhook is configured. Wrangler authentication expired and could not refresh; Vercel CLI 62.1 reported Logged out. No authenticated provider dashboard session was available. Deploying to a new temporary host would not update the confirmed product URLs and was not attempted.
+
+An initial Python HTTP-client check received 403 on Cloudflare; repeat curl checks returned 200. This client-specific result is not treated as a site outage. Authenticated production AI/integration tests, durable storage migration, and production index verification remain blocked by unavailable provider/test/storage configuration. No production signup, login, resume upload or AI call was performed.

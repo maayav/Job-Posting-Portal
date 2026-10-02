@@ -57,7 +57,7 @@ These requests did not test authenticated screens, login, uploads, applications,
 
 | Finding | Decision | Scope and reason |
 |---|---|---|
-| Abandoned queued/processing reports block re-analysis | Approved | Reconcile stale active reports so interruption is recoverable; preserve lifecycle states |
+| Abandoned queued/processing reports block re-analysis | Approved | Reconcile reports older than ten minutes on startup/first Vercel DB connection/new analysis; status polling/cron do not trigger cleanup |
 | Active-report compound index permits queued/processing race | Approved | Use named unique submission-only active partial index; `E11000` follows winner with 202; manual production migration still required |
 | GitHub sequential fan-out exceeds request budgets | Approved | Bound overall enrichment time, cache successful public data, expire cache records, tolerate partial failures |
 | Applying without a resume exposes a profile resume through fallback | Approved | Respect explicit `resumeSource`; protect downloads and associated profile references |
@@ -89,6 +89,7 @@ These requests did not test authenticated screens, login, uploads, applications,
 | “LinkedIn has official API or scraping support” | Rejected | Only URL validation and user-provided text are supported |
 | “LeetCode is a supported official authenticated API” | Rejected | Optional use of a public website GraphQL endpoint; provider behavior may change |
 | “Local fixes or a push prove deployed behavior” | Rejected | Confirm deployed revision and test each behavior independently |
+| Previously shared provider credential | Deferred provider action | A Groq key appeared in earlier task messages; rotate it in the provider and update local/hosted environment. No value is included here, and rotation was not performed |
 | Remote durable storage and migration | Deferred operational step | Provider contract/fallback is implemented; credentials/provider/policy and live durability proof are absent |
 | Automatic retention duration | Deferred | No user-approved period or operational cleanup policy; deletion is supported |
 | Distributed rate limiter and durable worker queue | Deferred | Current in-memory/synchronous design remains a documented serverless limitation |
@@ -109,25 +110,26 @@ The resume contract still uses a filesystem provider. New applications capture `
 
 ## Final verification record
 
-These entries must be updated from the final commands/deployment evidence before the release is described as complete.
+These entries record final commands and public evidence. Unverified operational work remains open.
 
 | Check | Final status |
 |---|---|
-| Backend full suite on guarded disposable DB | Interim run: 293 passed, 2 drift skipped; final count pending after later snapshot/concurrency regressions |
+| Backend full suite on guarded disposable DB | 306 passed, 2 drift skipped; 26 passing files, one skipped |
 | Focused regression suites | Latest focused snapshot/concurrency/application/assistant run: 52 passed; overlaps full suite |
 | Isolated backend unit suite | 141 passed; overlaps other coverage |
 | Frontend tests/lint/build after latest edits | 51 tests passed; lint 17 existing warnings/no errors; production build passed |
-| Syntax/diff checks | Pending final run |
+| CSP and external theme initialization checks | Passed locally; not verified live |
+| Syntax/diff checks | All changed backend JavaScript syntax checks and diff checks passed |
 | Backend/runtime and frontend dependency audits | Both report 0 vulnerabilities after nonbreaking fixes |
-| Combined diff review and secret scan | Pending final review |
-| Release commit and push | Pending release attempt |
-| Frontend deployed revision | Unknown until provider/deployment evidence is checked |
-| Backend deployed revision | Unknown until provider/deployment evidence is checked |
-| Repeated live CORS/SPA/health checks | Pending post-deployment checks |
+| Combined diff review and secret scan | Reviewed; scan of 80 release files found only a generic username/password placeholder in `.env.example`; real `.env` ignored |
+| Release commit and push | Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` committed and pushed to `origin/main`; evidence-only documentation follows |
+| Frontend deployed revision | Unknown: expected revision marker absent in repeated public check |
+| Backend deployed revision | Unknown: expected revision marker absent in repeated public check |
+| Repeated live CORS/SPA/health checks | 2 October 2026, 09:33 UTC: all five frontend routes 200 with identical HTML; health 200 `{status,timestamp}`; jobs preflight allowed origin 204/exact origin, unknown origin 401/no allow-origin; health preflight still 200/no CORS |
 
 ## Controlled integration verification
 
-No safe demo authentication credentials or public test usernames were configured in the inspected environment. No remote storage credentials or adapter were activated. The cached Cloudflare/Wrangler login was expired and could not refresh; no cached Vercel authentication was available. Commit/push and Git-linked deployment verification have not yet been attempted. Local revision markers were added: frontend `/build-info.json` and backend `X-Vortex-Revision` when a valid platform commit variable is supplied. Detailed integration coverage uses generated/mocked fixtures, without private profile data.
+No safe demo authentication credentials or public test usernames were configured in the inspected environment. No remote storage credentials or adapter were activated. The cached Cloudflare/Wrangler login was expired and could not refresh; Vercel CLI explicitly reported Logged out (exit 1). Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` was committed and pushed successfully. GitHub reported no commit statuses/check runs; the hosting revision remains unknown. Local revision markers were added: frontend `/build-info.json` and backend `X-Vortex-Revision` when a valid platform commit variable is supplied. Detailed integration coverage uses generated/mocked fixtures, without private profile data.
 
 | Workflow | Baseline coverage | Production status |
 |---|---|---|
@@ -144,7 +146,7 @@ No safe demo authentication credentials or public test usernames were configured
 ## Remaining production risks
 
 - Ephemeral Vercel `/tmp` resume storage can leave database references without downloadable files.
-- The 60-second serverless cap can interrupt provider work; stale reconciliation restores retryability but is not a durable queue.
+- The 60-second serverless cap can interrupt provider work. Stale reconciliation runs only on startup/first serverless database connection/new analysis, not polling or cron; it restores retryability when triggered and is not a durable queue.
 - Per-instance in-memory rate limits do not enforce a global quota under scaling.
 - Browser localStorage tokens remain exposed to any successful same-origin script compromise. CSP is implemented locally but has not been verified on the deployed frontend.
 - Production active-job/index readiness remains unknown; automatic index creation is disabled and a reviewed operator migration is still required.
@@ -152,3 +154,5 @@ No safe demo authentication credentials or public test usernames were configured
 - Optional public endpoints can fail or change; users must still be able to complete resume-only analysis.
 
 For the full implementation, see `PROJECT_TECHNICAL_DOCUMENTATION.md`. For provider/deployment claims, see `INTEGRATION_STATUS.md`. For release configuration, see `../DEPLOYMENT.md`.
+
+Tests ran on Linux with Node.js 24.13.0; the backend deployment engine remains Node.js 22.x. Native Windows and the hosted Node.js runtime were not exercised. The disposable MongoDB container was stopped after verifying only its system databases remained.

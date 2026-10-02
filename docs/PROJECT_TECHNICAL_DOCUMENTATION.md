@@ -165,7 +165,7 @@ PDF inputs are capped at 4 MiB on Vercel or 5 MiB elsewhere, 30 pages, and 60,00
 
 A failed extraction shows a retry action using the saved submission/PDF rather than requiring another upload.
 
-Failed optional profiles degrade separately from the required resume. Provider/validation failures are surfaced with codes and retry controls. Profile extraction and report analysis have separate statuses. Reports store `queued`, `processing`, `completed`, or `failed`; stale active reports are failed after ten minutes for recoverable retry.
+Failed optional profiles degrade separately from the required resume. Provider/validation failures are surfaced with codes and retry controls. Profile extraction and report analysis have separate statuses. Reports store `queued`, `processing`, `completed`, or `failed`. Reconciliation fails active reports older than ten minutes when the long-lived server starts, on the first Vercel database connection, or when a new analysis is requested. Status polling does not run reconciliation, and no scheduled reaper is configured. Retry recovery therefore depends on one of those triggers.
 
 Concurrent analysis requests rely on the active partial unique index. If creation loses an `E11000` race, the request follows the winning active report with HTTP 202 instead of returning a generic server error. The response uses the updated completed/failed status after synchronous work.
 
@@ -359,7 +359,7 @@ Normal tests use generated PDFs and mocked GitHub, LeetCode, Groq, and Gemini re
 
 The baseline backend harness dropped a fixed test database. It was not run against a possibly shared database; isolated mock suites bypassed those hooks. The current harness uses a loopback-only, UUID-named disposable database and temporary resume directory per run. Cleanup is guarded before dropping that database; remote/authenticated MongoDB URLs and fixed database names are refused. Provider tests normally use mocks; optional drift runs require deliberate opt-in and real provider quota. No test fixture should contain real profile data or production secrets.
 
-Baseline: 45 frontend tests/build passed; lint passed with existing warnings; isolated backend integration tests 8 passed and AI/source tests 9 passed. Latest frontend result: 51 tests passed, production build passed, and lint reported 17 existing warnings/no errors. An interim full backend run passed 293 tests with two drift skips. Later focused snapshot/concurrency-related suites passed 52 tests, and the isolated unit suite passed 141 tests. These runs overlap and must not be summed. The final full backend count remains pending; both backend/runtime and frontend dependency audits currently report zero vulnerabilities. Release/deployment verification is pending in `BASELINE_AUDIT.md`.
+Baseline: 45 frontend tests/build passed; lint passed with existing warnings; isolated backend integration tests 8 passed and AI/source tests 9 passed. Final local results: backend 306 tests passed with two drift skips (26 passing files, one skipped); frontend 51 tests and production build passed; lint reported 17 existing warnings/no errors. The focused regression run passed 52 tests and the isolated unit run passed 141 tests; those runs overlap the full suite and must not be summed. Backend/runtime and frontend dependency audits reported zero vulnerabilities. CSP/theme checks, changed backend JavaScript syntax, and diff checks passed. A scan of 80 release files found only a generic credential placeholder in the environment example; real `.env` files are ignored. The source release was pushed; deployment verification remains unresolved in `BASELINE_AUDIT.md`.
 
 ## 30. Known limitations
 
@@ -394,7 +394,7 @@ Those checks do not authenticate, consume AI quota, submit applications, upload 
 - Application profile/report capture references, explicit resume-source privacy, protected downloads, local hardening, and storage provider contract.
 - Cloudflare Pages/Vercel topology for the confirmed public URLs.
 
-Local implementation and safe live checks are separate evidence. The final commit/deployment result remains pending in the integration status record.
+Local implementation and safe live checks are separate evidence. The source release commit/push succeeded. The integration status record describes the remaining deployment/authentication/storage blockers.
 
 ## 34. What is not implemented or not verified
 
@@ -403,6 +403,6 @@ Local implementation and safe live checks are separate evidence. The final commi
 - A durable background worker queue or global distributed rate-limit store.
 - Production verification of GitHub/LeetCode enrichment, new LinkedIn fields, New Analysis, assistant generation, provider keys/models, or saved progress/database persistence.
 - Verified source revisions of the frontend/backend deployment after the local audit changes; new revision markers are configured locally but have not been checked live.
-- Direct CLI deployment access: the cached Cloudflare login could not refresh and no cached Vercel authentication was available. Git-linked deployment remains to be checked after the release attempt.
+- Direct CLI deployment access: the cached Cloudflare login could not refresh and Vercel CLI explicitly reported Logged out (exit 1). Git-linked deployment remains to be checked after the release attempt.
 - Semantic embedding-based readiness matching, immutable application evidence copies, or independent employer ATS certification.
 - Account-management, application withdrawal, restrictive business status transitions, full audit logs, and CI features not present in the inspected source.
