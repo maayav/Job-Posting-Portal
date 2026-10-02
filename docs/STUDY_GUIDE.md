@@ -265,7 +265,7 @@ If a queued or processing report is older than ten minutes, reconciliation marks
 
 Two requests can race to start the same analysis. A partial unique index is intended to enforce one active report per profile submission. Application code handles the losing `E11000` create race and returns the report the other request is running. That guarantee depends on the index having been applied to the production database. The migration remains an explicit operator task; this study guide does not claim production index readiness.
 
-**Follow it in code:** `backend/vercel.json`, `backend/src/utils/requestBudget.js`, `backend/src/api/index.js`, `backend/src/services/analysisService.js`, `backend/src/controllers/analyze.controller.js`, `backend/src/models/readinessReport.js`, `DEPLOYMENT.md`.
+**Follow it in code:** `backend/vercel.json`, `backend/src/utils/requestBudget.js`, `backend/api/index.js`, `backend/src/services/analysisService.js`, `backend/src/controllers/analyze.controller.js`, `backend/src/models/readinessReport.js`, `DEPLOYMENT.md`.
 
 ## 14. Resume storage and its boundary
 
@@ -283,7 +283,7 @@ The API checks request shapes with Zod, checks a bearer session on private route
 
 Production health returns `200` with `status` and `timestamp` to show the function responds. It deliberately does not prove MongoDB is available, AI providers work, login succeeds, or resume files persist. The release was checked at the public landing/login shell and safe API health/CORS routes; no production account credentials, resume, private profile, or AI quota were used.
 
-**Follow it in code:** `backend/src/app.js`, `backend/src/api/index.js`, `backend/src/config/cors.js`, `backend/src/middleware/auth.middleware.js`, `backend/src/middleware/ownership.middleware.js`, `backend/src/middleware/upload.middleware.js`, `frontend/public/_headers`, `backend/src/config/env.js`.
+**Follow it in code:** `backend/src/app.js`, `backend/api/index.js`, `backend/src/config/cors.js`, `backend/src/middleware/auth.middleware.js`, `backend/src/middleware/ownership.middleware.js`, `backend/src/middleware/upload.middleware.js`, `frontend/public/_headers`, `backend/src/config/env.js`.
 
 ## 16. How the two hosted sites work
 

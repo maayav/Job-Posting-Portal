@@ -38,12 +38,28 @@ Upload forms and landing FAQ now consistently state the deployed 4 MiB limit. Ap
 
 ## Production publication
 
-Publication and post-release verification are pending for this source revision. Use the existing Cloudflare Pages project `vortex` and Vercel project `vortex-api`; no new host or paid upgrade is required. Public URLs remain:
+Source implementation commit `9271983c24444dc511d6df8e7d7a09c596c2b816` was pushed to `main` and published to the existing Cloudflare Pages project `vortex` and Vercel project `vortex-api`. No new host, subscription, or paid upgrade was added. Public URLs remain:
 
 - https://vortex-6g7.pages.dev
 - https://vortex-api-eta.vercel.app/api
 
-After publication, compare the frontend `/build-info.json` and backend `X-Vortex-Revision` with the release commit and provider metadata. Record safe GET/OPTIONS results separately from authenticated feature tests.
+Provider records for this implementation release:
+
+- Cloudflare production deployment: `dcfc1321-2d72-433a-8d06-ac086d900f1d`; branch `main`; source `9271983`.
+- Vercel production deployment: `dpl_6NcwELq4PpzJt6esjBfuwUSntrWP`; state `READY`; Node.js `22.x`; Git metadata matches the full source commit; canonical API alias assigned.
+
+Safe live HTTP checks completed at `2026-10-02T16:47:58.999Z`. Both frontend `/build-info.json` and backend `X-Vortex-Revision` matched the full source commit.
+
+| Live check | Result |
+|---|---|
+| Frontend `/`, `/jobs`, `/dashboard`, `/analysis/new`, `/assistant`, `/admin/jobs`, `/admin/applications`, `/applications`, `/login` | 200; identical SPA HTML; Content Security Policy present |
+| Backend `/api/health` | 200; JSON contains `status` and `timestamp`; liveness only |
+| Unauthenticated `/api/jobs`, `/api/assistant/context`, and analysis status route | 401 with `unauthorized`; no account or submission was created |
+| OPTIONS for `/api/jobs` and `/api/health` from the frontend origin | 204; exact frontend origin allowed |
+| OPTIONS from an unknown origin | 204; unknown origin not reflected or allowed |
+| Fresh production browser | Landing content rendered; Get started opened the login form; no captured console errors or warnings |
+
+These checks prove publication, routing, liveness, CORS, and the sampled authentication boundaries. They do not establish authenticated production analysis, upstream profile integration, or database persistence. A documentation-only follow-up commit can have a newer revision marker while retaining this tested application implementation. For any such publication, compare its current Git HEAD with both live markers again.
 
 ## Limits retained
 

@@ -46,7 +46,7 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 |---|---|---|
 | `name` | string | display form |
 | `confidence` | enum `low` / `medium` / `high` | **fixed rule, not Gemini's**: high = evidence from 2+ sources; medium = 1 source with evidence excerpt; low = bare keyword |
-| `sources[]` | enum `resume` / `github` / `linkedin_user_provided` / `leetcode` | |
+| `sources[]` | enum `resume` / `github` / `linkedin_user_provided` / `leetcode` / `coding_user_provided` | |
 | `evidence[]` | `{ source, text }` | short excerpt supporting the skill |
 
 ## ReadinessReport (`readinessreports`)
@@ -62,15 +62,15 @@ All timestamps ISO-8601 UTC. IDs are Mongo ObjectIds.
 | `strong_areas[]` | `{ skill, percent }` | ≥ 80 |
 | `developing_areas[]` | `{ skill, percent }` | 60–79 |
 | `gaps[]` | `{ skill, percent, priority }` | < 60; `priority ∈ [0,1]` = `wᵢ(1−mᵢ)` rescaled by max |
-| `study_plan[]` | see below | one entry per gap skill |
+| `study_plan[]` | see below | gap skills plus developing skills added by the analysis service |
 | `embedding_model` / `embedding_version` | string | pinned at report generation time |
 | `generated_at` | date | |
 
 `study_plan[]`:
 | Field | Type | Notes |
 |---|---|---|
-| `skill` | string | gap skill |
-| `priority` | number [0,1] | matches the gap's priority |
+| `skill` | string | gap or developing skill |
+| `priority` | number [0,1] | gap priority, or 0.4 for a developing skill |
 | `resources[]` | `{ title, url, type, verified }` | from `ResourceCatalog`, exact match only |
 | `done` | boolean | toggled via PATCH |
 
