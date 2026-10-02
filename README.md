@@ -28,7 +28,7 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 - Backend API: <https://vortex-api-eta.vercel.app/api>
 - Health check: <https://vortex-api-eta.vercel.app/api/health>
 
-Safe checks on 2 October 2026 confirmed the frontend route fallback and API liveness. Authenticated AI, database persistence and resume durability remain unverified in production; see [integration status](docs/INTEGRATION_STATUS.md).
+Both existing production projects serve commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`, verified on 2 October 2026 through frontend build metadata, the backend revision header, and Vercel deployment metadata. Safe checks confirmed SPA routing, frontend CSP, API liveness, and origin-specific CORS. The landing page rendered without captured console warnings or errors. Authenticated AI, database persistence, production indexes, and resume durability remain unverified; see [integration status](docs/INTEGRATION_STATUS.md).
 
 ## Technology
 

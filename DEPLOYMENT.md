@@ -1,6 +1,6 @@
 # Vortex deployment guide
 
-This guide describes the deployment found in the repository and checked on 2 October 2026. It does not establish that the current local changes have been deployed.
+Both existing production projects were updated to commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e` and verified on 2 October 2026 at 10:20:41 UTC. This release contains source implementation commit `3f8facde7cf1bec00276f9b0d965428ae0352d22` and its initial verification documentation. Production feature coverage is limited to the checks recorded below.
 
 ## Confirmed public services
 
@@ -11,7 +11,7 @@ This guide describes the deployment found in the repository and checked on 2 Oct
 | Health | https://vortex-api-eta.vercel.app/api/health | HTTP 200 JSON with `status` and `timestamp` |
 | Source repository | https://github.com/maayav/Job-Posting-Portal | Repository remote/reference |
 
-The frontend is on Cloudflare Pages and the backend is a Vercel Node.js function. The backend code uses MongoDB through Mongoose, Groq for text AI by default, and Gemini for embeddings. The production database vendor and actual provider credentials are unknown from safe public checks.
+The frontend is on the existing Cloudflare Pages project `vortex`, and the backend is a Node.js 22.x function in the existing Vercel project `vortex-api`. Production configuration inspection confirmed a MongoDB connection variable, Groq and Gemini key presence, Groq as the text provider, Gemini as the embedding provider, the expected frontend origin, and a JWT secret meeting the 32-character minimum. `NODE_ENV=production` was set explicitly. Secret values are excluded from this record. The database vendor, provider availability/quota, and production persistence remain unverified.
 
 An HTTP 200 from an authenticated frontend route proves SPA routing. It does not prove login, data loading, student/admin access, or a completed AI workflow.
 
@@ -66,7 +66,7 @@ Configure the Vercel project with `backend` as its root directory. The repositor
 
 The Vercel handler is used directly. `npm start` runs the long-lived local server and is not the Vercel function entry point.
 
-For revision verification, the local handler emits `X-Vortex-Revision` when the platform supplies a valid `VERCEL_GIT_COMMIT_SHA`. The frontend build emits `/build-info.json` containing its source commit, using the hosting/CI commit variable or local Git HEAD. Until a new deployment serves these markers, its revision remains unknown. A marker identifies source revision; it does not prove authenticated features work.
+For revision verification, the handler emits `X-Vortex-Revision` when the platform supplies a valid `VERCEL_GIT_COMMIT_SHA`. The frontend build emits `/build-info.json` containing its source commit, using the hosting/CI commit variable or local Git HEAD. Both production markers matched the release commit, and Vercel's `gitCommitSha` metadata matched it independently. A marker identifies source revision; it does not prove authenticated features work.
 
 Set these variables in the backend deployment environment. Secret values belong in the provider environment, never in Git or browser code:
 
@@ -143,7 +143,7 @@ The root `scripts/build-role-catalog.mjs` is run by the frontend prebuild script
 /* /index.html 200
 ```
 
-`frontend/public/_headers` supplies response security headers, a Content Security Policy, and no-store caching for `/build-info.json`. The policy permits JavaScript only from the frontend origin; `/theme-init.js` is a synchronous external script, avoiding inline-JavaScript exceptions. Inline styles remain allowed for Motion/dynamic layout. API connections are limited to the frontend origin and confirmed Vercel origin. If the API origin changes, update `connect-src` with the build-time API value, review the diff, and rebuild. These CSP changes are implemented locally and have not been confirmed live. These files must appear in the deployed `dist` output. `frontend/vercel.json` is an alternative frontend-hosting configuration; it is not evidence that the current frontend runs on Vercel.
+`frontend/public/_headers` supplies response security headers, a Content Security Policy, and no-store caching for `/build-info.json`. The policy permits JavaScript only from the frontend origin; `/theme-init.js` is a synchronous external script, avoiding inline-JavaScript exceptions. Inline styles remain allowed for Motion/dynamic layout. API connections are limited to the frontend origin and confirmed Vercel origin. If the API origin changes, update `connect-src` with the build-time API value, review the diff, and rebuild. The production CSP was present on all five checked frontend routes. These files must appear in the deployed `dist` output. `frontend/vercel.json` is an alternative frontend-hosting configuration; it is not evidence that the current frontend runs on Vercel.
 
 The API client falls back to `/api` when `VITE_API_URL` is empty. That fallback is useful with the local Vite proxy. On the current static Cloudflare deployment, an empty value would send API requests to the frontend host and can return SPA HTML instead of JSON.
 
@@ -151,16 +151,15 @@ The API client falls back to `/api` when `VITE_API_URL` is empty. That fallback 
 
 Only explicitly configured browser origins are allowed in production. Development/test defaults also allow the local Vite origins. CORS is separate from authentication: an allowed origin still needs a valid bearer token on protected routes.
 
-The baseline production checks found:
+The post-release production checks at 10:20:41 UTC found:
 
 | Request | Result |
 |---|---|
 | `GET /api/health` | 200, `{status,timestamp}` JSON |
-| `OPTIONS /api/jobs` from the frontend origin | 204; exact frontend allow-origin header |
-| `OPTIONS /api/jobs` from an unknown origin | No allow-origin reflection |
-| `OPTIONS /api/health` | Baseline shortcut returned 200 without CORS headers |
+| `OPTIONS /api/jobs` and `/api/health` from the frontend origin | 204; exact frontend allow-origin header |
+| `OPTIONS /api/jobs` and `/api/health` from an unknown origin | 204; no allow-origin header or reflection |
 
-The local audit changes align serverless shortcut CORS handling. Its deployed result remains pending until the new commit is confirmed live.
+The health shortcut previously returned 200 without CORS headers. The corrected handler's deployed preflight behavior is now verified. An unknown origin receiving 204 without an allow-origin header is not browser CORS permission.
 
 `/api/health` is liveness only. The Vercel health shortcut does not connect to MongoDB. A healthy response must not be reported as proof of database readiness or persistence. There is no separately verified database-readiness endpoint.
 
@@ -197,7 +196,16 @@ A future adapter must preserve protected downloads, deletion behavior, old refer
 6. Use approved demo credentials/data for authenticated workflows. Never print JWTs, passwords, profile contents, or provider keys.
 7. Record the deployed revision and actual results in `docs/INTEGRATION_STATUS.md`.
 
-The cached Cloudflare/Wrangler login was expired and could not be refreshed, and Vercel CLI explicitly reported Logged out (exit 1). Safe demo credentials, public test usernames, and durable storage credentials were not configured. Git-linked auto-deployment must still be checked after the authorized commit/push attempt; CLI authentication failure alone does not establish that auto-deployment is unavailable. Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` was pushed successfully. Public checks still return SPA HTML for `/build-info.json`, no backend revision header, and the old health preflight behavior. No successful deployment of this release is established; provider authentication must be restored to continue.
+The first deployment attempt was blocked by an expired Cloudflare login and a logged-out Vercel CLI. After restoring provider access, both existing projects were deployed successfully:
+
+| Provider | Production release evidence |
+|---|---|
+| Cloudflare Pages | Existing project `vortex`, production branch `main`, deployment `e9ccd5dc-bd3c-4e08-89b2-c6a9cfd7e06d`; deploy stage succeeded at 10:20:26 UTC with matching commit metadata and dirty=false. Canonical hostname unchanged; `/build-info.json` returned JSON with the full release SHA. |
+| Vercel | Existing project `vortex-api`, deployment `dpl_4zjHCbyCVxu7qjVZpAxLuWx47Ri8`, READY, Node.js 22.x; canonical API alias unchanged. Provider Git metadata and the live revision header matched the full release SHA. |
+
+Cloudflare's project has no Git provider configured, so this release used a direct upload of the production frontend build; a Git push alone will not update that project. The Vercel team was confirmed on an active free Hobby plan. No paid upgrade, new hosting project, storage service, or billing product was added. Cloudflare's subscriptions API returned 403, so its account billing plan was not established; AI/database billing was not audited.
+
+The five frontend routes returned the same SPA shell with CSP, and a fresh browser check rendered the landing page without captured console warnings or errors. Login navigation displayed the real form without submitting credentials. Approved demo authentication credentials, public test usernames, and durable storage configuration were still unavailable. No production login/signup submission, profile analysis, AI generation, database persistence test, index migration, or resume upload/durability test was performed.
 
 ## Safe public checks
 

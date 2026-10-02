@@ -18,7 +18,7 @@ This record separates the inspected local implementation, safe public deployment
 
 Vortex is a student/admin job portal with resume-based skill readiness, curated study plans, and an assistant. React 19/Vite 8/Router 7 provide the frontend. Node.js 22, Express 5, Mongoose 9, Zod 4, bcrypt, and JWT provide the API. Groq is the default text provider; Gemini supplies embeddings. The database models connect users, jobs, applications, profile submissions, extracted skills, readiness reports, ontology skills, resources, wishlist items, and notifications.
 
-The current deployment topology confirmed by repository references and safe HTTP checks is Cloudflare Pages frontend plus Vercel serverless API. The production MongoDB-compatible database vendor is unknown. Provider keys and deployment environment settings cannot be proved from public configuration alone.
+The current deployment topology confirmed by repository references and safe HTTP checks is Cloudflare Pages frontend plus Vercel serverless API. Both existing projects now serve release `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`. Authenticated provider inspection confirmed production configuration/key presence without exposing values; the production MongoDB-compatible database vendor, persistence, and AI availability remain unverified.
 
 ## Baseline checks
 
@@ -49,6 +49,8 @@ The vulnerability count is the result for this lockfile/audit date, not a guaran
 | API `/jobs` preflight from unknown origin | No allow-origin header | Unknown origin not reflected |
 | API `/health` preflight at baseline | 200 without CORS headers | Serverless health shortcut bypassed normal middleware |
 
+Post-release checks at 10:20:41 UTC on 2 October 2026 verified matching frontend/backend revision markers, frontend CSP, and corrected health/jobs preflights: both return 204 with the exact frontend allow-origin header, while an unknown origin receives 204 with no allow-origin header. The baseline health inconsistency is fixed in the verified release. A fresh browser check rendered the landing page without captured warnings/errors and displayed the login form; no credentials were submitted.
+
 These requests did not test authenticated screens, login, uploads, applications, profile integrations, AI, database persistence, or resume durability. The health handler explicitly bypasses the database connection and checks liveness only.
 
 ## Finding decisions
@@ -76,7 +78,7 @@ These requests did not test authenticated screens, login, uploads, applications,
 | Gemini key in query strings | Approved | Send key in provider header |
 | Unhandled logs expose request/provider details | Approved | Use bounded error metadata; do not echo raw request URLs or secret content |
 | Private reports/resumes/assistant/candidate responses may be cached | Approved | Private/no-store headers on protected response paths |
-| Static frontend lacks CSP | Approved | Cloudflare header policy limits scripts/connect destinations; external synchronous theme init; inline styles retained for Motion; live header test pending |
+| Static frontend lacks CSP | Approved | Cloudflare header policy limits scripts/connect destinations; external synchronous theme init; inline styles retained for Motion; live CSP verified on all five routes |
 | `includeStatus=false` parses as true | Approved | Parse query booleans explicitly |
 | External application resume links accept arbitrary schemes | Approved | Require HTTPS and reject embedded credentials/unsafe URLs |
 | Extracted PDF text is unbounded | Approved | Reject PDFs above 30 pages or 60,000 extracted characters before storing/sending text to providers |
@@ -118,24 +120,24 @@ These entries record final commands and public evidence. Unverified operational 
 | Focused regression suites | Latest focused snapshot/concurrency/application/assistant run: 52 passed; overlaps full suite |
 | Isolated backend unit suite | 141 passed; overlaps other coverage |
 | Frontend tests/lint/build after latest edits | 51 tests passed; lint 17 existing warnings/no errors; production build passed |
-| CSP and external theme initialization checks | Passed locally; not verified live |
+| CSP and external theme initialization checks | Passed locally; CSP verified on all five production routes; landing browser smoke passed |
 | Syntax/diff checks | All changed backend JavaScript syntax checks and diff checks passed |
 | Backend/runtime and frontend dependency audits | Both report 0 vulnerabilities after nonbreaking fixes |
 | Combined diff review and secret scan | Reviewed; scan of 80 release files found only a generic username/password placeholder in `.env.example`; real `.env` ignored |
 | Release commit and push | Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` committed and pushed to `origin/main`; evidence-only documentation follows |
-| Frontend deployed revision | Unknown: expected revision marker absent in repeated public check |
-| Backend deployed revision | Unknown: expected revision marker absent in repeated public check |
-| Repeated live CORS/SPA/health checks | 2 October 2026, 09:33 UTC: all five frontend routes 200 with identical HTML; health 200 `{status,timestamp}`; jobs preflight allowed origin 204/exact origin, unknown origin 401/no allow-origin; health preflight still 200/no CORS |
+| Frontend deployed revision | `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`: build-info JSON and Cloudflare production metadata match |
+| Backend deployed revision | Same full release SHA: live revision header and Vercel provider Git metadata match; READY, Node.js 22.x |
+| Repeated live CORS/SPA/health checks | 2 October 2026, 10:20:41 UTC: all five frontend routes 200 with identical SPA HTML and CSP; health 200 `{status,timestamp}`; health/jobs preflights 204, exact frontend origin allowed, unknown origin receives no allow-origin header |
 
 ## Controlled integration verification
 
-No safe demo authentication credentials or public test usernames were configured in the inspected environment. No remote storage credentials or adapter were activated. The cached Cloudflare/Wrangler login was expired and could not refresh; Vercel CLI explicitly reported Logged out (exit 1). Source release `3f8facde7cf1bec00276f9b0d965428ae0352d22` was committed and pushed successfully. GitHub reported no commit statuses/check runs; the hosting revision remains unknown. Local revision markers were added: frontend `/build-info.json` and backend `X-Vortex-Revision` when a valid platform commit variable is supplied. Detailed integration coverage uses generated/mocked fixtures, without private profile data.
+No approved demo authentication credentials or public test usernames were configured. No remote storage credentials or adapter were activated. Initial CLI authentication failed, then provider access was restored and both existing projects were deployed to release `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`, which includes implementation commit `3f8facde7cf1bec00276f9b0d965428ae0352d22`. Live revision markers and provider metadata match. Cloudflare project `vortex` has no Git provider and used direct upload; Vercel project `vortex-api` is READY on the unchanged API alias. Production mode was explicitly set, and configuration/key presence was inspected safely. Detailed integration coverage still uses generated/mocked fixtures; no production authentication submission, personal profile upload, AI call, persistence test, or index migration was performed.
 
 | Workflow | Baseline coverage | Production status |
 |---|---|---|
 | GitHub normalization/public enrichment/cache/failures | Local mocked tests | End-to-end analysis not tested live |
 | LeetCode language counts/timeout/optional failure | Local mocked tests | Public provider request not tested live |
-| LinkedIn URL/text/source evidence | Local validation and mocked extraction tests | New fields not verified live |
+| LinkedIn URL/text/source evidence | Local validation and mocked extraction tests | Source deployed; request behavior not tested live |
 | Resume-only and combined-source extraction/scoring | Local mocked fixtures | Production AI completion not tested |
 | Student/admin assistant | Static route/context inspection and local tests | Production chat not tested |
 | Resume access and explicit no-resume | Local authorization/privacy tests | No production upload/download test |
@@ -148,11 +150,11 @@ No safe demo authentication credentials or public test usernames were configured
 - Ephemeral Vercel `/tmp` resume storage can leave database references without downloadable files.
 - The 60-second serverless cap can interrupt provider work. Stale reconciliation runs only on startup/first serverless database connection/new analysis, not polling or cron; it restores retryability when triggered and is not a durable queue.
 - Per-instance in-memory rate limits do not enforce a global quota under scaling.
-- Browser localStorage tokens remain exposed to any successful same-origin script compromise. CSP is implemented locally but has not been verified on the deployed frontend.
+- Browser localStorage tokens remain exposed to any successful same-origin script compromise. CSP was verified on the deployed frontend but does not eliminate that risk.
 - Production active-job/index readiness remains unknown; automatic index creation is disabled and a reviewed operator migration is still required.
-- Production database provider, persistence/backups, AI model configuration, and deployed source revision remain unknown until operational checks establish them.
+- Production database provider, persistence/backups, and AI model availability/quota remain unknown. Production configuration/key presence and deployed source revision were verified separately; they do not establish working workflows.
 - Optional public endpoints can fail or change; users must still be able to complete resume-only analysis.
 
 For the full implementation, see `PROJECT_TECHNICAL_DOCUMENTATION.md`. For provider/deployment claims, see `INTEGRATION_STATUS.md`. For release configuration, see `../DEPLOYMENT.md`.
 
-Tests ran on Linux with Node.js 24.13.0; the backend deployment engine remains Node.js 22.x. Native Windows and the hosted Node.js runtime were not exercised. The disposable MongoDB container was stopped after verifying only its system databases remained.
+Tests ran on Linux with Node.js 24.13.0. Vercel metadata confirmed Node.js 22.x for the production release, and safe health/CORS checks passed there; the full suite was not run on the hosted runtime. Native Windows was not exercised. The disposable MongoDB container was stopped after verifying only its system databases remained.

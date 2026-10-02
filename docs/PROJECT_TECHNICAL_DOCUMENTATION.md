@@ -1,6 +1,6 @@
 # Vortex technical project documentation
 
-Implementation inspection and safe deployment checks: 2 October 2026. This document describes the combined local implementation. Production test claims are limited to the evidence in `INTEGRATION_STATUS.md`.
+Implementation inspection and safe deployment checks: 2 October 2026. Both existing production projects serve release `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`, which contains the combined implementation described here. Production workflow claims are limited to the evidence in `INTEGRATION_STATUS.md`.
 
 ## 1. Project overview
 
@@ -63,7 +63,7 @@ Repository references and safe HTTP checks confirm these public URLs:
 - Liveness: https://vortex-api-eta.vercel.app/api/health
 - Repository: https://github.com/maayav/Job-Posting-Portal
 
-The database vendor, deployed commit, provider environment values, and production persistence are not established by those checks. Local release instrumentation adds frontend `/build-info.json` and backend `X-Vortex-Revision` when `VERCEL_GIT_COMMIT_SHA` is available; their live presence/revision still needs verification. Health returns `{status,timestamp}` without a database readiness check. See `../DEPLOYMENT.md` for exact hosting configuration and release verification.
+Post-release checks at 10:20:41 UTC verified frontend `/build-info.json` and backend `X-Vortex-Revision` as the full release SHA, matching both providers' production metadata. Vercel reported READY with Node.js 22.x. Separate configuration inspection confirmed explicit production mode, the expected frontend origin, the JWT minimum, MongoDB configuration, and Groq/Gemini provider selection/key presence without exposing values. The database vendor, production persistence, and actual AI availability remain unverified. Health returns `{status,timestamp}` without a database readiness check. See `../DEPLOYMENT.md` for hosting configuration and release evidence.
 
 ## 6. Frontend architecture
 
@@ -195,7 +195,7 @@ The submission supports `linkedinUrl`, `linkedinSummaryText`, and `linkedinDataS
 
 Vortex never fetches LinkedIn pages, logs into LinkedIn, or claims official API support. Users may paste selected About/profile text, limited to 10,000 characters. Evidence is labeled `linkedin_user_provided`. A URL alone is never supplied to extraction as technical evidence. Titles, company names, and bare keywords do not justify invented experience or a high proficiency claim.
 
-Source text is untrusted input. It is rendered as text and source markers are sanitized before assembling provider input. The new fields are locally implemented and tested with fixtures; their deployed behavior remains unverified.
+Source text is untrusted input. It is rendered as text and source markers are sanitized before assembling provider input. The new fields are included in the verified deployed source and tested locally with fixtures; no production request has tested their behavior.
 
 ## 18. AI pipeline and provider selection
 
@@ -275,7 +275,7 @@ Controls include bcrypt, active-session JWT checks, production secret length val
 
 AI work has per-user limits: profile upload/retry, report analysis, and assistant chat. Global/auth IP limits also exist. Error logging uses safe metadata and avoids tokens, credentials, full profile text, and request-derived URLs.
 
-The static frontend headers now define HSTS, frame denial, content-type protection, referrer policy, and CSP. CSP restricts scripts to the frontend origin, permits inline styles for Motion/dynamic layout, and restricts connections to the frontend and confirmed Vercel API origin. Theme initialization is a synchronous external `/theme-init.js` script so inline JavaScript is unnecessary. A future API-origin change requires updating the CSP connection allowlist and rebuilding. These header changes are local and not yet verified on Cloudflare; backend Helmet alone does not protect static frontend HTML.
+The static frontend headers define HSTS, frame denial, content-type protection, referrer policy, and CSP. CSP restricts scripts to the frontend origin, permits inline styles for Motion/dynamic layout, and restricts connections to the frontend and confirmed Vercel API origin. Theme initialization is a synchronous external `/theme-init.js` script so inline JavaScript is unnecessary. A future API-origin change requires updating the CSP connection allowlist and rebuilding. The CSP was verified on all five production frontend routes; backend Helmet alone does not protect static frontend HTML.
 
 Remaining limits include localStorage tokens, in-memory per-instance rate limiting, no per-account distributed login lockout, no full audit-log model, ephemeral Vercel resumes, no retention policy, and the function-duration cap. An allowed CORS origin is not authorization, and a healthy endpoint is not proof of database/provider readiness.
 
@@ -359,12 +359,12 @@ Normal tests use generated PDFs and mocked GitHub, LeetCode, Groq, and Gemini re
 
 The baseline backend harness dropped a fixed test database. It was not run against a possibly shared database; isolated mock suites bypassed those hooks. The current harness uses a loopback-only, UUID-named disposable database and temporary resume directory per run. Cleanup is guarded before dropping that database; remote/authenticated MongoDB URLs and fixed database names are refused. Provider tests normally use mocks; optional drift runs require deliberate opt-in and real provider quota. No test fixture should contain real profile data or production secrets.
 
-Baseline: 45 frontend tests/build passed; lint passed with existing warnings; isolated backend integration tests 8 passed and AI/source tests 9 passed. Final local results: backend 306 tests passed with two drift skips (26 passing files, one skipped); frontend 51 tests and production build passed; lint reported 17 existing warnings/no errors. The focused regression run passed 52 tests and the isolated unit run passed 141 tests; those runs overlap the full suite and must not be summed. Backend/runtime and frontend dependency audits reported zero vulnerabilities. CSP/theme checks, changed backend JavaScript syntax, and diff checks passed. A scan of 80 release files found only a generic credential placeholder in the environment example; real `.env` files are ignored. The source release was pushed; deployment verification remains unresolved in `BASELINE_AUDIT.md`.
+Baseline: 45 frontend tests/build passed; lint passed with existing warnings; isolated backend integration tests 8 passed and AI/source tests 9 passed. Final local results: backend 306 tests passed with two drift skips (26 passing files, one skipped); frontend 51 tests and production build passed; lint reported 17 existing warnings/no errors. The focused regression run passed 52 tests and the isolated unit run passed 141 tests; those runs overlap the full suite and must not be summed. Backend/runtime and frontend dependency audits reported zero vulnerabilities. CSP/theme checks, changed backend JavaScript syntax, and diff checks passed. A scan of 80 release files found only a generic credential placeholder in the environment example; real `.env` files are ignored. The release was committed, pushed, and deployed to the existing hosts, with safe HTTP revision/CSP/CORS checks and a landing/login browser smoke check. Authenticated workflows remain untested as recorded in `BASELINE_AUDIT.md`.
 
 ## 30. Known limitations
 
 - Production auth, AI, external enrichment, new LinkedIn inputs, durable database writes, and resume downloads have not been tested with safe demo identities during this audit.
-- The production database vendor/configuration, deployed commit, and index state remain unknown until checked operationally. No production index migration was executed; the active-job guarantee requires the named index.
+- The production database vendor, persistence/backups, and index state remain unknown. Configuration/key presence and the deployed commit were verified separately. No production index migration was executed; the active-job guarantee requires the named index.
 - Optional public provider endpoints and quotas can fail or change.
 - No OCR for scanned PDFs, durable worker queue, distributed rate limits, remote resume storage, or automatic retention policy.
 - Application capture uses references rather than immutable report/evidence copies.
@@ -379,9 +379,9 @@ Semantic scoring is a future option only after evaluation; exact canonical match
 
 ## 32. Verified deployment URLs and verification limits
 
-The frontend URL and backend URL listed in section 5 are confirmed by safe requests. Frontend `/`, `/jobs`, `/dashboard`, `/analysis/new`, and `/assistant` returned 200 with SPA fallback. Backend health returned liveness JSON. API preflight accepted the frontend origin and did not reflect an unknown origin.
+The frontend URL and backend URL listed in section 5 are confirmed by safe requests. Both existing production projects serve release `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`, verified through live revision markers and provider metadata. Frontend `/`, `/jobs`, `/dashboard`, `/analysis/new`, and `/assistant` returned 200 with the same SPA shell and CSP. Backend health returned liveness JSON. Health/jobs preflights returned 204 with the exact frontend origin allowed; unknown origins received 204 without an allow-origin header. The landing page rendered without captured console warnings/errors, and navigation displayed the login form without submitting credentials.
 
-Those checks do not authenticate, consume AI quota, submit applications, upload resumes, or establish MongoDB persistence. The baseline health shortcut had a CORS inconsistency corrected locally; deployed confirmation is pending. Do not call an integration production-working based on route configuration or local mocks.
+Those checks do not authenticate, consume AI quota, submit applications, upload resumes, or establish MongoDB persistence. The baseline health shortcut's CORS inconsistency was corrected and verified live. Deployment/configuration evidence does not prove GitHub, LeetCode, LinkedIn, New Analysis, assistant, database, or resume workflows work in production.
 
 ## 33. What is currently implemented
 
@@ -394,15 +394,14 @@ Those checks do not authenticate, consume AI quota, submit applications, upload 
 - Application profile/report capture references, explicit resume-source privacy, protected downloads, local hardening, and storage provider contract.
 - Cloudflare Pages/Vercel topology for the confirmed public URLs.
 
-Local implementation and safe live checks are separate evidence. The source release commit/push succeeded. The integration status record describes the remaining deployment/authentication/storage blockers.
+Implementation, deployed source, and tested behavior remain separate evidence. The source release commit/push and both existing-host deployments succeeded. The integration status record describes the remaining demo-authentication, workflow verification, database-index, and storage requirements. No new hosting project or paid upgrade was introduced; Vercel's active free Hobby plan was confirmed, while Cloudflare account billing and AI/database billing were not established.
 
 ## 34. What is not implemented or not verified
 
 - Official LinkedIn/LeetCode authenticated API support or LinkedIn scraping.
 - A configured durable remote resume provider, migration, automatic retention, or live durability verification.
 - A durable background worker queue or global distributed rate-limit store.
-- Production verification of GitHub/LeetCode enrichment, new LinkedIn fields, New Analysis, assistant generation, provider keys/models, or saved progress/database persistence.
-- Verified source revisions of the frontend/backend deployment after the local audit changes; new revision markers are configured locally but have not been checked live.
-- Direct CLI deployment access: the cached Cloudflare login could not refresh and Vercel CLI explicitly reported Logged out (exit 1). Git-linked deployment remains to be checked after the release attempt.
+- Production workflow verification of GitHub/LeetCode enrichment, new LinkedIn fields, New Analysis, assistant generation, actual provider availability/model/quota, or saved progress/database persistence. Production configuration/key presence was inspected without exposing secret values.
+- Automatic Git deployment for the existing Cloudflare Pages project: it has no Git provider configured, so the verified frontend release used direct upload. A future Git push alone will not update that project.
 - Semantic embedding-based readiness matching, immutable application evidence copies, or independent employer ATS certification.
 - Account-management, application withdrawal, restrictive business status transitions, full audit logs, and CI features not present in the inspected source.
