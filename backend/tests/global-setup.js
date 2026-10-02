@@ -1,21 +1,27 @@
-process.env.NODE_ENV = 'test';
-process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/placement_skill_gap_test';
-process.env.JWT_SECRET = 'test-secret';
-// Drift runs need the real key from .env — don't poison the worker env with a dummy.
-if (process.env.RUN_DRIFT_TEST !== '1') {
-  process.env.GEMINI_API_KEY = 'test-key';
-  process.env.GROQ_API_KEY = 'test-key';
-}
+import mongoose from 'mongoose';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { tmpdir } from 'node:os';
+import { assertDisposableTestDatabase } from './test-environment.js';
 
 export default async function globalSetup() {
-  const { connectDB, disconnectDB } = await import('../src/config/db.js');
-  const mongoose = (await import('mongoose')).default;
-  try {
-    await connectDB({ retry: false });
-    await mongoose.connection.db.dropDatabase();
-    await disconnectDB();
-  } catch (err) {
-    console.error('Test DB unavailable — is dockerized MongoDB running?', err.message);
-    process.exit(1);
-  }
+  const uri = process.env.TEST_MONGO_URI;
+  assertDisposableTestDatabase(uri);
+  const connection = await mongoose.createConnection(uri, { serverSelectionTimeoutMS: 5000 }).asPromise();
+  await connection.db.command({ ping: 1 });
+  await connection.close();
+
+  return async () => {
+    assertDisposableTestDatabase(uri);
+    const cleanup = await mongoose.createConnection(uri, { serverSelectionTimeoutMS: 5000 }).asPromise();
+    try {
+      await cleanup.db.dropDatabase();
+    } finally {
+      await cleanup.close();
+    }
+    const directory = process.env.TEST_RESUME_STORAGE_DIR;
+    if (directory && path.dirname(directory) === tmpdir() && path.basename(directory).startsWith('vortex-test-resumes-')) {
+      await fs.rm(directory, { recursive: true, force: true });
+    }
+  };
 }

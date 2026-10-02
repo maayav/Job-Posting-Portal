@@ -7,6 +7,24 @@ import { processExtraction } from './skillService.js';
 import { generateEmbeddings as embedSkillsBatch } from './ai/embeddingProvider.js';
 import { generateReport, buildStudyPlan } from './scoringService.js';
 import { enrichStudyPlan } from './ai/studyPlanService.js';
+import { assertRequestBudget, withinRequestBudget } from '../utils/requestBudget.js';
+
+export const STALE_ANALYSIS_MS = 10 * 60 * 1000;
+
+export async function reconcileAnalysisJobs(now = Date.now()) {
+  const cutoff = new Date(now - STALE_ANALYSIS_MS);
+  const result = await ReadinessReport.updateMany(
+    {
+      $or: [
+        { status: 'processing', startedAt: { $lt: cutoff } },
+        { status: 'processing', startedAt: null, createdAt: { $lt: cutoff } },
+        { status: 'queued', createdAt: { $lt: cutoff } },
+      ],
+    },
+    { $set: { status: 'failed', errorCode: 'analysis_timeout', completedAt: new Date(now) } },
+  );
+  return result.modifiedCount ?? 0;
+}
 
 function logTransition(report, to, extra = {}) {
   console.log(JSON.stringify({
@@ -19,26 +37,31 @@ function logTransition(report, to, extra = {}) {
 }
 
 export async function runAnalysis(reportId) {
-  const report = await ReadinessReport.findById(reportId);
-  if (!report) return;
-
+  let report;
   try {
-    report.status = 'processing';
-    report.startedAt = new Date();
-    await report.save();
+    assertRequestBudget();
+    // Claim only queued work. A second runner cannot restart a completed job or
+    // take over a processing job owned by another request.
+    report = await ReadinessReport.findOneAndUpdate(
+      { _id: reportId, status: 'queued' },
+      { $set: { status: 'processing', startedAt: new Date(), errorCode: null } },
+      { returnDocument: 'after', maxTimeMS: 5000 },
+    );
+    if (!report) return null;
     logTransition(report, 'processing');
+    assertRequestBudget();
 
-    const submission = await ProfileSubmission.findById(report.submission_id);
+    const submission = await withinRequestBudget(() => ProfileSubmission.findById(report.submission_id));
     if (!submission) {
       throw new Error('submission_missing');
     }
 
-    let skillProfile = await ExtractedSkillProfile.findOne({ submission_id: submission._id });
+    let skillProfile = await withinRequestBudget(() => ExtractedSkillProfile.findOne({ submission_id: submission._id }));
     if (!skillProfile || skillProfile.skills.length === 0) {
-      skillProfile = await processExtraction(submission._id, null);
+      skillProfile = await withinRequestBudget(() => processExtraction(submission._id, null));
     }
 
-    const rawOntology = await SkillOntology.find({ roles: { $elemMatch: { role_name: report.target_role } } }).lean();
+    const rawOntology = await withinRequestBudget(() => SkillOntology.find({ roles: { $elemMatch: { role_name: report.target_role } } }).lean());
     if (rawOntology.length === 0) {
       const err = new Error('ontology_missing');
       err.code = 'ontology_missing';
@@ -68,11 +91,11 @@ export async function runAnalysis(reportId) {
     if (cacheValid) {
       vectors = skillProfile.embeddings.map((entry) => entry.vector);
     } else {
-      vectors = await embedSkillsBatch(skillProfile.skills.map((s) => s.name));
+      vectors = await withinRequestBudget(() => embedSkillsBatch(skillProfile.skills.map((s) => s.name)));
       skillProfile.embeddings = skillProfile.skills.map((skill, index) => ({ name: skill.name, vector: vectors[index] }));
       skillProfile.embedding_model = env.EMBEDDING_MODEL;
       skillProfile.embedding_version = env.EMBEDDING_VERSION;
-      await skillProfile.save().catch(() => {});
+      await withinRequestBudget(() => skillProfile.save().catch(() => {}));
     }
 
     if (vectors.some((vector) => rawOntology.some((skill) => skill.embedding_vector.length !== vector.length))) {
@@ -82,52 +105,56 @@ export async function runAnalysis(reportId) {
     }
     const candidateVectors = skillProfile.skills.map((skill, i) => ({ ...skill.toObject(), vector: vectors[i] }));
 
-    const result = await generateReport(ontologySkills, candidateVectors);
-    const developingPlan = await buildStudyPlan(result.developing_areas.map((area) => ({ ...area, priority: 0.4 })));
-    result.study_plan = await enrichStudyPlan([...result.study_plan, ...developingPlan], report.target_role, skillProfile.skills.map((skill) => skill.name));
+    const result = await withinRequestBudget(() => generateReport(ontologySkills, candidateVectors));
+    const developingPlan = await withinRequestBudget(() => buildStudyPlan(result.developing_areas.map((area) => ({ ...area, priority: 0.4 }))));
+    result.study_plan = await withinRequestBudget(() => enrichStudyPlan([...result.study_plan, ...developingPlan], report.target_role, skillProfile.skills.map((skill) => skill.name)));
 
     if (!Number.isFinite(result.score)) {
       throw new Error('scoring_failed');
     }
 
-    report.score = result.score;
-    report.strong_areas = result.strong_areas;
-    report.developing_areas = result.developing_areas;
-    report.gaps = result.gaps;
-    report.study_plan = result.study_plan;
-    report.embedding_model = env.EMBEDDING_MODEL;
-    report.embedding_version = env.EMBEDDING_VERSION;
-    report.status = 'completed';
-    report.errorCode = null;
-    report.completedAt = new Date();
-    report.generated_at = new Date();
-    await report.save();
-    logTransition(report, 'completed', { score: report.score });
+    assertRequestBudget();
+    const completed = await ReadinessReport.findOneAndUpdate(
+      { _id: reportId, status: 'processing', startedAt: report.startedAt },
+      { $set: {
+        score: result.score,
+        strong_areas: result.strong_areas,
+        developing_areas: result.developing_areas,
+        gaps: result.gaps,
+        study_plan: result.study_plan,
+        embedding_model: env.EMBEDDING_MODEL,
+        embedding_version: env.EMBEDDING_VERSION,
+        status: 'completed', errorCode: null,
+        completedAt: new Date(), generated_at: new Date(),
+      } },
+      { returnDocument: 'after', maxTimeMS: 5000 },
+    );
+    if (completed) logTransition(completed, 'completed', { score: completed.score });
+    return completed;
   } catch (err) {
-    const errorCode = err.code ?? 'analysis_failed';
-    await ReadinessReport.findByIdAndUpdate(reportId, {
-      $set: {
-        status: 'failed',
-        errorCode,
-        completedAt: new Date(),
-      },
-    });
-    report.status = 'failed';
-    report.errorCode = errorCode;
-    logTransition(report, 'failed', { errorCode, message: err.message?.slice(0, 200) });
+    const errorCode = err.code === 'request_timeout' ? 'analysis_timeout' : err.code ?? 'analysis_failed';
+    // This write deliberately uses the reserved time after upstream cancellation.
+    // A stale reaper or another terminal transition must win over a late runner.
+    const failed = await ReadinessReport.findOneAndUpdate(
+      { _id: reportId, status: report ? 'processing' : 'queued', ...(report ? { startedAt: report.startedAt } : {}) },
+      { $set: { status: 'failed', errorCode, completedAt: new Date() } },
+      { returnDocument: 'after', maxTimeMS: 5000 },
+    );
+    if (failed) logTransition(failed, 'failed', { errorCode });
+    return failed;
   }
 }
 
 export function queueAnalysis(reportId) {
   if (env.NODE_ENV === 'test') {
     runAnalysis(reportId).catch((err) => {
-      console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, message: err.message }));
+      console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, code: err.code ?? 'analysis_failed' }));
     });
     return;
   }
   setImmediate(() => {
     runAnalysis(reportId).catch((err) => {
-      console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, message: err.message }));
+      console.error(JSON.stringify({ event: 'analysis_job', report_id: String(reportId), fatal: true, code: err.code ?? 'analysis_failed' }));
     });
   });
 }

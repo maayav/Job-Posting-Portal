@@ -1,628 +1,237 @@
-# Deployment Guide
+# Vortex deployment guide
 
-## AI-Assisted Job Posting Portal and Skill Gap Tracker
+This guide describes the deployment found in the repository and checked on 2 October 2026. It does not establish that the current local changes have been deployed.
 
-This guide explains how to deploy the full-stack MERN application using free-tier services:
+## Confirmed public services
 
-- **Frontend:** Vercel
-- **Backend:** Render
-- **Database:** MongoDB Atlas
-- **Source control:** GitHub
-- **Text AI:** Groq
-- **Embeddings:** Gemini
-- **Optional file storage:** Cloudinary or Supabase Storage
-
-> Free-tier services have limitations such as sleeping servers, request limits, storage limits, and usage quotas. This setup is suitable for academic demonstrations, portfolio projects, and development environments.
-
-## 1. Recommended architecture
-
-```text
-User browser
-    |
-    v
-Vercel
-React + Vite frontend
-    |
-    | HTTPS API requests
-    v
-Render
-Node.js + Express backend
-    |
-    +--> MongoDB Atlas
-    +--> Groq API
-    +--> Gemini API
-    +--> GitHub API
-    +--> Optional file storage
-```
-
-## 2. Before deployment
-
-Confirm that the project works locally:
-
-```bash
-git status
-npm install
-npm run build
-```
-
-Run the backend tests and frontend checks using the commands defined in the project `package.json` files.
-
-Verify locally:
-
-- Login works.
-- Student and admin roles work.
-- Job listing and filters work.
-- Admin job CRUD works.
-- Applications work.
-- Admin application dashboard works.
-- New Analysis works.
-- ATS and role-readiness scores are generated.
-- Study-plan generation works.
-- AI Assistant works.
-- Dark mode works.
-
-## 3. MongoDB Atlas setup
-
-1. Create a MongoDB Atlas account.
-2. Create a free cluster.
-3. Create a database user and password.
-4. Configure network access.
-5. Copy the MongoDB connection string.
-6. Replace the password placeholder in the connection string.
-7. Add it to Render as `MONGODB_URI` (the backend also accepts `MONGO_URI`; either name works).
-
-Example:
-
-```env
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority
-```
-
-Do not commit the connection string to GitHub.
-
-## 4. Backend preparation
-
-The backend must listen on the hosting provider's port:
-
-```js
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
-```
-
-Add a health-check route if one does not already exist:
-
-```js
-app.get("/api/health", (req, res) => {
-  res.json({ ok: true });
-});
-```
-
-The production backend must not depend on a local MongoDB server or local filesystem paths.
-
-## 5. Backend environment variables
-
-Create these environment variables in Render. Do not commit `.env` files or secret values.
-
-```env
-NODE_ENV=production
-PORT=10000
-
-# Either name works; MONGODB_URI matches the Atlas/Render docs.
-MONGO_URI=mongodb+srv://<user>:<password>@<cluster>/<database>?retryWrites=true&w=majority
-# MONGODB_URI=...
-JWT_SECRET=your_long_random_secret
-JWT_EXPIRES_IN=7d
-
-# Comma-separated list of allowed browser origins.
-CLIENT_URL=https://your-frontend.vercel.app
-
-# Groq — required for extraction, study plans and the assistant.
-GROQ_API_KEY=your_groq_api_key
-GROQ_MODEL=openai/gpt-oss-120b
-GROQ_FALLBACK_MODELS=openai/gpt-oss-20b,qwen/qwen3.8-27b
-AI_TEXT_PROVIDER=groq
-
-# Gemini — required for skill embeddings.
-GEMINI_API_KEY=your_gemini_api_key
-EMBEDDING_MODEL=gemini-embedding-2
-EMBEDDING_VERSION=2026-09
-AI_EMBEDDING_PROVIDER=gemini
-AI_TEXT_FALLBACK_PROVIDER=none
-
-GITHUB_TOKEN=optional_github_token
-
-# Optional persistent resume storage (not wired up yet; see section 11).
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-```
-
-`MONGO_URI`/`MONGODB_URI` and `JWT_SECRET` are required at startup. Missing AI keys are
-reported as startup warnings, and the related endpoints return
-`503 ai_configuration_error` until the keys are configured. The project `.env.example`
-files (`backend/.env.example`, `frontend/.env.example`) are the source of truth.
-
-Use the actual variable names expected by the project code. If the project uses different names, update the deployment configuration to match the code.
-
-### Security rules
-
-- Never expose `GROQ_API_KEY` or `GEMINI_API_KEY` to the frontend.
-- Never place secrets in `VITE_` variables.
-- Never commit `.env`, `.env.local`, or production credentials.
-- Use a strong random `JWT_SECRET`.
-- Do not log resume contents, tokens, passwords, or API keys.
-
-## 6. Deploy the backend to Render
-
-1. Push the project to GitHub.
-2. Open Render and create a new **Web Service**.
-3. Connect the GitHub repository.
-4. Select the backend directory if the backend is in a subfolder.
-5. Configure the service.
-
-Typical configuration:
-
-```text
-Root Directory: backend
-Build Command: npm install
-Start Command: npm start
-```
-
-Use the scripts from the backend `package.json` if they differ.
-
-6. Add the backend environment variables.
-7. Create the service.
-8. Wait for the deployment to complete.
-9. Copy the Render backend URL.
-
-Example:
-
-```text
-https://your-project-api.onrender.com
-```
-
-Test the backend:
-
-```text
-https://your-project-api.onrender.com/api/health
-```
-
-Expected response (`200`, no authentication required):
-
-```json
-{
-  "status": "ok",
-  "timestamp": "2026-09-21T14:00:00.000Z"
-}
-```
-
-### Render free-tier notes
-
-- The backend may sleep after inactivity.
-- The first request after sleeping may be slow.
-- Do not treat a slow first request as an application failure.
-- Use frontend loading states and reasonable API timeouts.
-- Free services are suitable for demos, not guaranteed production workloads.
-
-## 7. Configure backend CORS
-
-The backend must allow the deployed Vercel frontend URL.
-
-Example:
-
-```js
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "http://localhost:5173"
-].filter(Boolean);
-
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true
-}));
-```
-
-Set this Render variable after deploying the frontend:
-
-```env
-CLIENT_URL=https://your-project.vercel.app
-```
-
-If the project uses cookies, configure secure production cookies correctly. If it uses JWT headers, confirm that the frontend sends:
-
-```http
-Authorization: Bearer <token>
-```
-
-## 8. Frontend API configuration
-
-Do not hardcode a localhost backend URL in production.
-
-Use a Vite environment variable:
-
-```js
-const API_URL = import.meta.env.VITE_API_URL;
-```
-
-The value should include the API path expected by the frontend:
-
-```env
-VITE_API_URL=https://your-project-api.onrender.com/api
-```
-
-Update the API client or Axios configuration to use this variable.
-
-## 9. Deploy the frontend to Vercel
-
-1. Open Vercel.
-2. Import the GitHub repository.
-3. Select the frontend directory if the frontend is in a subfolder.
-4. Configure the build.
-
-Typical configuration:
-
-```text
-Framework Preset: Vite
-Build Command: npm run build
-Output Directory: dist
-```
-
-5. Add this Vercel environment variable:
-
-```env
-VITE_API_URL=https://your-project-api.onrender.com/api
-```
-
-6. Deploy the frontend.
-7. Copy the Vercel URL.
-8. Add the Vercel URL to Render as `CLIENT_URL`.
-9. Redeploy the backend if required.
-
-## 10. Vercel SPA routing
-
-This repository already includes `frontend/vercel.json`, so direct navigation to routes such as `/dashboard`, `/jobs`, or `/assistant` works. The file contains:
-
-```json
-{
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
-```
-
-Redeploy the frontend after adding the file.
-
-## 11. Resume upload and file storage
-
-If the backend currently stores uploaded resumes on the local server filesystem, those files may disappear after a restart or redeployment.
-
-For persistent storage, use one of the following:
-
-- Cloudinary.
-- Supabase Storage.
-- Amazon S3-compatible storage.
-- Another persistent object-storage service.
-
-For a student project, Cloudinary or Supabase Storage is usually simpler than managing a storage server.
-
-The backend should store the file URL and metadata in MongoDB rather than relying on a temporary local path.
-
-## 12. AI provider configuration
-
-Recommended configuration:
-
-```env
-AI_TEXT_PROVIDER=groq
-AI_EMBEDDING_PROVIDER=gemini
-```
-
-Use Groq for:
-
-- Structured skill extraction.
-- Skill-gap explanations.
-- Study-plan generation.
-- Resource recommendations.
-- AI Assistant responses.
-
-Use Gemini for:
-
-- Text embeddings.
-- Semantic similarity.
-- Existing vector-search functionality.
-
-The backend must validate all structured AI responses before storing them. Do not trust model output merely because it appears to be JSON.
-
-## 13. Optional seed data
-
-If the project includes seed scripts, run them only against the intended development/demo database.
-
-Example:
-
-```bash
-node scripts/create-admin.js
-node scripts/seed-jobs.js
-node scripts/seed-applications.js
-```
-
-Use the actual script paths in the repository.
-
-Run idempotent seed scripts more than once and confirm that they do not create duplicate jobs or applications.
-
-Never run development seed scripts against a production database unless they are explicitly designed for production use.
-
-## 14. Deployment verification
-
-### Backend
-
-- `/api/health` returns success.
-- MongoDB Atlas connection succeeds.
-- Login works.
-- JWT authentication works.
-- Student/admin authorization works.
-- Job listing works.
-- Job filters work.
-- Admin job CRUD works.
-- Student application submission works.
-- Duplicate applications are blocked.
-- Admin application dashboard works.
-- Candidate View button works.
-- New Analysis works.
-- ATS score is generated.
-- Role-readiness score is generated.
-- Study plan is generated.
-- AI Assistant responds.
-- Groq and Gemini API requests work.
-- CORS allows only the intended frontend origin.
-
-### Frontend
-
-- The jobs page loads.
-- Search and filters work.
-- Student dashboard loads.
-- Admin dashboard loads.
-- Applications load correctly.
-- Candidate details update when View is clicked.
-- New Analysis page loads and submits successfully.
-- AI Assistant page loads and responds.
-- Dark mode works.
-- Theme persists after refresh.
-- Refreshing nested routes does not produce a 404.
-- API errors are displayed clearly.
-- Loading states work while the backend wakes up.
-
-## 15. Common deployment problems
-
-### CORS error
-
-Check:
-
-- `CLIENT_URL` matches the exact Vercel URL.
-- The frontend uses the Render backend URL.
-- The backend was redeployed after changing environment variables.
-- Credentials settings match the authentication method.
-
-### 404 on dashboard or assistant route
-
-Add the Vercel SPA rewrite described above.
-
-### `localhost` appears in production requests
-
-Search the frontend for hardcoded URLs:
-
-```bash
-grep -R "localhost" frontend/src
-```
-
-Replace production API references with `import.meta.env.VITE_API_URL`.
-
-### Backend crashes on Render
-
-Check:
-
-- Start command.
-- Node version.
-- Missing environment variables.
-- MongoDB URI.
-- `process.env.PORT` usage.
-- Logs in Render.
-
-### AI requests fail
-
-Check:
-
-- API keys exist in Render.
-- Model names are valid.
-- Provider environment variables are correct.
-- Backend, not frontend, calls the AI APIs.
-- Rate limits have not been exceeded.
-
-### Resume upload fails
-
-Check:
-
-- Multipart form field name matches backend code.
-- File size limits.
-- File type validation.
-- Persistent storage configuration.
-- Render logs.
-
-## 16. Final deployment checklist
-
-- [ ] Code pushed to GitHub.
-- [ ] Backend deployed on Render.
-- [ ] Frontend deployed on Vercel.
-- [ ] MongoDB Atlas configured.
-- [ ] Backend environment variables configured.
-- [ ] Frontend `VITE_API_URL` configured.
-- [ ] CORS configured with the Vercel URL.
-- [ ] Health endpoint tested.
-- [ ] Login tested.
-- [ ] Student flow tested.
-- [ ] Admin flow tested.
-- [ ] Applications tested.
-- [ ] Candidate details tested.
-- [ ] New Analysis tested.
-- [ ] AI Assistant tested.
-- [ ] Groq tested.
-- [ ] Gemini embeddings tested.
-- [ ] Resume storage tested.
-- [ ] Dark mode tested.
-- [ ] Nested routes tested after refresh.
-- [ ] No secrets committed to GitHub.
-- [ ] No production API calls use localhost.
-- [ ] Final backend tests pass.
-- [ ] Final frontend lint passes.
-- [ ] Final frontend build passes.
-
-## 17. Production URLs
-
-Fill these after deployment:
-
-```text
-Frontend URL: https://____________________________
-Backend URL: https://_____________________________
-Health URL:   https://_____________________________/api/health
-Repository:   https://github.com/__________________
-```
-
-
-## 18. Project-specific reference
-
-### Exact repository layout used by the hosting providers
-
-```text
-Root directory:  backend/     -> Render Web Service
-Root directory:  frontend/    -> Vercel project
-```
-
-Render (backend):
-
-```text
-Root Directory: backend
-Build Command:  npm install
-Start Command:  npm start        (node server.js)
-```
-
-Vercel (frontend):
-
-```text
-Root Directory: frontend
-Framework:      Vite
-Build Command:  npm run build
-Output:         dist
-Env:            VITE_API_URL=https://<render-service>.onrender.com/api
-```
-
-The backend binds to `0.0.0.0` and uses `process.env.PORT`, so Render's injected
-port is honoured. `frontend/vercel.json` rewrites every path to `index.html` for
-client-side routing.
-
-### Health check
-
-```text
-GET https://<render-service>.onrender.com/api/health
--> 200 { "status": "ok", "timestamp": "<ISO-8601 UTC>" }
-```
-
-### Database notes
-
-- Connection string variable: `MONGO_URI` or `MONGODB_URI`.
-- Database name: whatever you put in the connection string
-  (local development uses `placement_skill_gap`; the test suite uses
-  `placement_skill_gap_test`).
-- Indexes: Mongoose `autoIndex` builds the schema indexes (unique email,
-  unique `{applicant, job}`, `{user, job}` wishlist, report/ontology indexes) the
-  first time the API connects. No manual migration is required.
-- Seed manually against the intended database only, from `backend/`:
-
-```bash
-node scripts/create-admin.js admin@example.com
-npm run seed                     # ontology + resource catalog (embeddings)
-node scripts/seed-jobs.js --admin=admin@example.com
-node scripts/seed-applications.js --admin=admin@example.com
-```
-
-All seed scripts are idempotent and safe to re-run.
-
-### Resume storage
-
-Resumes are written to `backend/storage/` on the Render filesystem
-(`storageService.js`). Render's free tier has an ephemeral filesystem: uploaded
-resumes disappear after a restart or redeploy, and downloads of older resumes
-then return `404 resume_missing`. Database records, scores and applications are
-unaffected. Cloudinary/Supabase integration is documented as an optional
-follow-up and is not wired up in this build.
-
-### Verification performed before handoff
-
-| Check | Command | Result |
+| Service | Confirmed URL | Evidence |
 |---|---|---|
-| Backend tests | `npm --prefix backend test` | 145 passed, 2 skipped |
-| Frontend tests | `npm --prefix frontend test` | 38 passed |
-| Frontend lint | `npm --prefix frontend run lint` | 0 errors |
-| Frontend build | `npm --prefix frontend run build` | success (`dist/`) |
-| Health route | `GET /api/health` | 200, no auth |
-| CORS | allowed origin reflects `Access-Control-Allow-Origin`; unknown origins are not reflected | covered by tests |
+| Frontend | https://vortex-6g7.pages.dev | HTTP 200 for `/`, `/jobs`, `/dashboard`, `/analysis/new`, and `/assistant`; nested routes return the SPA document |
+| Backend API | https://vortex-api-eta.vercel.app/api | Safe health and CORS checks reached the Vercel API |
+| Health | https://vortex-api-eta.vercel.app/api/health | HTTP 200 JSON with `status` and `timestamp` |
+| Source repository | https://github.com/maayav/Job-Posting-Portal | Repository remote/reference |
 
-### Free-tier limitations
+The frontend is on Cloudflare Pages and the backend is a Vercel Node.js function. The backend code uses MongoDB through Mongoose, Groq for text AI by default, and Gemini for embeddings. The production database vendor and actual provider credentials are unknown from safe public checks.
 
-- Render free web services sleep after inactivity; the first request can take up
-  to a minute. Frontend loading states and retries cover this.
-- Atlas free clusters have limited storage and connections.
-- Groq and Gemini free tiers have request/token quotas; embeddings are batched to
-  reduce request counts.
-- Vercel hobby projects have bandwidth/build limits.
-- Ephemeral backend storage means resume files are not durable (see above).
+An HTTP 200 from an authenticated frontend route proves SPA routing. It does not prove login, data loading, student/admin access, or a completed AI workflow.
 
-## 19. Serverless backend on Vercel (no-card option)
-
-Render free instances require payment verification for some accounts and Hugging Face
-now requires a PRO subscription for Docker Spaces. Vercel Hobby (free, no card) can
-host the same Express API as a Node.js serverless function.
-
-Repository changes that make this work:
-
-- `backend/api/index.js` — exports the existing Express app as the function handler.
-- `backend/vercel.json` — rewrites every path to `/api/index` and sets `maxDuration: 60`.
-- `backend/src/services/storageService.js` — uses `/tmp/vortex-storage` when the
-  `VERCEL` environment variable is present (the project filesystem is read-only there).
-- `backend/src/controllers/analyze.controller.js` — waits for the analysis inside the
-  request on Vercel because serverless functions freeze after responding.
-- `backend/src/middleware/upload.middleware.js` — 4 MB resume cap on Vercel (the
-  platform rejects request bodies above ~4.5 MB) and the usual 5 MB elsewhere.
-
-Vercel backend project configuration:
+## Architecture
 
 ```text
-Root Directory: backend
-Framework: Other
-Build Command: (default)
-Output Directory: (default)
-Env: NODE_ENV=production, MONGODB_URI, JWT_SECRET, CLIENT_URL,
-     GROQ_API_KEY, GROQ_MODEL, GROQ_FALLBACK_MODELS,
-     GEMINI_API_KEY, EMBEDDING_MODEL, EMBEDDING_VERSION,
-     AI_TEXT_PROVIDER=groq, AI_EMBEDDING_PROVIDER=gemini, AI_TEXT_FALLBACK_PROVIDER=none
+Browser
+  -> Cloudflare Pages: React/Vite static assets and SPA fallback
+  -> Vercel: backend/api/index.js -> Express /api routes
+       -> MongoDB-compatible database
+       -> Groq text API (configured default)
+       -> Gemini embedding API (configured provider)
+       -> GitHub public REST API (optional enrichment)
+       -> LeetCode public GraphQL endpoint (optional enrichment)
+       -> Resume provider contract -> filesystem fallback
 ```
 
-Serverless limitations to expect:
+LinkedIn is never scraped or fetched. Its supported input is a validated profile URL and optional text pasted by the user.
 
-- Resume files live in `/tmp` per instance: they disappear on cold starts and are not
-  shared between instances, so resume downloads can return `404 resume_missing`.
-  Scores, jobs and applications in MongoDB are unaffected.
-- The AI analysis must finish within the function's 60-second limit; free-tier Groq
-  and Gemini latency plus retries can occasionally exceed it.
-- Cold starts add a few seconds to the first request.
+## Local preparation
 
-Hugging Face Spaces (Docker) is no longer a free option: creating a Docker Space on
-`cpu-basic` returns HTTP 402 requiring PRO.
+Use Node.js 22 and install each package from its lockfile:
+
+```bash
+npm run install:all
+npm run dev
+```
+
+For Windows, use the root Node scripts rather than Linux-only process commands. See `docs/SETUP.md` for local environment and MongoDB setup.
+
+The latest local frontend run passed 51 tests and production build; lint reported 17 existing warnings and no errors. Backend/runtime and frontend dependency audits both reported zero vulnerabilities. Full backend verification after the latest concurrency/snapshot fixes is still pending its final result.
+
+Run frontend tests, lint, and build before release. Backend tests must use the disposable test database described in `docs/BASELINE_AUDIT.md`; never point database-drop hooks at a shared or production database. Normal automated tests mock provider calls and do not need real AI keys.
+
+```bash
+npm --prefix frontend test
+npm --prefix frontend run lint
+npm --prefix frontend run build
+npm --prefix backend test
+```
+
+The last command is safe only after verifying the test harness uses its guarded disposable database. The old baseline harness used a fixed `placement_skill_gap_test` database and was intentionally not run in that form.
+
+## Backend on Vercel
+
+Configure the Vercel project with `backend` as its root directory. The repository contains:
+
+- `backend/api/index.js`: serverless handler; opens/reuses the database connection before normal API requests.
+- `backend/vercel.json`: rewrites requests to `/api/index` and sets a 60-second function duration.
+- `backend/.vercelignore`: excludes local environment files, storage, tests, and sample resumes.
+- `backend/package.json`: Node.js `22.x` engine.
+
+The Vercel handler is used directly. `npm start` runs the long-lived local server and is not the Vercel function entry point.
+
+For revision verification, the local handler emits `X-Vortex-Revision` when the platform supplies a valid `VERCEL_GIT_COMMIT_SHA`. The frontend build emits `/build-info.json` containing its source commit, using the hosting/CI commit variable or local Git HEAD. Until a new deployment serves these markers, its revision remains unknown. A marker identifies source revision; it does not prove authenticated features work.
+
+Set these variables in the backend deployment environment. Secret values belong in the provider environment, never in Git or browser code:
+
+| Required for | Variable names |
+|---|---|
+| Core API | `NODE_ENV`, `MONGO_URI` or `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL` |
+| Text AI | `AI_TEXT_PROVIDER`, `GROQ_API_KEY`, `GROQ_MODEL`, `GROQ_FALLBACK_MODELS`, `AI_TEXT_FALLBACK_PROVIDER` |
+| Embeddings | `AI_EMBEDDING_PROVIDER`, `GEMINI_API_KEY`, `EMBEDDING_MODEL`, `GEMINI_EMBEDDING_MODEL`, `EMBEDDING_VERSION` |
+| Optional Gemini text mode | `GEMINI_MODEL` |
+| Optional GitHub authenticated quota | `GITHUB_TOKEN` |
+
+Use `NODE_ENV=production` and set `CLIENT_URL` to the exact confirmed frontend origin, `https://vortex-6g7.pages.dev`. Multiple trusted origins may be comma-separated. Production JWT secrets must be at least 32 characters. Missing AI credentials produce configuration errors for the related features; they do not establish provider availability.
+
+The checked source validates `AI_EMBEDDING_PROVIDER` as Gemini only. Changing the variable to another provider is not supported.
+
+## Production index migration
+
+Production database connection uses `autoIndex: false`. Deploying code does not create or migrate indexes. No production indexes were inspected or changed in this audit. A new production database also needs the existing unique/query indexes applied through a reviewed migration.
+
+The new `ReadinessReport` index is named `one_active_analysis_per_submission`: unique on `{submission_id: 1}` only while status is `queued` or `processing`. The former compound key `{submission_id: 1, status: 1}` could allow one queued and one processing record for the same submission. The stronger index and duplicate-key handler together enforce/follow one active job. Until the index is applied, that concurrency guarantee is not established in production.
+
+An operator must perform this sequence against the intended database using the provider's authenticated console, without copying credentials into shell history or documentation:
+
+1. Confirm the target database and collection, backup/restore readiness, provider support for partial unique indexes, and a maintenance window or paused analysis writes.
+2. Inspect the current readiness-report indexes and identify active duplicate submission groups. The snippets below assume Mongoose's default `readinessreports` collection; verify the actual name first.
+3. Review duplicate records' state/timestamps and choose a survivor. Mark abandoned jobs failed through a deliberate, reviewed correction; do not bulk-delete reports or automatically pick the latest. Re-run the duplicate query and require no duplicate groups.
+4. Create the named stronger index explicitly. If index creation fails, resolve the cause rather than ignoring it or dropping existing indexes.
+5. Verify the index specification and test concurrent starts/retries with approved demo data. A duplicate-key race should return HTTP 202 following the winning active report.
+6. Only after the new index is verified, consider removing an obsolete compound index by its inspected exact name. Do not run `syncIndexes`, `dropIndexes`, or a generic drop as a release shortcut.
+
+Manual inspection and index-creation snippets, for review in the database console:
+
+```js
+const reports = db.getCollection('readinessreports');
+reports.getIndexes();
+reports.aggregate([
+  { $match: { status: { $in: ['queued', 'processing'] } } },
+  { $group: { _id: '$submission_id', count: { $sum: 1 } } },
+  { $match: { count: { $gt: 1 } } }
+]);
+// Run only after duplicate groups are resolved and the change is approved:
+reports.createIndex(
+  { submission_id: 1 },
+  {
+    name: 'one_active_analysis_per_submission',
+    unique: true,
+    partialFilterExpression: { status: { $in: ['queued', 'processing'] } }
+  }
+);
+reports.getIndexes();
+```
+
+These examples are documentation, not an executed migration. Do not include profile/resume contents or credentials in migration logs. Production index readiness remains unverified until the operator records actual results.
+
+## Frontend on Cloudflare Pages
+
+Configure Cloudflare Pages with:
+
+```text
+Root directory: frontend
+Build command: npm run build
+Build output directory: dist
+Build-time public API value:
+VITE_API_URL=https://vortex-api-eta.vercel.app/api
+```
+
+`VITE_API_URL` is embedded in the frontend build. Changing it requires a new frontend build/deployment. Do not put database, JWT, AI, GitHub, or storage secrets in any `VITE_` variable.
+
+The root `scripts/build-role-catalog.mjs` is run by the frontend prebuild script, so the checkout must contain the full repository rather than an isolated copy of `frontend`.
+
+`frontend/public/_redirects` contains the Cloudflare SPA fallback:
+
+```text
+/* /index.html 200
+```
+
+`frontend/public/_headers` supplies response security headers, a Content Security Policy, and no-store caching for `/build-info.json`. The policy permits JavaScript only from the frontend origin; `/theme-init.js` is a synchronous external script, avoiding inline-JavaScript exceptions. Inline styles remain allowed for Motion/dynamic layout. API connections are limited to the frontend origin and confirmed Vercel origin. If the API origin changes, update `connect-src` with the build-time API value, review the diff, and rebuild. These CSP changes are implemented locally and have not been confirmed live. These files must appear in the deployed `dist` output. `frontend/vercel.json` is an alternative frontend-hosting configuration; it is not evidence that the current frontend runs on Vercel.
+
+The API client falls back to `/api` when `VITE_API_URL` is empty. That fallback is useful with the local Vite proxy. On the current static Cloudflare deployment, an empty value would send API requests to the frontend host and can return SPA HTML instead of JSON.
+
+## CORS and health
+
+Only explicitly configured browser origins are allowed in production. Development/test defaults also allow the local Vite origins. CORS is separate from authentication: an allowed origin still needs a valid bearer token on protected routes.
+
+The baseline production checks found:
+
+| Request | Result |
+|---|---|
+| `GET /api/health` | 200, `{status,timestamp}` JSON |
+| `OPTIONS /api/jobs` from the frontend origin | 204; exact frontend allow-origin header |
+| `OPTIONS /api/jobs` from an unknown origin | No allow-origin reflection |
+| `OPTIONS /api/health` | Baseline shortcut returned 200 without CORS headers |
+
+The local audit changes align serverless shortcut CORS handling. Its deployed result remains pending until the new commit is confirmed live.
+
+`/api/health` is liveness only. The Vercel health shortcut does not connect to MongoDB. A healthy response must not be reported as proof of database readiness or persistence. There is no separately verified database-readiness endpoint.
+
+## Analysis and serverless limits
+
+Profile upload performs PDF extraction, optional external enrichment, text extraction, and embedding work. PDFs are limited to 30 pages and 60,000 extracted characters; files are capped at 4 MiB on Vercel and 5 MiB elsewhere. Analysis uses the saved profile, ontology, and curated resource catalog.
+
+On Vercel, analysis is awaited within the request because work scheduled after a response may be frozen. The database stores `queued`, `processing`, `completed`, and `failed` states. The active-job index is unique on submission alone, and an `E11000` race follows the winning active job with HTTP 202; production requires the manual index procedure above. Stale active reports are reconciled to `analysis_timeout` after ten minutes so an interrupted request can be retried.
+
+This is recovery from abandoned work, not a durable worker queue. Provider latency, retries, and cold starts can still exceed the configured 60-second function limit. GitHub enrichment is bounded by a 25-second overall deadline, LeetCode by a 10-second request timeout, and provider calls have their own timeouts. These separate limits do not guarantee an entire upload/analysis finishes within 60 seconds.
+
+Successful production reliability must be measured with approved demo identities, demo PDF data, and actual deployed completion/polling/retry checks. It has not been established by the safe baseline checks.
+
+## Resume storage
+
+The local storage abstraction exposes save, read, delete, and provider-status operations. The active fallback is filesystem storage:
+
+- Long-lived local host: `backend/storage`.
+- Vercel: `/tmp/vortex-storage`, per function instance.
+
+Random file references are stored in MongoDB. Resume downloads go through authenticated owner/admin endpoints, with private/no-store cache headers. Explicit application-without-resume choices are respected.
+
+Vercel `/tmp` is ephemeral and unshared. Files can disappear between instances or deployments while database records survive. The new provider contract is preparation for durable object storage; it does not migrate files or make the fallback durable. No remote storage credentials/provider were configured during this audit, and no durable production storage was verified.
+
+A future adapter must preserve protected downloads, deletion behavior, old reference compatibility, and an explicit retention policy. Merely adding Cloudinary/Supabase variable names is insufficient. Do not run cleanup or migration against production until the target provider and policy are configured.
+
+## Release procedure
+
+1. Review the combined diff, tests, dependency audit, and secret-ignore behavior.
+2. Stage relevant project changes. Exclude local environment files, generated working folders such as `.pt1-work`, uploads, and unrelated artifacts.
+3. Commit and push to the confirmed repository branch.
+4. Confirm each hosting provider deployed that commit. A successful push alone is not evidence of a deployment.
+5. Read frontend `/build-info.json` and backend `X-Vortex-Revision` if served, compare full commit IDs with the release commit, and repeat safe HTTP/CORS checks against the confirmed URLs. Missing markers leave the deployed revision unknown.
+6. Use approved demo credentials/data for authenticated workflows. Never print JWTs, passwords, profile contents, or provider keys.
+7. Record the deployed revision and actual results in `docs/INTEGRATION_STATUS.md`.
+
+The cached Cloudflare/Wrangler login was expired and could not be refreshed, and no cached Vercel authentication was available. Safe demo credentials, public test usernames, and durable storage credentials were not configured. Git-linked auto-deployment must still be checked after the authorized commit/push attempt; CLI authentication failure alone does not establish that auto-deployment is unavailable. The release result remains pending.
+
+## Safe public checks
+
+```bash
+curl --fail --silent --show-error https://vortex-6g7.pages.dev/
+curl --fail --silent --show-error https://vortex-6g7.pages.dev/jobs
+curl --fail --silent --show-error https://vortex-api-eta.vercel.app/api/health
+curl --silent --show-error --request OPTIONS \
+  --header 'Origin: https://vortex-6g7.pages.dev' \
+  --header 'Access-Control-Request-Method: GET' \
+  --header 'Access-Control-Request-Headers: Authorization' \
+  --dump-header - --output /dev/null \
+  https://vortex-api-eta.vercel.app/api/jobs
+```
+
+The shell example uses `/dev/null` on Linux/macOS. On Windows, use `curl.exe` and `--output NUL`, or the platform's HTTP client. Test an unknown synthetic origin separately and confirm it receives no allow-origin header.
+
+Do not run production signup, upload, application/status writes, real profile enrichment, or paid/quota-consuming AI workflows as part of these public checks.
+
+## Troubleshooting
+
+| Symptom | Check |
+|---|---|
+| Protected page returns 200 but shows login | SPA routing works; authentication must be tested separately |
+| API returns HTML | Verify frontend build-time `VITE_API_URL` includes `/api` and points at Vercel |
+| CORS failure | Check exact production `CLIENT_URL`, request origin, and deployed backend revision |
+| Nested route 404 | Confirm Cloudflare deployed `_redirects` with SPA fallback |
+| Health is healthy but features fail | Inspect backend database/provider configuration; health is liveness only |
+| `resume_missing` on Vercel | The filesystem fallback is ephemeral; durable storage is still required |
+| Analysis stays active after a killed request | Check stale reconciliation and retry after its timeout window |
+| AI configuration error | Verify backend provider variable names and credentials without logging values |
+| Analysis model mismatch | Rebuild ontology vectors for the configured model/version in a controlled environment |
+| Local port 5173 is occupied | Check the existing Vite server; use the root development launcher rather than starting duplicate servers |
+
+## Verification record
+
+See `docs/BASELINE_AUDIT.md` for baseline evidence and decisions, `docs/INTEGRATION_STATUS.md` for live-versus-local integration status, and `docs/PROJECT_TECHNICAL_DOCUMENTATION.md` for the actual architecture and project boundaries.

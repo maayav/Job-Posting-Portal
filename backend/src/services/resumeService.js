@@ -43,6 +43,8 @@ export function resumeSignalScore(text) {
 }
 
 export const RESUME_SIGNAL_MINIMUM = 3;
+export const MAX_RESUME_PAGES = 30;
+export const MAX_RESUME_TEXT_CHARS = 60000;
 
 export function assertLooksLikeResume(text) {
   if (text.trim().length < 120 || resumeSignalScore(text) < RESUME_SIGNAL_MINIMUM) {
@@ -58,6 +60,9 @@ export async function extractResumeText(buffer) {
   try {
     const { extractText, getDocumentProxy } = await loadUnpdf();
     const document = await getDocumentProxy(new Uint8Array(buffer));
+    if (document.numPages > MAX_RESUME_PAGES) {
+      throw new AppError('Resume PDF must contain 30 pages or fewer', 422, 'resume_too_long');
+    }
     let { text } = await extractText(document, { mergePages: true });
     let normalized = typeof text === 'string' ? text.trim() : '';
     if (normalized.length < 40) {
@@ -70,10 +75,13 @@ export async function extractResumeText(buffer) {
     if (!normalized) {
       throw new AppError('No readable text found in this PDF', 422, 'resume_unreadable');
     }
+    if (normalized.length > MAX_RESUME_TEXT_CHARS) {
+      throw new AppError('Resume text must contain 60,000 characters or fewer', 422, 'resume_too_long');
+    }
     return normalized;
   } catch (err) {
     if (err instanceof AppError) throw err;
-    console.error('resume extraction failed:', err.message);
+    console.error('resume extraction failed:', { name: err.name, code: err.code });
     throw new AppError('Resume could not be read or parsed', 422, 'resume_unreadable');
   }
 }

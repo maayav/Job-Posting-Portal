@@ -19,6 +19,15 @@ vi.mock('../src/services/geminiService.js', () => ({
 
 const SAMPLE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'sample-resumes');
 
+vi.mock('../src/services/githubService.js', async (importOriginal) => {
+  const original = await importOriginal();
+  const { AppError } = await import('../src/utils/errors.js');
+  return { ...original, fetchGithubProfile: vi.fn(async (username) => {
+    if (username.startsWith('this-user-does-not-exist')) throw new AppError('GitHub user not found', 404, 'github_not_found');
+    return { username, repos: [], fromCache: false };
+  }) };
+});
+
 describe('Profile ingestion & security', () => {
   let token;
   let otherToken;
@@ -131,6 +140,34 @@ describe('Profile ingestion & security', () => {
       .field('target_role', 'SDE');
     expect(r.status).toBe(201);
     expect(r.body.github_username).toBe('someuser');
+  });
+
+  it('stores a normalized LinkedIn URL and user-provided summary', async () => {
+    const r = await request(app)
+      .post('/api/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .attach('resume', minimalPdfBuffer(), { filename: 'r.pdf' })
+      .field('linkedinUrl', 'https://www.linkedin.com/in/example-user/?trk=profile')
+      .field('linkedinSummaryText', 'Built React dashboards for internal teams.')
+      .field('target_role', 'SDE');
+    expect(r.status).toBe(201);
+    expect(r.body.linkedinUrl).toBe('https://www.linkedin.com/in/example-user/');
+    expect(r.body.linkedinSummaryText).toContain('Built React dashboards');
+    expect(r.body.linkedinDataSource).toBe('user_provided_text');
+    const profile = await request(app).get(`/api/profile/${r.body.id}`).set('Authorization', `Bearer ${token}`);
+    expect(profile.body.linkedinUrl).toBe('https://www.linkedin.com/in/example-user/');
+    expect(profile.body.linkedinSummaryText).toContain('Built React dashboards');
+  });
+
+  it('rejects non-LinkedIn profile URLs', async () => {
+    const r = await request(app)
+      .post('/api/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .attach('resume', minimalPdfBuffer(), { filename: 'r.pdf' })
+      .field('linkedinUrl', 'https://example.com/in/example-user')
+      .field('target_role', 'SDE');
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe('invalid_linkedin_url');
   });
 
   it('accepts a valid PDF and persists the submission without returning resume_text', async () => {

@@ -5,7 +5,7 @@ import { User } from '../models/user.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
-import { readResume, saveResume } from '../services/storageService.js';
+import { deleteResume, readResume, saveResume } from '../services/storageService.js';
 import { hydrateStudyPlan } from '../services/resourceService.js';
 import { notifyApplicationStatus, notifyApplicationSubmitted } from '../services/notificationService.js';
 import { AppError } from '../utils/errors.js';
@@ -26,7 +26,15 @@ const applySchema = z.strictObject({
     .refine((value) => value === '' || z.string().email().safeParse(value).success, {
       message: 'A valid email is required',
     }),
-  resumeUrl: z.string().trim().max(500).optional().default(''),
+  resumeUrl: z.string().trim().max(500).optional().default('').refine((value) => {
+    if (!value) return true;
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  }, { message: 'Resume URL must be a valid HTTPS URL without credentials' }),
   useProfileResume: z.union([z.boolean(), z.string()]).optional(),
 });
 
@@ -73,43 +81,25 @@ function reviewStage(status) {
   return 'under_review';
 }
 
-async function latestReviewsForApplicants(applicantIds, { details = false } = {}) {
-  if (!applicantIds.length) return new Map();
+async function reviewForApplication(application, { details = false } = {}) {
+  const applicantId = application.applicant?._id ?? application.applicant;
+  const hasSnapshot = Boolean(application.reviewSnapshotAt || application.profileSubmissionId || application.readinessReportId);
+  if (hasSnapshot && !application.profileSubmissionId) return null;
+  const submission = application.profileSubmissionId
+    ? await ProfileSubmission.findOne({ _id: application.profileSubmissionId, user_id: applicantId }).lean()
+    : await ProfileSubmission.findOne({ user_id: applicantId }).sort({ submitted_at: -1 }).lean();
+  if (!submission) return null;
 
-  const submissions = await ProfileSubmission.find({ user_id: { $in: applicantIds } })
-    .sort({ submitted_at: -1 })
-    .lean();
-  const latestSubmissionByUser = new Map();
-  for (const submission of submissions) {
-    const key = submission.user_id.toString();
-    if (!latestSubmissionByUser.has(key)) latestSubmissionByUser.set(key, submission);
-  }
-
-  const submissionIds = [...latestSubmissionByUser.values()].map((submission) => submission._id);
-  const [reports, profiles] = await Promise.all([
-    ReadinessReport.find({ submission_id: { $in: submissionIds }, status: 'completed' })
-      .sort({ completedAt: -1 })
-      .lean(),
-    details
-      ? ExtractedSkillProfile.find({ submission_id: { $in: submissionIds } }).lean()
-      : Promise.resolve([]),
-  ]);
-
-  const reportBySubmission = new Map();
-  for (const report of reports) {
-    const key = report.submission_id.toString();
-    if (!reportBySubmission.has(key)) reportBySubmission.set(key, report);
-  }
-  const profileBySubmission = new Map(profiles.map((profile) => [profile.submission_id.toString(), profile]));
-  const reviewByUser = new Map();
-
-  for (const [userId, submission] of latestSubmissionByUser) {
-    const report = reportBySubmission.get(submission._id.toString());
-    const profile = profileBySubmission.get(submission._id.toString());
-    const strong = report?.strong_areas ?? [];
-    const developing = report?.developing_areas ?? [];
-    const gaps = report?.gaps ?? [];
-    const review = {
+  const report = application.readinessReportId
+    ? await ReadinessReport.findOne({ _id: application.readinessReportId, submission_id: submission._id, status: 'completed' }).lean()
+    : hasSnapshot ? null : await ReadinessReport.findOne({ submission_id: submission._id, status: 'completed' }).sort({ completedAt: -1 }).lean();
+  const profile = details ? await ExtractedSkillProfile.findOne({ submission_id: submission._id }).lean() : null;
+  const strong = report?.strong_areas ?? [];
+  const developing = report?.developing_areas ?? [];
+  const gaps = report?.gaps ?? [];
+  const legacyProfileFallback = !application.resumeSource && !application.resumeFileRef && !application.resumeUrl;
+  const canUseProfileResume = application.resumeSource === 'profile' || legacyProfileFallback;
+  const review = {
       submissionId: submission._id.toString(),
       targetRole: submission.target_role,
       atsScore: report?.score ?? null,
@@ -119,13 +109,14 @@ async function latestReviewsForApplicants(applicantIds, { details = false } = {}
       githubUrl: submission.github_username
         ? (submission.github_username.startsWith('http') ? submission.github_username : `https://github.com/${submission.github_username}`)
         : null,
-      resumeFileRef: submission.resume_file_ref || null,
+      linkedinUrl: submission.linkedinUrl || null,
+      resumeFileRef: canUseProfileResume ? (submission.resume_file_ref || null) : null,
       strongSkills: strong,
       developingSkills: developing,
       missingSkills: gaps,
     };
 
-    if (details) {
+  if (details) {
       review.studyPlan = await hydrateStudyPlan(report?.study_plan ?? []);
       review.evidence = (profile?.skills ?? []).flatMap((skill) => (skill.evidence ?? []).map((evidence) => ({
         skill: skill.name,
@@ -135,10 +126,16 @@ async function latestReviewsForApplicants(applicantIds, { details = false } = {}
       })));
       review.extractedSkills = profile?.skills ?? [];
       review.generatedAt = report?.generatedAt ?? report?.generated_at ?? null;
-    }
-    reviewByUser.set(userId, review);
   }
-  return reviewByUser;
+  return review;
+}
+
+async function reviewsForApplications(applications, options = {}) {
+  const entries = await Promise.all(applications.map(async (application) => [
+    application._id.toString(),
+    await reviewForApplication(application, options),
+  ]));
+  return new Map(entries.filter(([, review]) => review));
 }
 
 function toApplicationResponse(application) {
@@ -213,29 +210,35 @@ export async function applyToJob(req, res) {
 
   const account = await User.findById(req.user.id).select('email').lean();
   const applicantEmail = data.email || account?.email || '';
+  const profileSnapshot = await ProfileSubmission.findOne({ user_id: req.user.id })
+    .sort({ submitted_at: -1 })
+    .select('_id resume_file_ref')
+    .lean();
+  const readinessSnapshot = profileSnapshot
+    ? await ReadinessReport.findOne({ submission_id: profileSnapshot._id, status: 'completed' }).sort({ completedAt: -1 }).select('_id').lean()
+    : null;
 
   let resumeFileRef = '';
   let resumeOriginalName = '';
+  let resumeSource = data.resumeUrl ? 'external_url' : 'none';
   if (req.file) {
     resumeFileRef = await saveResume(req.file.buffer, req.file.originalname);
     resumeOriginalName = req.file.originalname;
+    resumeSource = 'application_upload';
   } else if (isTruthyFlag(data.useProfileResume)) {
-    const submission = await ProfileSubmission.findOne({
-      user_id: req.user.id,
-      resume_file_ref: { $nin: ['', null] },
-    })
-      .sort({ submitted_at: -1 })
-      .select('resume_file_ref')
-      .lean();
-    if (submission?.resume_file_ref) {
-      try {
-        const buffer = await readResume(submission.resume_file_ref);
-        resumeFileRef = await saveResume(buffer, 'profile-resume.pdf');
-        resumeOriginalName = 'profile-resume.pdf';
-      } catch {
-        // The saved profile resume is unavailable; continue without one.
-      }
+    if (!profileSnapshot?.resume_file_ref) {
+      throw new AppError('Your profile resume is unavailable. Attach a PDF or choose no resume.', 409, 'profile_resume_unavailable');
     }
+    let buffer;
+    try {
+      buffer = await readResume(profileSnapshot.resume_file_ref);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+      throw new AppError('Your profile resume is no longer available. Attach a PDF or choose no resume.', 409, 'profile_resume_unavailable');
+    }
+    resumeFileRef = await saveResume(buffer, 'profile-resume.pdf');
+    resumeOriginalName = 'profile-resume.pdf';
+    resumeSource = 'profile';
   }
 
   let application;
@@ -243,14 +246,19 @@ export async function applyToJob(req, res) {
     application = await Application.create({
       applicant: req.user.id, // server-derived from the verified JWT
       job: data.jobId,
+      profileSubmissionId: profileSnapshot?._id ?? null,
+      readinessReportId: readinessSnapshot?._id ?? null,
+      reviewSnapshotAt: new Date(),
       status: 'applied',
       coverLetter: data.coverLetter,
       applicantEmail,
       resumeFileRef,
       resumeOriginalName,
       resumeUrl: data.resumeUrl,
+      resumeSource,
     });
   } catch (err) {
+    if (resumeFileRef) await deleteResume(resumeFileRef).catch(() => {});
     if (err.code === 11000) {
       throw new AppError('You have already applied to this job', 409, 'already_applied');
     }
@@ -269,6 +277,7 @@ export async function applyToJob(req, res) {
 
 // GET /api/applications/me — a student's own applications only.
 export async function listMyApplications(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   const query = myQuerySchema.parse(req.query);
   const filter = { applicant: req.user.id };
   if (query.status) filter.status = query.status;
@@ -283,6 +292,7 @@ export async function listMyApplications(req, res) {
 
 // GET /api/admin/applications — paginated list of all applications (admin only).
 export async function listAllApplications(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   const query = adminQuerySchema.parse(req.query);
   const { page, limit } = query;
 
@@ -321,6 +331,7 @@ export async function listAllApplications(req, res) {
 
 // GET /api/admin/dashboard — compact candidate-review data sourced from applications.
 export async function adminDashboard(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   const query = dashboardQuerySchema.parse(req.query);
   const { page, limit } = query;
   const filter = {};
@@ -359,16 +370,14 @@ export async function adminDashboard(req, res) {
   const stageCounts = Object.fromEntries(APPLICATION_STATUSES.map((status) => [status, 0]));
   for (const row of filteredStatusRows) stageCounts[row._id] = row.count;
 
-  const reviews = await latestReviewsForApplicants(
-    applications.map((application) => application.applicant?._id).filter(Boolean),
-  );
+  const reviews = await reviewsForApplications(applications);
 
   res.json({
     totalApplications,
     roles: roleRows,
     applications: applications.map((application) => toDashboardApplication(
       application,
-      reviews.get(application.applicant?._id?.toString()),
+      reviews.get(application._id.toString()),
     )),
     page,
     limit,
@@ -389,9 +398,8 @@ export async function getApplicationDetails(req, res) {
     throw new AppError('Application not found', 404, 'not_found');
   }
 
-  const applicantId = application.applicant?._id;
-  const reviews = await latestReviewsForApplicants(applicantId ? [applicantId] : [], { details: true });
-  const review = reviews.get(applicantId?.toString()) ?? null;
+  res.set('Cache-Control', 'private, no-store');
+  const review = await reviewForApplication(application, { details: true });
   res.json({
     application: toApplicationResponse(application),
     candidate: toDashboardApplication(application, review),
@@ -405,7 +413,9 @@ export async function getApplicationDetails(req, res) {
 // GET /api/applications/:applicationId/resume — the application resume (owner or admin).
 export async function getApplicationResume(req, res) {
   const id = objectIdSchema.parse(req.params.applicationId);
-  const application = await Application.findById(id).select('applicant resumeFileRef resumeOriginalName').lean();
+  const application = await Application.findById(id)
+    .select('applicant resumeFileRef resumeOriginalName resumeSource profileSubmissionId resumeUrl')
+    .lean();
   if (!application) {
     throw new AppError('Application not found', 404, 'not_found');
   }
@@ -416,21 +426,22 @@ export async function getApplicationResume(req, res) {
     throw new AppError('Insufficient permissions', 403, 'forbidden');
   }
 
-  // Prefer the resume attached to this application; fall back to the resume on
-  // the applicant's latest profile submission for applications without one.
+  // Only applications that explicitly selected a profile resume may use one.
+  // Legacy records retain the old fallback behavior for compatibility.
   let fileRef = application.resumeFileRef;
   let downloadName = application.resumeOriginalName || 'vortex-resume.pdf';
-  if (!fileRef) {
-    const submission = await ProfileSubmission.findOne({ user_id: application.applicant })
-      .sort({ submitted_at: -1 })
-      .select('resume_file_ref')
-      .lean();
+  const legacyProfileFallback = !application.resumeSource && !application.resumeFileRef && !application.resumeUrl;
+  if (!fileRef && (application.resumeSource === 'profile' || legacyProfileFallback)) {
+    const submission = application.profileSubmissionId
+      ? await ProfileSubmission.findOne({ _id: application.profileSubmissionId, user_id: application.applicant }).select('resume_file_ref').lean()
+      : await ProfileSubmission.findOne({ user_id: application.applicant }).sort({ submitted_at: -1 }).select('resume_file_ref').lean();
     fileRef = submission?.resume_file_ref;
     downloadName = 'vortex-resume.pdf';
   }
   if (!fileRef) {
     throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
   }
+  res.set('Cache-Control', 'private, no-store');
 
   let buffer;
   try {
@@ -475,6 +486,7 @@ export async function updateApplicationStatus(req, res) {
 
 // GET /api/admin/dashboard/application-summary — aggregation-backed dashboard data (admin only).
 export async function applicationSummary(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   const statusCountsProjection = {};
   for (const status of APPLICATION_STATUSES) {
     statusCountsProjection[status] = {

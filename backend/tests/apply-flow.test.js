@@ -63,6 +63,19 @@ describe('Application apply flow (email, resume, notifications)', () => {
     expect(res.status).toBe(400);
   });
 
+  it.each(['javascript:alert(1)', 'file:///private/resume.pdf', 'http://example.com/resume.pdf', 'https://user:password@example.com/resume.pdf'])('rejects an unsafe external resume link: %s', async (resumeUrl) => {
+    const response = await request(app).post('/api/applications').set(authHeader(student.token)).send({ jobId, resumeUrl });
+    expect(response.status).toBe(400);
+  });
+
+  it('reports a missing selected profile resume instead of applying without it', async () => {
+    const response = await request(app).post('/api/applications').set(authHeader(student.token)).send({ jobId, useProfileResume: true });
+    expect(response.status).toBe(409);
+    expect(response.body.error).toBe('profile_resume_unavailable');
+    const mine = await request(app).get('/api/applications/me').set(authHeader(student.token));
+    expect(mine.body.applications).toHaveLength(0);
+  });
+
   it('accepts a resume attached at apply time and serves it to the owner and admins only', async () => {
     const applied = await request(app)
       .post('/api/applications')
@@ -124,6 +137,27 @@ describe('Application apply flow (email, resume, notifications)', () => {
       .get(res.body.application.resumeUrl)
       .set(authHeader(student.token));
     expect(download.status).toBe(200);
+  });
+
+  it('does not expose a profile resume when the student chooses no resume', async () => {
+    const stored = await saveResume(minimalPdfBuffer(), 'profile.pdf');
+    await ProfileSubmission.create({
+      user_id: student.user.id,
+      resume_file_ref: stored,
+      resume_text: 'resume text',
+      target_role: 'SDE',
+    });
+
+    const applied = await request(app)
+      .post('/api/applications')
+      .set(authHeader(student.token))
+      .send({ jobId });
+    expect(applied.status).toBe(201);
+    const download = await request(app)
+      .get(`/api/applications/${applied.body.application.id}/resume`)
+      .set(authHeader(admin.token));
+    expect(download.status).toBe(404);
+    expect(download.body.error).toBe('resume_not_found');
   });
 
   it('notifies the student when an admin changes the status', async () => {

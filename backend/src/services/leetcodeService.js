@@ -1,17 +1,29 @@
 import axios from 'axios';
+import { assertRequestBudget, requestSignal, requestTimeout } from '../utils/requestBudget.js';
 
-// Public profile data only; fixed destination, bounded request size and time.
-export async function fetchLeetcodeProfile(username) {
+// Unauthenticated public GraphQL lookup; supplementary data, not an official API contract.
+export async function fetchLeetcodeProfile(username, { client = axios } = {}) {
   if (!username) return { status: 'none', evidence: '' };
-  if (!/^[A-Za-z0-9._-]{1,120}$/.test(username)) return { status: 'unavailable', evidence: '' };
+  if (typeof username !== 'string' || !/^[A-Za-z0-9._-]{1,120}$/.test(username)) return { status: 'unavailable', evidence: '' };
   try {
-    const { data } = await axios.post('https://leetcode.com/graphql/', {
+    assertRequestBudget();
+    const { data } = await client.post('https://leetcode.com/graphql/', {
       query: 'query ProfileLanguages($username: String!) { matchedUser(username: $username) { languageProblemCount { languageName problemsSolved } } }',
       variables: { username },
-    }, { timeout: 10000, maxContentLength: 100000, headers: { 'Content-Type': 'application/json' } });
+    }, { timeout: requestTimeout(10000), signal: requestSignal(), maxContentLength: 100000, headers: { 'Content-Type': 'application/json' } });
+    assertRequestBudget();
     const profile = data?.data?.matchedUser;
     if (!profile) return { status: data?.errors ? 'unavailable' : 'not_found', evidence: '' };
-    const evidence = (profile.languageProblemCount || []).filter((item) => item.problemsSolved > 0).slice(0,20).map((item) => `Solved ${item.problemsSolved} LeetCode problems using ${String(item.languageName).slice(0,50)}.`).join('\n');
+    if (data?.errors?.length || !Array.isArray(profile.languageProblemCount)) return { status: 'unavailable', evidence: '' };
+    const evidence = profile.languageProblemCount
+      .filter((item) => item && Number.isSafeInteger(item.problemsSolved) && item.problemsSolved > 0 && typeof item.languageName === 'string' && /^[A-Za-z][A-Za-z0-9 +#./_-]{0,49}$/.test(item.languageName))
+      .slice(0, 20)
+      .map((item) => `Solved ${item.problemsSolved} LeetCode problems using ${item.languageName}.`)
+      .join('\n');
     return { status: 'ok', evidence };
-  } catch { return { status: 'unavailable', evidence: '' }; }
+  } catch {
+    // A source outage is optional; exhaustion of the whole analysis deadline is not.
+    assertRequestBudget();
+    return { status: 'unavailable', evidence: '' };
+  }
 }

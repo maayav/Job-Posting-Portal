@@ -6,11 +6,14 @@ import { saveResume, deleteResume } from '../services/storageService.js';
 import { extractResumeText, assertLooksLikeResume } from '../services/resumeService.js';
 import { normalizeUsername, fetchGithubProfile } from '../services/githubService.js';
 import { processExtraction } from '../services/skillService.js';
+import { normalizeLinkedInSummary, normalizeLinkedInUrl } from '../services/linkedinService.js';
 import { AppError } from '../utils/errors.js';
 
 const createSchema = z.object({
   github_username: z.string().trim().optional().default(''),
   leetcode_username: z.string().trim().max(120).optional().default(''),
+  linkedinUrl: z.string().trim().max(500).optional().default(''),
+  linkedinSummaryText: z.string().trim().max(10000).optional().default(''),
   target_role: z.string().trim().min(1, 'Target role is required').max(100),
 });
 
@@ -30,6 +33,7 @@ async function collectGithub(username) {
       github_profile: profile,
     };
   } catch (err) {
+    if (err.code === 'request_timeout') throw err;
     if (err instanceof AppError && err.code === 'github_not_found') {
       return { github_username: username, github_status: 'not_found', github_profile: null };
     }
@@ -49,31 +53,36 @@ export async function createProfile(req, res) {
   if (leetcode_username && !/^[a-zA-Z0-9._-]+$/.test(leetcode_username)) {
     throw new AppError('Invalid LeetCode username or profile URL', 400, 'validation_error');
   }
+  const linkedinUrl = normalizeLinkedInUrl(data.linkedinUrl);
+  const linkedinSummaryText = normalizeLinkedInSummary(data.linkedinSummaryText);
 
-  const filename = await saveResume(req.file.buffer, req.file.originalname);
-  let resume_text;
-  try {
-    resume_text = await extractResumeText(req.file.buffer);
-    assertLooksLikeResume(resume_text);
-  } catch (err) {
-    await deleteResume(filename);
-    throw err;
-  }
+  const resume_text = await extractResumeText(req.file.buffer);
+  assertLooksLikeResume(resume_text);
 
   let github = { github_username, github_status: 'none', github_profile: null };
   if (github_username) {
     github = await collectGithub(github_username);
   }
 
-  const submission = await ProfileSubmission.create({
-    user_id: req.user.id,
-    resume_file_ref: filename,
-    resume_text,
-    target_role: data.target_role,
-    github_username: github.github_username,
-    github_status: github.github_status,
-    leetcode_username,
-  });
+  const filename = await saveResume(req.file.buffer, req.file.originalname);
+  let submission;
+  try {
+    submission = await ProfileSubmission.create({
+      user_id: req.user.id,
+      resume_file_ref: filename,
+      resume_text,
+      target_role: data.target_role,
+      github_username: github.github_username,
+      github_status: github.github_status,
+      leetcode_username,
+      linkedinUrl,
+      linkedinSummaryText,
+      linkedinDataSource: linkedinSummaryText ? 'user_provided_text' : null,
+    });
+  } catch (error) {
+    await deleteResume(filename).catch(() => {});
+    throw error;
+  }
 
   let extraction = { status: 'pending', error: null };
   try {
@@ -89,6 +98,7 @@ export async function createProfile(req, res) {
     await submission.save();
   }
 
+  res.set('Cache-Control', 'private, no-store');
   res.status(201).json({
     id: submission._id.toString(),
     target_role: submission.target_role,
@@ -96,6 +106,9 @@ export async function createProfile(req, res) {
     github_status: submission.github_status,
     leetcode_username: submission.leetcode_username,
     leetcode_status: submission.leetcode_status,
+    linkedinUrl: submission.linkedinUrl,
+    linkedinSummaryText: submission.linkedinSummaryText,
+    linkedinDataSource: submission.linkedinDataSource,
     extraction_status: extraction.status,
     extraction_error: extraction.error ?? null,
     submitted_at: submission.submitted_at,
@@ -115,6 +128,7 @@ export async function getProfile(req, res) {
     }
   }
 
+  res.set('Cache-Control', 'private, no-store');
   res.json({
     id: submission._id.toString(),
     target_role: submission.target_role,
@@ -122,6 +136,9 @@ export async function getProfile(req, res) {
     github_status: submission.github_status,
     leetcode_username: submission.leetcode_username,
     leetcode_status: submission.leetcode_status,
+    linkedinUrl: submission.linkedinUrl,
+    linkedinSummaryText: submission.linkedinSummaryText,
+    linkedinDataSource: submission.linkedinDataSource,
     submitted_at: submission.submitted_at,
     created_at: submission.createdAt,
     extracted_skills,

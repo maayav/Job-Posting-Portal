@@ -17,10 +17,10 @@ const skillSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     category: { type: String, enum: CATEGORIES, default: 'other' },
     confidence: { type: String, enum: ['low', 'medium', 'high'], required: true },
-    sources: [{ type: String, enum: ['resume', 'github', 'leetcode'] }],
+    sources: [{ type: String, enum: ['resume', 'github', 'linkedin_user_provided', 'leetcode'] }],
     evidence: [
       {
-        source: { type: String, enum: ['resume', 'github', 'leetcode'], required: true },
+        source: { type: String, enum: ['resume', 'github', 'linkedin_user_provided', 'leetcode'], required: true },
         text: { type: String, required: true },
       },
     ],

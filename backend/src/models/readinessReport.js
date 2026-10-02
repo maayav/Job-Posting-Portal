@@ -64,8 +64,8 @@ const readinessReportSchema = new mongoose.Schema(
 );
 
 readinessReportSchema.index(
-  { submission_id: 1, status: 1 },
-  { unique: true, partialFilterExpression: { status: { $in: ['queued', 'processing'] } } }
+  { submission_id: 1 },
+  { name: 'one_active_analysis_per_submission', unique: true, partialFilterExpression: { status: { $in: ['queued', 'processing'] } } }
 );
 
 readinessReportSchema.index({ submission_id: 1, completedAt: -1 });

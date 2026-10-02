@@ -47,7 +47,10 @@ const listQuerySchema = z.object({
   city: z.string().trim().max(100).optional(),
   search: z.string().trim().max(120).optional(),
   sort: z.enum(['newest', 'oldest', 'title']).default('newest'),
-  includeStatus: z.coerce.boolean().default(false),
+  includeStatus: z.preprocess(
+    (value) => value === true || value === 'true' || value === '1',
+    z.boolean(),
+  ).default(false),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).default(20).transform((value) => Math.min(value, MAX_LIMIT)),
 });

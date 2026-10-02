@@ -12,6 +12,9 @@ export async function connectDB({ retry = true } = {}) {
     try {
       await mongoose.connect(env.MONGO_URI, {
         maxPoolSize: MAX_POOL_SIZE,
+        // Production indexes are reviewed and applied operationally, not migrated
+        // implicitly during a serverless cold start.
+        autoIndex: env.NODE_ENV !== 'production',
         serverSelectionTimeoutMS: 5000,
       });
       return mongoose.connection;
@@ -20,7 +23,7 @@ export async function connectDB({ retry = true } = {}) {
         throw err;
       }
       const delay = Math.min(1000 * 2 ** (attempt - 1), 8000);
-      console.error(`MongoDB connection attempt ${attempt} failed, retrying in ${delay}ms:`, err.message);
+      console.error('MongoDB connection retry', { attempt, delay, name: err.name, code: err.code });
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Local development uses the Vite proxy (/api -> localhost:5000).
-// Production (Vercel) points at the Render API via VITE_API_URL.
+// Production Cloudflare Pages points at the Vercel API via VITE_API_URL.
 const baseURL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
 export const api = axios.create({

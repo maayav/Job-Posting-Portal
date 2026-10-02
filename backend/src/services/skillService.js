@@ -5,25 +5,38 @@ import { fetchLeetcodeProfile } from './leetcodeService.js';
 import { generateEmbeddings } from './ai/embeddingProvider.js';
 import { env } from '../config/env.js';
 
-function buildProfileText(submission, github) {
+const SECTION_MARKER = /===\s*(?:RESUME|GITHUB PROFILE|LINKEDIN USER-PROVIDED SUMMARY|LEETCODE PROFILE)\s*===/gi;
+
+export function sanitizeSourceText(value) {
+  return String(value ?? '').replace(SECTION_MARKER, '[profile section marker]');
+}
+
+export function buildProfileText(submission, github) {
   const parts = [];
   parts.push('=== RESUME ===');
-  parts.push(submission.resume_text);
+  parts.push(sanitizeSourceText(submission.resume_text));
 
-  if (github?.repos?.length) {
+  if (submission.linkedinSummaryText) {
+    parts.push('\n=== LINKEDIN USER-PROVIDED SUMMARY ===');
+    parts.push(sanitizeSourceText(submission.linkedinSummaryText));
+  }
+
+  if (Array.isArray(github?.repos) && github.repos.length) {
     parts.push('\n=== GITHUB PROFILE ===');
-    parts.push(`Username: ${github.username}`);
-    for (const repo of github.repos) {
-      parts.push(`\nRepo: ${repo.name}`);
-      if (repo.language) parts.push(`Primary language: ${repo.language}`);
+    parts.push(`Username: ${sanitizeSourceText(github.username)}`);
+    for (const repo of github.repos.slice(0, 10)) {
+      if (!repo || typeof repo !== 'object') continue;
+      parts.push(`\nRepo: ${sanitizeSourceText(repo.name)}`);
+      if (repo.description) parts.push(`Description: ${sanitizeSourceText(repo.description)}`);
+      if (repo.language) parts.push(`Primary language: ${sanitizeSourceText(repo.language)}`);
       if (repo.languages && Object.keys(repo.languages).length) {
-        parts.push(`Languages: ${Object.entries(repo.languages).map(([k]) => k).join(', ')}`);
+        parts.push(`Languages: ${Object.entries(repo.languages).map(([k]) => sanitizeSourceText(k)).join(', ')}`);
       }
-      if (repo.topics?.length) parts.push(`Topics: ${repo.topics.join(', ')}`);
+      if (Array.isArray(repo.topics) && repo.topics.length) parts.push(`Topics: ${repo.topics.map(sanitizeSourceText).join(', ')}`);
       for (const [file, content] of Object.entries(repo.manifests || {})) {
-        parts.push(`\n--- ${file} ---\n${content}`);
+        parts.push(`\n--- ${sanitizeSourceText(file)} ---\n${sanitizeSourceText(content)}`);
       }
-      if (repo.readme) parts.push(`\nREADME excerpt:\n${repo.readme}`);
+      if (repo.readme) parts.push(`\nREADME excerpt:\n${sanitizeSourceText(repo.readme)}`);
     }
   }
 
@@ -102,7 +115,7 @@ export async function processExtraction(submissionId, githubData) {
   }
 
   const leetcode = await fetchLeetcodeProfile(submission.leetcode_username);
-  const profileText = buildProfileText(submission, githubData) + (leetcode.evidence ? '\n=== LEETCODE PROFILE ===\n' + leetcode.evidence : '');
+  const profileText = buildProfileText(submission, githubData) + (leetcode.evidence ? '\n=== LEETCODE PROFILE ===\n' + sanitizeSourceText(leetcode.evidence) : '');
   const { skills: geminiSkills, model: usedModel } = await extractSkills(profileText);
   const skills = mergeSkills(geminiSkills);
 
@@ -117,7 +130,7 @@ export async function processExtraction(submissionId, githubData) {
     embeddingModel = env.EMBEDDING_MODEL;
     embeddingVersion = env.EMBEDDING_VERSION;
   } catch (error) {
-    console.warn('skill embedding cache skipped:', error.message);
+    console.warn('skill embedding cache skipped', { code: error.code || 'embedding_unavailable' });
   }
 
   const saved = await ExtractedSkillProfile.findOneAndUpdate(

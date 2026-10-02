@@ -190,13 +190,21 @@ export default function AssistantPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const [analysisRequired, setAnalysisRequired] = useState(false);
   const logRef = useRef(null);
 
   useEffect(() => {
     let active = true;
     api.get('/assistant/context')
-      .then((response) => { if (active) setContext(response.data); })
-      .catch((err) => { if (active && err.response?.status !== 409) setError(errorMessage(err)); })
+      .then((response) => { if (active) { setContext(response.data); setAnalysisRequired(false); } })
+      .catch((err) => {
+        if (!active) return;
+        if (err.response?.status === 409 && err.response?.data?.error === 'analysis_required') {
+          setAnalysisRequired(true);
+          return;
+        }
+        setError(errorMessage(err));
+      })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -258,13 +266,15 @@ export default function AssistantPage() {
 
         {loading && <div className="card center" role="status"><div className="spinner" /><p className="muted">Loading {isAdminAssistant ? 'the placement workspace' : 'your analysis context'}…</p></div>}
 
-        {!loading && !context && error && (
-          <section className="card assistant-empty-state">
-            <span className="assistant-icon"><Icon name="alert" size={28} /></span>
-            <h2>Workspace context unavailable</h2>
-            <p className="muted">We could not load the data needed for this assistant. Retry when the API is available.</p>
-            <button className="primary inline" onClick={() => window.location.reload()}>Retry context</button>
-          </section>
+        {!loading && !context && (error || analysisRequired) && (
+           <section className="card assistant-empty-state">
+             <span className="assistant-icon"><Icon name="alert" size={28} /></span>
+             <h2>{analysisRequired ? 'Complete an analysis first' : 'Workspace context unavailable'}</h2>
+             <p className="muted">{analysisRequired ? 'The assistant needs a completed analysis before it can give grounded advice.' : 'We could not load the data needed for this assistant. Retry when the API is available.'}</p>
+             {analysisRequired
+               ? <Link className="primary inline" to="/analyze">Start a new analysis <Icon name="arrow" size={16} /></Link>
+               : <button className="primary inline" onClick={() => window.location.reload()}>Retry context</button>}
+           </section>
         )}
 
         {!loading && context && !isAdminAssistant && !hasAnalysis && (

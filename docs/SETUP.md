@@ -1,6 +1,6 @@
 # Quick setup on Windows, macOS and Linux
 
-Use Node.js 22.12+ (Node 24 LTS recommended), npm and MongoDB. On Windows use PowerShell or Command Prompt; WSL is not required. Docker Desktop should use Linux containers for the supplied MongoDB container.
+Use Node.js 22.x (at least 22.12), npm and MongoDB, matching the backend engine. On Windows use PowerShell or Command Prompt; WSL is not required. Docker Desktop should use Linux containers for the supplied MongoDB container.
 
 From the project folder:
 
@@ -17,7 +17,7 @@ npm --prefix backend run seed
 npm run dev
 ```
 
-`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open **http://localhost:5173**; Vite uses a strict fixed port, so if it is occupied, stop the previous dev server or free the port instead of expecting another one. Never open `frontend/index.html` or downloaded app pages with `file://`.
+`npm run setup` preserves an existing `.env`. `npm run dev` starts both servers using Node and works with paths containing spaces. Stop with Ctrl+C. Open **http://localhost:5173**; Vite prefers port 5173 and uses the next available port when occupied; open the URL printed by Vite. Never open `frontend/index.html` or downloaded app pages with `file://`.
 
 Required AI configuration:
 
@@ -43,7 +43,7 @@ npm run lint
 npm run build
 ```
 
-Backend tests require the local MongoDB instance. If PowerShell blocks `npm.ps1`, invoke the same commands with `npm.cmd`; no execution-policy change is required. Dependencies must be installed on the target operating system: do not copy Linux `node_modules` to Windows. Native Windows execution has not been tested in this Linux workspace.
+Backend integration tests require local MongoDB. Every test run creates a unique `vortex_test_<random UUID>` database, refuses remote or authenticated test endpoints, and deletes only its own database during teardown. Resume test files use a temporary directory. Normal tests mock GitHub, LeetCode, text AI and embeddings; they do not consume provider quota. `npm --prefix backend run test:unit` does not require MongoDB. If PowerShell blocks `npm.ps1`, invoke the same commands with `npm.cmd`; no execution-policy change is required. Dependencies must be installed on the target operating system: do not copy Linux `node_modules` to Windows. Native Windows execution has not been tested in this Linux workspace.
 
 ---
 
@@ -51,7 +51,7 @@ Backend tests require the local MongoDB instance. If PowerShell blocks `npm.ps1`
 
 ## Prerequisites
 
-- Node.js ≥ 22.12 (Node 24 LTS recommended)
+- Node.js 22.x, at least 22.12
 - Docker (for local MongoDB) — `mongo:7`
 - A Groq API key — covers text generation for extraction and the assistant (`openai/gpt-oss-120b` by default).
 - A Google AI (Gemini) API key for embeddings (`gemini-embedding-2`). Groq does not provide an embeddings endpoint. Note: `text-embedding-004` is retired; `gemini-embedding-2` is the pinned model, tagged `2026-09`.
@@ -103,11 +103,25 @@ npm install
 npm run dev               # Vite on :5173, proxies /api → :5000
 ```
 
-If port 5173 is already in use, Vite stops with a `Port 5173 is already in use` error. Stop the previous Vite process with Ctrl+C, or free the port (`lsof -ti tcp:5173 | xargs -r kill` on Linux/macOS; `Get-NetTCPConnection -LocalPort 5173 | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force }` in PowerShell).
+If port 5173 is already in use, Vite selects the next available port. Use its printed URL, or stop the previous process with Ctrl+C to reuse 5173. Inspect the process before stopping anything on a shared port.
 
-Open http://localhost:5173, register, upload a PDF resume (+ optional GitHub username), review extracted skills, then analyze to see the readiness score and study plan.
+Open http://localhost:5173, register, upload a PDF resume (+ optional GitHub username, LinkedIn URL/user-provided summary, and LeetCode username), review extracted skills, then analyze to see the readiness score and study plan. LinkedIn is never scraped; LeetCode is an optional public-source enrichment.
 
 ## 4. Tests
+
+The default test endpoint is `mongodb://127.0.0.1:27017`. To use a different local port, set `TEST_MONGO_URI` (its database name is replaced with a unique disposable name):
+
+```bash
+TEST_MONGO_URI=mongodb://127.0.0.1:32768 npm --prefix backend test
+```
+
+```powershell
+$env:TEST_MONGO_URI = "mongodb://127.0.0.1:32768"
+npm --prefix backend test
+Remove-Item Env:TEST_MONGO_URI
+```
+
+Database-free tests: `npm --prefix backend run test:unit`. Do not set test variables to a production database.
 
 ```bash
 npm --prefix backend test    # requires MongoDB
@@ -152,7 +166,11 @@ Seed demo job postings (development/demo only, idempotent, requires an existing 
 node scripts/seed-jobs.js --admin=you@example.com
 ```
 
-## 6. Production checklist (deployment)
+## 6. Deployment
+
+See [DEPLOYMENT.md](../DEPLOYMENT.md) for the confirmed Cloudflare Pages frontend and Vercel API. The health endpoint checks liveness only. On Vercel, analysis executes inside the request with a shared 50-second work budget under this repository’s 60-second function configuration. It is not a durable queue. Resumes currently use ephemeral `/tmp` there; configure and implement a durable provider before claiming persistent resume downloads.
+
+For a separate long-running host:
 
 - Set `NODE_ENV=production`, strong `JWT_SECRET`, Atlas `MONGO_URI` (TLS).
 - Terminate HTTPS + HSTS at the reverse proxy (nginx/Caddy/Cloudflare).
@@ -167,11 +185,11 @@ node scripts/seed-jobs.js --admin=you@example.com
 
 ## 7. Windows setup notes
 
-The project is cross-platform (Node ESM, no Unix-only tooling). Everything below works in PowerShell or cmd.
+The project uses Node ESM and cross-platform launch scripts. PowerShell commands are provided below; native Windows runtime verification has not been performed in this Linux workspace.
 
 ### Prerequisites
 
-- **Node.js 22.12+ (LTS)** — from nodejs.org or via nvm-windows. Verify with `node --version`.
+- **Node.js 22.x, at least 22.12** — from nodejs.org or via nvm-windows. Verify with `node --version`.
 - **Docker Desktop for Windows** — must be running (WSL2 backend recommended) before `docker compose up -d mongo`.
 - **Git for Windows** — for cloning and commits.
 - Optionally **Visual Studio Build Tools** ("Desktop development with C++") + Python — only needed if a native module fails to build.

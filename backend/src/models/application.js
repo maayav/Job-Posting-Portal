@@ -31,6 +31,9 @@ const applicationSchema = new mongoose.Schema(
   {
     applicant: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     job: { type: mongoose.Schema.Types.ObjectId, ref: 'Job', required: true },
+    profileSubmissionId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProfileSubmission', default: null },
+    readinessReportId: { type: mongoose.Schema.Types.ObjectId, ref: 'ReadinessReport', default: null },
+    reviewSnapshotAt: { type: Date, default: null },
     status: { type: String, enum: APPLICATION_STATUSES, default: 'applied' },
     appliedAt: { type: Date, default: Date.now },
     coverLetter: { type: String, trim: true, maxlength: 3000, default: '' },
@@ -40,6 +43,7 @@ const applicationSchema = new mongoose.Schema(
     resumeFileRef: { type: String, trim: true, default: '' },
     resumeOriginalName: { type: String, trim: true, maxlength: 200, default: '' },
     resumeUrl: { type: String, trim: true, maxlength: 500, default: '' },
+    resumeSource: { type: String, enum: ['application_upload', 'profile', 'external_url', 'none'], default: 'none' },
     statusHistory: { type: [statusHistorySchema], default: [] },
   },
   { timestamps: true }

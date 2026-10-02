@@ -13,6 +13,9 @@ const profileSubmissionSchema = new mongoose.Schema(
     },
     leetcode_username: { type: String, trim: true, default: '' },
     leetcode_status: { type: String, enum: ['none', 'ok', 'not_found', 'unavailable'], default: 'none' },
+    linkedinUrl: { type: String, trim: true, maxlength: 500, default: '' },
+    linkedinSummaryText: { type: String, trim: true, maxlength: 10000, default: '' },
+    linkedinDataSource: { type: String, enum: ['user_provided_text'], default: null },
     target_role: { type: String, required: true, trim: true },
     submitted_at: { type: Date, default: Date.now },
     extraction_status: {
@@ -24,5 +27,7 @@ const profileSubmissionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+profileSubmissionSchema.index({ user_id: 1, submitted_at: -1 });
 
 export const ProfileSubmission = mongoose.model('ProfileSubmission', profileSubmissionSchema);

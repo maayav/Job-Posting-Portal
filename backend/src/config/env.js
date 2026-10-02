@@ -18,7 +18,7 @@ const envSchema = z.object({
   AI_TEXT_FALLBACK_PROVIDER: z.enum(['none', 'groq', 'gemini']).default('none'),
   // Groq powers text generation (skill extraction and the assistant).
   GROQ_API_KEY: z.string().default(''),
-  GROQ_MODEL: z.string().default(''),
+  GROQ_MODEL: z.string().default('openai/gpt-oss-120b'),
   GROQ_FALLBACK_MODELS: z.string().default('openai/gpt-oss-20b,qwen/qwen3.8-27b'),
   // Gemini is retained for the existing embedding pipeline because Groq does
   // not expose an embeddings endpoint.
@@ -34,6 +34,13 @@ const envSchema = z.object({
       code: z.ZodIssueCode.custom,
       path: ['MONGO_URI'],
       message: 'MONGO_URI (or MONGODB_URI) is required',
+    });
+  }
+  if (env.NODE_ENV === 'production' && env.JWT_SECRET.length < 32) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['JWT_SECRET'],
+      message: 'JWT_SECRET must be at least 32 characters in production',
     });
   }
 });

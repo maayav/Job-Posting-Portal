@@ -234,7 +234,10 @@ describe('Dashboard layout', () => {
     expect(localStorage.getItem('report_id')).toBeNull();
   });
 
-  it('renders the candidate review dashboard for admins from application data', async () => {
+  it.each([
+    ['uploaded application resume', true, null],
+    ['LinkedIn-only profile', false, 'https://www.linkedin.com/in/example-user/'],
+  ])('renders the candidate review dashboard with a %s', async (_source, hasResume, linkedinUrl) => {
     localStorage.setItem('user', JSON.stringify({ id: 'a1', name: 'Admin', role: 'admin' }));
     api.get.mockImplementation((url) => {
       if (url === '/admin/dashboard') {
@@ -258,10 +261,11 @@ describe('Dashboard layout', () => {
         return Promise.resolve({ data: {
           application: {
             id: 'a1', status: 'under_review', appliedAt: '2026-09-16',
+            hasResume,
             applicant: { name: 'Candidate A', email: 'candidate@example.com' },
             job: { title: 'Frontend Developer', company: 'Acme', city: 'Chennai', experienceLevel: 1 },
           },
-          review: { atsScore: 82, roleReadinessScore: 82, strongSkills: [{ skill: 'React', percent: 90 }], missingSkills: [], studyPlan: [] },
+          review: { atsScore: 82, roleReadinessScore: 82, linkedinUrl, resumeFileRef: null, strongSkills: [{ skill: 'React', percent: 90 }], missingSkills: [], studyPlan: [] },
         } });
       }
       return Promise.resolve({ data: {} });
@@ -286,5 +290,8 @@ describe('Dashboard layout', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'View' }));
     expect(await screen.findByRole('heading', { name: 'Candidate A' })).toBeTruthy();
     expect(screen.getByText('ATS score')).toBeTruthy();
+    if (hasResume) expect(screen.getByRole('button', { name: /open resume/i })).toBeTruthy();
+    if (linkedinUrl) expect(screen.getByRole('link', { name: /linkedin/i }).getAttribute('href')).toBe(linkedinUrl);
+    expect(screen.queryByText('No external profiles attached')).toBeNull();
   });
 });

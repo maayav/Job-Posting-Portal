@@ -2,12 +2,14 @@ import app from './src/app.js';
 import { env } from './src/config/env.js';
 import { connectDB, disconnectDB } from './src/config/db.js';
 import { ensureStorageDir } from './src/services/storageService.js';
+import { reconcileAnalysisJobs } from './src/services/analysisService.js';
 
 const HOST = '0.0.0.0';
 
 async function start() {
   try {
     await connectDB();
+    await reconcileAnalysisJobs();
     await ensureStorageDir();
 
     const server = app.listen(env.PORT, HOST, () => {
@@ -29,7 +31,7 @@ async function start() {
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
   } catch (err) {
-    console.error('Failed to start server:', err.message);
+    console.error('Failed to start server:', { name: err.name, code: err.code });
     process.exit(1);
   }
 }

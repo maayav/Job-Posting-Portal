@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
-import { queueAnalysis, runAnalysis } from '../services/analysisService.js';
+import { queueAnalysis, reconcileAnalysisJobs, runAnalysis } from '../services/analysisService.js';
 import { env } from '../config/env.js';
 import { AppError } from '../utils/errors.js';
 
@@ -13,6 +13,7 @@ const createSchema = z.object({
 
 export async function createAnalysis(req, res) {
   const { submission_id } = createSchema.parse(req.body);
+  await reconcileAnalysisJobs();
 
   const submission = await ProfileSubmission.findById(submission_id);
   if (!submission) {
@@ -45,23 +46,35 @@ export async function createAnalysis(req, res) {
     }
   }
 
-  const report = await ReadinessReport.create({
-    submission_id,
-    target_role: submission.target_role,
-    status: 'queued',
-    embedding_model: null,
-    embedding_version: null,
-  });
+  let report;
+  try {
+    report = await ReadinessReport.create({
+      submission_id,
+      target_role: submission.target_role,
+      status: 'queued',
+      embedding_model: null,
+      embedding_version: null,
+    });
+  } catch (error) {
+    // Two requests may both pass the read above. The database's active-job
+    // constraint chooses the winner; the other request follows that same job.
+    if (error.code === 11000) {
+      const active = await ReadinessReport.findOne({ submission_id, status: { $in: ['queued', 'processing'] } });
+      if (active) return res.status(202).json({ report_id: active._id.toString(), status: active.status, errorCode: active.errorCode ?? null });
+    }
+    throw error;
+  }
 
   // Serverless platforms freeze the process after the response, so the job must
   // finish inside the request there; long-lived servers keep the async queue.
+  let responseReport = report;
   if (env.NODE_ENV === 'test' || process.env.VERCEL) {
-    await runAnalysis(report._id);
+    responseReport = await runAnalysis(report._id) || await ReadinessReport.findById(report._id);
   } else {
     queueAnalysis(report._id);
   }
 
-  res.status(202).json({ report_id: report._id.toString(), status: report.status });
+  res.status(202).json({ report_id: report._id.toString(), status: responseReport?.status ?? report.status, errorCode: responseReport?.errorCode ?? null });
 }
 
 export async function getAnalysisStatus(req, res) {

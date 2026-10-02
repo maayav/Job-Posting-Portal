@@ -9,7 +9,7 @@ All errors return `{ "error": "<code>", "message": "..." }`, with optional `issu
 ## Health
 
 ### `GET /api/health`
-Public. Canonical shape, no extra fields:
+Public liveness check. The Vercel shortcut does not connect to MongoDB and does not establish database readiness. Canonical shape, no extra fields:
 ```json
 { "status": "ok", "timestamp": "2026-09-13T12:34:56.789Z" }
 ```
@@ -28,20 +28,23 @@ Ends the current session and returns `204`. The token is rejected afterwards (`4
 ## Profile (submissions)
 
 ### `POST /api/profile` — multipart/form-data
-Fields: `resume` (PDF, ≤ 5 MB, magic-byte validated), `github_username` (optional; URL or username, normalized), `target_role` (`SDE` | `ML Engineer`).
+Fields: `resume` (PDF, ≤ 5 MB locally or 4 MB on Vercel, magic-byte validated; at most 30 pages and 60,000 extracted characters), `github_username` (optional; URL or username, normalized), `linkedinUrl` (optional HTTPS public `/in/` URL), `linkedinSummaryText` (optional user-provided text, maximum 10,000 characters), `leetcode_username` (optional public username or profile URL), and `target_role` (validated against the live ontology).
 
 Runs skill extraction via the selected text provider (Groq by default) as part of the request. Returns `201`:
 ```json
 {
   "id": "...", "target_role": "SDE", "github_username": "maayav",
-  "github_status": "ok", "extraction_status": "completed",
+   "github_status": "ok", "linkedinUrl": "https://www.linkedin.com/in/example-user/",
+   "linkedinDataSource": "user_provided_text", "extraction_status": "completed",
   "extraction_error": null, "submitted_at": "...", "created_at": "..."
 }
 ```
-Rejections: `400 no_file` / `400 invalid_file_type` / `413 file_too_large` / `422 resume_unreadable`.
+Rejections: `400 no_file` / `400 invalid_file_type` / `413 file_too_large` / `422 resume_unreadable` / `422 resume_too_long`. Expensive extraction and retry requests are limited to 5 per user per 15 minutes outside tests.
 
 ### `GET /api/profile/:id` — owner or admin
 Returns submission metadata + `extracted_skills` (skills with confidence, sources, evidence). **Never returns `resume_text`.**
+
+LinkedIn is URL-only unless the student supplies `linkedinSummaryText`. The backend never scrapes LinkedIn. User-provided LinkedIn evidence is labeled `linkedin_user_provided`; a URL alone is never sent to the extraction model as evidence. LeetCode uses an unofficial public GraphQL lookup and is supplementary; lookup failure does not block extraction.
 
 ### `DELETE /api/profile/:id` — owner or admin
 Deletes the stored resume file, extracted skill profile, and all related reports. Returns `204`.
@@ -50,15 +53,16 @@ Deletes the stored resume file, extracted skill profile, and all related reports
 
 ### `POST /api/analyze` — owner, rate-limited
 Body: `{ "submission_id" }`.
-- Active job exists (queued/processing) → `202` with the existing `report_id` (idempotent, enforced by a partial unique index).
+- Active job exists (queued/processing) → `202` with the existing `report_id` (idempotent; the named partial unique index on `submission_id` enforces one active report after the documented production index migration).
 - Completed within last 60s → `429 { "error": "analysis_cooldown", "message": "...", "retryAfterSeconds": N }`.
-- Otherwise → creates a `queued` report, returns `202 { "report_id", "status": "queued" }`.
+- Otherwise → creates a `queued` report. A long-running server returns `202 { "report_id", "status": "queued", "errorCode": null }` and starts in-process work. Vercel/test requests await the runner and return its terminal status (`completed` or `failed`) under the same 202 response.
+- Vercel provider calls/retries/analysis phases share a 50-second work budget; timeout persists `analysis_timeout` when the database remains available. There is no durable worker queue. Stale active reports are reaped after 10 minutes on startup and new analysis requests.
 
 ### `GET /api/analyze/:id/status` — owner or admin
 ```json
 { "report_id": "...", "submission_id": "...", "status": "queued|processing|completed|failed", "errorCode": null, "startedAt": null, "completedAt": null }
 ```
-`errorCode` values: `extraction_invalid`, `service_unavailable`, `embedding_failed`, `ontology_missing`, `analysis_failed`.
+`errorCode` values: `extraction_invalid`, `service_unavailable`, `embedding_failed`, `ontology_missing`, `analysis_failed`, `analysis_timeout`. Shared request expiry may return `503 request_timeout`.
 
 ## Reports
 
@@ -121,10 +125,13 @@ Query parameters (all optional):
 | `skills` | — | comma-separated; ANY-match, case-insensitive; synonyms normalized to canonical names (`reactjs` → `React`, `ui/ux` → `UI/UX`, `nodejs` → `Node.js`, …) |
 | `experience` | — | the seeker's years; returns jobs with `experienceLevel <= experience` |
 | `city` | — | case-insensitive exact match after trim (`CHENNAI` matches `Chennai`; no partial matching) |
+| `search` | — | up to 120 characters; comma-separated terms match title, company, skills, description or normalized skill names |
+| `sort` | `newest` | `newest`, `oldest`, or `title` |
+| `includeStatus` | `false` | admin-only status output; true only for `true` or `1` |
 | `page` | `1` | integer ≥ 1 |
 | `limit` | `20` | integer ≥ 1; values above 50 are clamped to 50 |
 
-Filters combine with AND across categories; within `skills` it is OR (any listed skill may match). Job skills are canonicalized with an explicit synonym map on create/update and on search (`UI/UX` stays distinct from frontend frameworks like `React`). Sorted newest first (`createdAt` desc). Empty results still return `200`:
+Filters combine with AND across categories; within `skills` it is OR (any listed skill may match). Job skills are canonicalized with an explicit synonym map on create/update and on search (`UI/UX` stays distinct from frontend frameworks like `React`). Sorted newest first unless `sort` requests otherwise. Students see open jobs; admins can inspect closed/archived jobs. Empty results still return `200`:
 
 ```json
 {
@@ -154,7 +161,7 @@ Body (unknown keys, including `createdBy`, are rejected with `400`):
 ```json
 { "title": "Frontend Developer", "skills": ["React", "JavaScript"], "experienceLevel": 1, "city": "Chennai", "description": "Build UIs" }
 ```
-Returns `201 { "job": { ... } }`. `createdBy` is always set server-side from the verified JWT.
+Optional `company` (maximum 150 characters) and `status` (`open`, `closed`, `archived`; default `open`) are also accepted. Returns `201 { "job": { ... } }`. `createdBy` is always set server-side from the verified JWT.
 
 ### `PUT /api/jobs/:id` — **admin only**
 
@@ -162,13 +169,13 @@ Partial body (at least one field). Returns `200 { "job": { ... } }`; `404` if th
 
 ### `DELETE /api/jobs/:id` — **admin only**
 
-Returns `204`; `404` if the job does not exist.
+Returns `204`; `404` if the job does not exist. A role with existing applications is archived so candidate history remains readable; a role with no applications is deleted.
 
 Validation errors use the shared shape: `{ "error": "validation_error", "message": "Validation failed", "issues": [...] }`. Missing/invalid JWT → `401`; insufficient role → `403 { "error": "forbidden", ... }`.
 
 ## Scoring (deterministic, not model-decided)
 
-`score = 100 × (Σ(wᵢ·mᵢ) / Σwᵢ)` where `wᵢ` is the role weight and `mᵢ` is the best normalized-cosine similarity of the ontology skill against the candidate skill embeddings, clamped to `[0,1]`. Strong ≥ 80%, Developing 60–79%, Gap < 60%. Gap priority = `wᵢ(1−mᵢ)` rescaled to `[0,1]`. Resources come only from the curated `ResourceCatalog` (exact normalized skill-name match).
+`score = round(100 × (Σ(wᵢ·mᵢ) / Σwᵢ))` where `wᵢ` is the role weight and `mᵢ` is the best allowed canonical-name match. Distinct canonical names or incompatible specific categories never match. Matching skills start at 1; absent evidence caps the value at 0.4 and low-depth evidence at 0.65. Values are clamped to `[0,1]`. Embeddings are generated/cached, but normal scoring is gated by this exact-name logic, rather than semantic similarity alone. Strong ≥ 80%, Developing 60–79%, Gap < 60%. Gap priority = `wᵢ(1−mᵢ)` rescaled to `[0,1]`. Resources come only from the curated `ResourceCatalog` (exact normalized skill-name match).
 ## Applications
 
 Applications use the existing JWT and role system: `student` users apply and see only their own applications; `admin` users manage every application.
@@ -204,15 +211,17 @@ Returns the application-driven candidate review dashboard. Optional query parame
 
 ### `GET /api/admin/applications/:applicationId` — admin only
 
-Returns the selected application plus the applicant's latest completed AI review data: ATS/readiness scores, matched/developing/missing skills, evidence, GitHub profile, and study plan. Passwords, tokens, and password hashes are excluded. Invalid IDs return `400`; missing applications return `404`.
+Returns the selected application plus its captured AI review data: ATS/readiness scores, matched/developing/missing skills, evidence, GitHub profile, and study plan. Passwords, tokens, and password hashes are excluded. Invalid IDs return `400`; missing applications return `404`.
+
+New applications record `reviewSnapshotAt` and the profile/report references available at application time. A missing or deleted captured profile/report remains unavailable; later submissions are never substituted. Older uncaptured applications use the applicant’s latest compatible profile/report for backward compatibility. ATS/readiness labels currently expose the same readiness score rather than a separately validated ATS metric.
 
 ### `GET /api/assistant/context` — authenticated
 
-Returns the current student's latest completed analysis context, including target role, scores, demonstrated skills, verified gaps, and study plan. Returns `409 analysis_required` when no completed analysis exists.
+For students, returns the latest completed analysis context, including target role, scores, demonstrated skills, verified gaps, and study plan; returns `409 analysis_required` when none exists. For admins, returns job/application/status totals, role breakdown and recent candidate details. Global counts cover all records; detailed context is capped at 200 recent jobs and 250 recent applications and reports coverage explicitly.
 
 ### `POST /api/assistant/chat` — authenticated
 
-Body: `{ "message": "What should I learn first?", "analysisId": "...", "history": [] }`. The server loads the owned analysis and sends only trusted structured context to Groq. Returns `{ reply, analysisId, usage: { groundedInAnalysis: true } }`. Messages are limited to 1200 characters and history to 12 entries.
+Body: `{ "message": "What should I learn first?", "analysisId": "...", "history": [] }`. The server loads the owned analysis and sends only trusted structured context to Groq. Returns `{ reply, analysisId, usage: { groundedInAnalysis: true } }`. Messages are limited to 1200 characters and history to 12 entries, with each history entry clamped to 4,000 characters. Admin chat uses admin job/application context, including application snapshots; it does not require a student analysis. Chat is limited to 20 requests per user per minute outside tests. Private context responses use `Cache-Control: private, no-store`.
 
 ### POST /api/profile/:id/retry-extraction
 
@@ -227,11 +236,11 @@ Authenticated owner/admin endpoint. Reuses the stored resume and refreshes optio
 | `jobId` | required |
 | `email` | optional contact email; defaults to the account email when omitted |
 | `coverLetter` | optional |
-| `resume` | optional PDF attachment (multipart only, max 5 MB, magic-byte validated) |
+| `resume` | optional PDF attachment (multipart only, max 5 MB locally / 4 MB on Vercel, magic-byte validated) |
 | `useProfileResume` | set `true` to copy the resume from the student's latest analysis |
-| `resumeUrl` | optional external link (JSON only) |
+| `resumeUrl` | optional HTTPS external link without embedded credentials |
 
-Responses include `applicantEmail`, `hasResume`, and `resumeUrl`. When a resume is stored, `resumeUrl` points at `GET /api/applications/:applicationId/resume` (owner or admin only), which serves the attached resume or falls back to the resume on the applicant's latest profile submission.
+Responses include `applicantEmail`, `hasResume`, and `resumeUrl`; private filesystem references are not returned. A selected profile resume is copied when applying; if no available profile resume exists, the API returns `409 profile_resume_unavailable` without creating an application. For stored attachments, `resumeUrl` points at `GET /api/applications/:applicationId/resume` (owner or admin only). Downloads never substitute a later profile resume; legacy records may use their captured profile reference. Current Vercel filesystem storage is ephemeral: an absent attachment returns `404 resume_not_found`, and an unavailable stored file returns `404 resume_missing`.
 
 ### `GET /api/notifications` — authenticated
 

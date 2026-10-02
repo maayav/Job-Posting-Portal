@@ -58,11 +58,21 @@ describe('ApplyDialog', () => {
 
   it('treats an already-applied response as success', async () => {
     const onApplied = vi.fn();
-    api.post.mockRejectedValue({ response: { status: 409 } });
+    api.post.mockRejectedValue({ response: { status: 409, data: { error: 'already_applied' } } });
 
     render(<ApplyDialog job={job} user={user} onClose={vi.fn()} onApplied={onApplied} />);
     fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
 
     await waitFor(() => expect(onApplied).toHaveBeenCalledWith('j1'));
+  });
+
+  it.each(['profile_resume_unavailable', 'job_closed'])('does not mark an application successful after %s', async (errorCode) => {
+    const onApplied = vi.fn();
+    api.post.mockRejectedValue({ message: 'Choose another resume option or an open job.', response: { status: 409, data: { error: errorCode } } });
+    render(<ApplyDialog job={job} user={user} onClose={vi.fn()} onApplied={onApplied} />);
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
+
+    expect(await screen.findByText('Choose another resume option or an open job.')).toBeTruthy();
+    expect(onApplied).not.toHaveBeenCalled();
   });
 });

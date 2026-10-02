@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import { ZodError } from 'zod';
 import { AppError } from '../utils/errors.js';
+import { MAX_RESUME_BYTES } from './upload.middleware.js';
 
 function sendError(res, err) {
   const body = { error: err.error ?? err.code, message: err.message };
@@ -10,7 +11,7 @@ function sendError(res, err) {
 }
 
 export function notFoundHandler(req, res, next) {
-  next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404, 'not_found'));
+  next(new AppError('Route not found', 404, 'not_found'));
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -32,7 +33,7 @@ export function errorHandler(err, req, res, next) {
 
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      sendError(res, new AppError('File exceeds the 5 MB size limit', 413, 'file_too_large'));
+      sendError(res, new AppError(`File exceeds the ${MAX_RESUME_BYTES / (1024 * 1024)} MB size limit`, 413, 'file_too_large'));
       return;
     }
     if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -64,6 +65,11 @@ export function errorHandler(err, req, res, next) {
     return;
   }
 
-  console.error('Unhandled error:', err);
+  console.error('Unhandled error:', {
+    name: err.name,
+    code: err.code,
+    method: req.method,
+    path: req.path,
+  });
   sendError(res, new AppError('Internal server error', 500, 'internal_error'));
 }

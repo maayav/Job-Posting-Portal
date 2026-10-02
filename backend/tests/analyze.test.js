@@ -8,6 +8,11 @@ import { app, initDb, closeDb, clearDb, registerUser, authHeader, seedTestOntolo
 
 const SAMPLE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'sample-resumes');
 
+vi.mock('../src/services/githubService.js', async (importOriginal) => ({
+  ...await importOriginal(),
+  fetchGithubProfile: vi.fn(async (username) => ({ username, repos: [], fromCache: false })),
+}));
+
 function fakeEmbed(name) {
   return fakeVector(name);
 }
@@ -32,6 +37,11 @@ vi.mock('../src/services/geminiService.js', () => ({
     ],
     model: 'mock-model',
   })),
+}));
+
+vi.mock('../src/services/githubService.js', async (importOriginal) => ({
+  ...await importOriginal(),
+  fetchGithubProfile: vi.fn(async (username) => ({ username, repos: [], fromCache: false })),
 }));
 
 async function createSubmission(token, github = 'maayav', role = 'SDE') {
@@ -79,7 +89,7 @@ describe('Analyze pipeline', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ submission_id: sid });
     expect(created.status).toBe(202);
-    expect(created.body.status).toBe('queued');
+    expect(created.body.status).toBe('completed');
 
     const status = await waitForStatus(token, created.body.report_id);
     expect(status.status).toBe('completed');
@@ -136,6 +146,47 @@ describe('Analyze pipeline', () => {
     await ReadinessReport.create({ submission_id: sid, target_role: 'SDE', status: 'failed' });
     const failedCount = await ReadinessReport.countDocuments({ submission_id: sid, status: 'failed' });
     expect(failedCount).toBe(1);
+  });
+
+  it('rejects a queued job while a processing job exists for the same submission', async () => {
+    const sid = await createSubmission(token, '');
+    const { ReadinessReport } = await import('../src/models/readinessReport.js');
+    await ReadinessReport.create({ submission_id: sid, target_role: 'SDE', status: 'processing', startedAt: new Date() });
+    await expect(ReadinessReport.create({ submission_id: sid, target_role: 'SDE', status: 'queued' })).rejects.toThrow(/E11000/);
+    expect(await ReadinessReport.countDocuments({ submission_id: sid, status: { $in: ['queued', 'processing'] } })).toBe(1);
+  });
+
+  it('returns the same active job when simultaneous requests race past the initial lookup', async () => {
+    const sid = await createSubmission(token, '');
+    const { ReadinessReport } = await import('../src/models/readinessReport.js');
+    const { enrichStudyPlan } = await import('../src/services/ai/studyPlanService.js');
+    const originalFindOne = ReadinessReport.findOne;
+    let arrivals = 0;
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    const spy = vi.spyOn(ReadinessReport, 'findOne').mockImplementation(function (filter, ...args) {
+      const query = originalFindOne.call(this, filter, ...args);
+      if (filter.submission_id !== sid || !filter.status?.$in || arrivals >= 2) return query;
+      return query.exec().then(async (existing) => {
+        arrivals += 1;
+        if (arrivals === 2) release();
+        await gate;
+        return existing;
+      });
+    });
+    enrichStudyPlan.mockImplementationOnce(async (plan) => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return plan;
+    });
+    try {
+      const responses = await Promise.all([0, 1].map(() => request(app).post('/api/analyze').set(authHeader(token)).send({ submission_id: sid })));
+      expect(responses.map((response) => response.status)).toEqual([202, 202]);
+      expect(new Set(responses.map((response) => response.body.report_id)).size).toBe(1);
+      expect(await ReadinessReport.countDocuments({ submission_id: sid })).toBe(1);
+    } finally {
+      spy.mockRestore();
+      enrichStudyPlan.mockImplementation(async (plan) => plan);
+    }
   });
 
   it('enforces the 60s cooldown with the fixed 429 body after completion', async () => {

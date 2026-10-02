@@ -71,8 +71,10 @@ function DetailPanel({ application, review, loading, onStatusChange, changing, o
   const { applicant: candidate = {}, job = {} } = application;
   const candidateReview = review ?? {};
   const displayStage = STAGE_LABELS[application.status] ?? application.status;
-  const resumeUrl = safeExternalUrl(application.resumeUrl);
+  const hasStoredResume = application.hasResume || Boolean(candidateReview.resumeFileRef);
+  const resumeUrl = application.hasResume ? null : safeExternalUrl(application.resumeUrl);
   const leetcodeUrl = safeExternalUrl(candidateReview.leetcodeUrl ?? candidateReview.leetCodeUrl);
+  const linkedinUrl = safeExternalUrl(candidateReview.linkedinUrl);
   return <aside className="card candidate-detail-panel" data-lenis-prevent>
       <div className="candidate-detail-heading">
       <div className="application-avatar large">{(candidate.name || '?').slice(0, 1).toUpperCase()}</div>
@@ -80,10 +82,11 @@ function DetailPanel({ application, review, loading, onStatusChange, changing, o
     </div>
     <div className="candidate-links">
       {resumeUrl && <a className="candidate-link" href={resumeUrl} target="_blank" rel="noreferrer">Resume ↗</a>}
-      {!resumeUrl && candidateReview.resumeFileRef && <button type="button" className="candidate-link" onClick={onViewResume} disabled={resumeLoading}>{resumeLoading ? 'Opening resume…' : 'Open resume ↗'}</button>}
-      {safeExternalUrl(candidateReview.githubUrl) && <a className="candidate-link" href={safeExternalUrl(candidateReview.githubUrl)} target="_blank" rel="noreferrer">GitHub ↗</a>}
+      {!resumeUrl && hasStoredResume && <button type="button" className="candidate-link" onClick={onViewResume} disabled={resumeLoading}>{resumeLoading ? 'Opening resume…' : 'Open resume ↗'}</button>}
+       {safeExternalUrl(candidateReview.githubUrl) && <a className="candidate-link" href={safeExternalUrl(candidateReview.githubUrl)} target="_blank" rel="noreferrer">GitHub ↗</a>}
+       {linkedinUrl && <a className="candidate-link" href={linkedinUrl} target="_blank" rel="noreferrer">LinkedIn ↗</a>}
       {leetcodeUrl && <a className="candidate-link" href={leetcodeUrl} target="_blank" rel="noreferrer">LeetCode ↗</a>}
-      {!resumeUrl && !candidateReview.resumeFileRef && !candidateReview.githubUrl && !leetcodeUrl && <span className="muted small">No external profiles attached</span>}
+      {!resumeUrl && !hasStoredResume && !candidateReview.githubUrl && !leetcodeUrl && !linkedinUrl && <span className="muted small">No external profiles attached</span>}
     </div>
     <div className="candidate-application-meta">
       <span><b>Role</b>{job.title || 'Archived role'}</span><span><b>Target role</b>{candidateReview.targetRole || job.title || '—'}</span><span><b>Company</b>{job.company || '—'}</span><span><b>Applied</b>{new Date(application.appliedAt).toLocaleDateString()}</span><span><b>Requirement</b>{job.experienceLevel == null ? '—' : `${job.experienceLevel} yr${job.experienceLevel === 1 ? '' : 's'} · ${job.city || '—'}`}</span>

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { z } from 'zod';
 import { AppError } from '../../utils/errors.js';
+import { assertRequestBudget, requestTimeout, requestSignal, waitWithinRequestBudget } from '../../utils/requestBudget.js';
 
 const strictModels = new Set(['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b']);
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -40,6 +41,7 @@ export function createTextProvider({ provider, apiKey, model, fallbackModels = [
     for (const chosenModel of [...new Set([model, ...fallbackModels])]) {
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
+          assertRequestBudget();
           const { systemPrompt, userPrompt, temperature = 0.2, maxTokens = 4096, schema, schemaName = 'response' } = options;
           let text;
           if (provider === 'groq') {
@@ -49,16 +51,17 @@ export function createTextProvider({ provider, apiKey, model, fallbackModels = [
               messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
               temperature, max_completion_tokens: maxTokens, response_format,
               ...(chosenModel.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
-            }, { timeout: 45000, headers: { Authorization: `Bearer ${apiKey}` } });
+            }, { timeout: requestTimeout(45000), signal: requestSignal(), headers: { Authorization: `Bearer ${apiKey}` } });
             text = response.data?.choices?.[0]?.message?.content;
           } else {
             const response = await client.post(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(chosenModel)}:generateContent`, {
               systemInstruction: { parts: [{ text: systemPrompt }] },
               contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
               generationConfig: { temperature, maxOutputTokens: maxTokens, ...(schema ? { responseMimeType: 'application/json' } : {}) },
-            }, { timeout: 45000, headers: { 'x-goog-api-key': apiKey } });
+            }, { timeout: requestTimeout(45000), signal: requestSignal(), headers: { 'x-goog-api-key': apiKey } });
             text = response.data?.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('');
           }
+          assertRequestBudget();
           if (!text?.trim()) throw new AppError('AI returned an incomplete response. Please retry.', 422, 'extraction_invalid');
           if (!schema) return { text: text.trim(), model: chosenModel, provider };
           let data;
@@ -66,6 +69,7 @@ export function createTextProvider({ provider, apiKey, model, fallbackModels = [
           catch { throw new AppError('AI returned invalid structured data. Please retry.', 422, 'extraction_invalid'); }
           return { data, model: chosenModel, provider };
         } catch (error) {
+          assertRequestBudget();
           lastError = error;
           const status = error.response?.status;
           const transient = !error.response && !(error instanceof AppError) || [429,500,502,503,504].includes(status);
@@ -73,7 +77,7 @@ export function createTextProvider({ provider, apiKey, model, fallbackModels = [
           // Never log Axios errors or upstream bodies: they can contain credentials or candidate data.
           console.warn(JSON.stringify({ event: 'ai_provider_failure', provider, model: chosenModel, status, code: error instanceof AppError ? error.code : error.code || 'upstream_error', attempt: attempt + 1 }));
           if (attempt === 0 && (transient || invalid)) {
-            await sleep(Math.min(5000, Math.max(250, (Number(error.response?.headers?.['retry-after']) || 1) * 1000)));
+            await waitWithinRequestBudget(Math.min(5000, Math.max(250, (Number(error.response?.headers?.['retry-after']) || 1) * 1000)), sleep);
             continue;
           }
           if (!transient && !invalid && status !== 404) throw providerError(error);

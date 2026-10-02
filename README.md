@@ -9,7 +9,7 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 - **Track your progress:** the student dashboard shows your ATS score, how many jobs you have applied to, and a readiness trend graph.
 - **Stay informed:** in-app notifications tell you when an administrator moves your application through the pipeline.
 - **Save for later:** bookmark jobs into a wishlist and apply from the dashboard when you are ready.
-- **Understand your readiness:** upload a resume and optional GitHub/LeetCode profile; review extracted evidence, skill matches, gaps, and a prioritized study plan.
+- **Understand your readiness:** upload a resume and optional GitHub, LinkedIn user-provided text, and LeetCode profile; review extracted evidence, skill matches, gaps, and a prioritized study plan.
 - **Get grounded AI help:** ask questions about your latest analysis and receive recommendations tied to its verified skills and gaps.
 - **Review candidates:** see application totals, filter by role or candidate, inspect a candidate’s profile and evaluation, and move an application through review stages.
 - **Manage the job board:** administrators can create, edit, and remove postings.
@@ -28,6 +28,8 @@ Vortex is a placement and career-readiness workspace for students and campus pla
 - Backend API: <https://vortex-api-eta.vercel.app/api>
 - Health check: <https://vortex-api-eta.vercel.app/api/health>
 
+Safe checks on 2 October 2026 confirmed the frontend route fallback and API liveness. Authenticated AI, database persistence and resume durability remain unverified in production; see [integration status](docs/INTEGRATION_STATUS.md).
+
 ## Technology
 
 | Area | Stack |
@@ -45,7 +47,7 @@ Follow these steps in order on a fresh machine. Every command runs from the repo
 
 ### 1. Prerequisites
 
-- Node.js **22.12 or later** and npm
+- Node.js **22.x, at least 22.12**, and npm (matches the backend deployment engine)
 - Docker Desktop (Windows/macOS) or Docker Engine (Linux), for local MongoDB
 - Git
 
@@ -84,7 +86,7 @@ GEMINI_API_KEY=<your-gemini-key>
 | `GROQ_API_KEY` | Free key from <https://console.groq.com/keys> — text generation for resume extraction, study plans, and the AI assistant. |
 | `GEMINI_API_KEY` | Free key from <https://aistudio.google.com/apikey> — skill embeddings only. |
 | `GITHUB_TOKEN` | Optional. Raises the GitHub API rate limit from 60 to 5,000 requests/hour when collecting profile evidence. |
-| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Optional. Persistent resume storage in production; locally resumes stay on disk in `backend/storage`. |
+| `RESUME_STORAGE_DIR` | Optional local filesystem directory. Vercel defaults to ephemeral `/tmp`; no durable cloud adapter is enabled. |
 
 Generate the JWT secret with Node:
 
@@ -128,7 +130,7 @@ npm run dev
 
 Open <http://localhost:5173>. The frontend proxies `/api` requests to the backend at `http://localhost:5000`.
 
-The frontend uses port `5173` and the backend uses port `5000`. Both fail fast when the port is already taken, so stop any previous dev server or free the port first.
+The frontend uses port `5173` and the backend uses port `5000`. The API fails when its port is occupied. Vite can select the next available port; use the URL printed in its terminal.
 
 ### 8. Create an administrator
 
@@ -157,7 +159,7 @@ The job seed is idempotent and includes 35 demo postings across the 21-role cata
 
 Refresh curated learning resources independently of AI embeddings with `npm --prefix backend run seed:resources`. This covers every skill in the demo jobs and analysis ontology. Existing reports load the latest matching links while keeping their completion state. Run `npm --prefix backend run check:resources` to check external link availability; remote sites can occasionally block automated checks.
 
-The landing page uses cream/charcoal glass surfaces, animated neutral light trails, and directional scroll reveals. Animations play by default; the header's play/pause icon pauses those page effects. The interactive product tour retains its own motion control.
+The landing page uses flat cream and charcoal surfaces, locally hosted Manrope, and restrained animations. Its guide is generated from the project’s role and resource catalogs.
 
 On a fresh local database, the application seed creates demo students `demo.student1@vortex.dev` through `demo.student8@vortex.dev`, each with the development-only password `demo-pass-123`, plus sample reviews and applications. These accounts and this password are for a disposable local development database only. Never use them in production.
 
@@ -184,7 +186,7 @@ The backend reads configuration from `backend/.env` (created by `npm run setup`)
 | `AI_EMBEDDING_PROVIDER` | no | `gemini` | Embedding provider (Gemini only) |
 | `AI_TEXT_FALLBACK_PROVIDER` | no | `none` | Optional text fallback provider |
 | `GITHUB_TOKEN` | no | empty | Raises the GitHub API rate limit for profile evidence collection |
-| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | no | empty | Persistent resume storage in production; local disk is used when blank |
+| `RESUME_STORAGE_DIR` | no | host-specific | Local resume directory. This does not enable durable cloud storage; Vercel defaults to ephemeral `/tmp/vortex-storage`. |
 
 The text and embedding providers are configured separately. The frontend needs no variables for local development — the Vite dev server proxies `/api` to `http://localhost:5000`. For a production build, set `VITE_API_URL` to the deployed API including the `/api` path (see `frontend/.env.example`); only public values belong in `VITE_` variables.
 
@@ -197,7 +199,8 @@ Run from the repository root:
 | `npm run setup` | Create `backend/.env` from the example if missing |
 | `npm run install:all` | Install backend and frontend dependencies |
 | `npm run dev` | Start the API and Vite development servers |
-| `npm test` | Run backend and frontend test suites (MongoDB must be available for backend tests) |
+| `npm test` | Run backend and frontend tests; backend uses a unique disposable database on a local MongoDB endpoint |
+| `npm --prefix backend run test:unit` | Run mocked backend unit tests without MongoDB or provider quota |
 | `npm run lint` | Run the frontend linter |
 | `npm run build` | Build the production frontend |
 
@@ -227,7 +230,7 @@ npm run dev                   # API on :5000 and Vite on :5173
 
 ### Windows (PowerShell)
 
-WSL is not required. Install Node.js 22.12+ (or nvm-windows), Git for Windows, and Docker Desktop with the WSL2 backend, then run the same commands from the repository root:
+WSL is not required. Install Node.js 22.x, at least 22.12 (or nvm-windows), Git for Windows, and Docker Desktop with the WSL2 backend, then run the same commands from the repository root:
 
 ```powershell
 npm run setup
@@ -271,6 +274,10 @@ scripts/    Cross-platform root setup and development launchers
 - [`docs/SCHEMA.md`](docs/SCHEMA.md) — MongoDB models and indexes
 - [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) — implementation decisions and development history
 - [`docs/JOB_PORTAL_INTEGRATION_AUDIT.md`](docs/JOB_PORTAL_INTEGRATION_AUDIT.md) — job portal integration notes
+- [`docs/PROJECT_TECHNICAL_DOCUMENTATION.md`](docs/PROJECT_TECHNICAL_DOCUMENTATION.md) — verified architecture and feature documentation
+- [`docs/INTEGRATION_STATUS.md`](docs/INTEGRATION_STATUS.md) — external integration and deployment verification status
+- [`docs/BASELINE_AUDIT.md`](docs/BASELINE_AUDIT.md) — findings, decisions, fixes, and verification limits
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) — Cloudflare Pages and Vercel deployment guide
 
 ## Security notes
 

@@ -51,7 +51,7 @@ export default function ApplyDialog({ job, user, onClose, onApplied }) {
       await api.post('/applications', form);
       onApplied(job.id);
     } catch (err) {
-      if (err.response?.status === 409) {
+      if (err.response?.status === 409 && err.response?.data?.error === 'already_applied') {
         onApplied(job.id);
         return;
       }

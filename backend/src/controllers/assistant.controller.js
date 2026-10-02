@@ -8,16 +8,19 @@ import { generateAssistantReply } from '../services/geminiService.js';
 import { hydrateStudyPlan } from '../services/resourceService.js';
 import { AppError } from '../utils/errors.js';
 
+export const MAX_ADMIN_CONTEXT_JOBS = 200;
+export const MAX_ADMIN_CONTEXT_APPLICATIONS = 250;
+
 const messageSchema = z.object({
   message: z.string().trim().min(1, 'Message is required').max(1200, 'Message is too long'),
   analysisId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),
-  history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string().trim().max(4000) })).max(12).optional().default([]),
+  history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string().trim().transform((content) => content.slice(0, 4000)) })).max(12).optional().default([]),
 });
 
 async function loadAnalysis(userId, analysisId) {
   let report;
   if (analysisId) {
-    report = await ReadinessReport.findById(analysisId).lean();
+    report = await ReadinessReport.findOne({ _id: analysisId, status: 'completed' }).lean();
   } else {
     const submissions = await ProfileSubmission.find({ user_id: userId }).select('_id').lean();
     report = await ReadinessReport.findOne({ submission_id: { $in: submissions.map((item) => item._id) }, status: 'completed' })
@@ -61,9 +64,12 @@ function emptyStatusCounts() {
 async function latestAdminReviewsForApplicants(applicantIds) {
   if (!applicantIds.length) return new Map();
 
-  const submissions = await ProfileSubmission.find({ user_id: { $in: applicantIds } })
-    .sort({ submitted_at: -1 })
-    .lean();
+  const submissions = await ProfileSubmission.aggregate([
+    { $match: { user_id: { $in: applicantIds } } },
+    { $sort: { submitted_at: -1 } },
+    { $group: { _id: '$user_id', submission: { $first: { _id: '$_id', user_id: '$user_id', target_role: '$target_role' } } } },
+    { $replaceRoot: { newRoot: '$submission' } },
+  ]).option({ maxTimeMS: 5000 });
   const latestSubmissionByUser = new Map();
   for (const submission of submissions) {
     const key = submission.user_id.toString();
@@ -72,10 +78,13 @@ async function latestAdminReviewsForApplicants(applicantIds) {
 
   const submissionIds = [...latestSubmissionByUser.values()].map((submission) => submission._id);
   const [reports, profiles] = await Promise.all([
-    ReadinessReport.find({ submission_id: { $in: submissionIds }, status: 'completed' })
-      .sort({ completedAt: -1 })
-      .lean(),
-    ExtractedSkillProfile.find({ submission_id: { $in: submissionIds } }).lean(),
+    ReadinessReport.aggregate([
+      { $match: { submission_id: { $in: submissionIds }, status: 'completed' } },
+      { $sort: { completedAt: -1 } },
+      { $group: { _id: '$submission_id', report: { $first: { submission_id: '$submission_id', score: '$score', strong_areas: '$strong_areas', developing_areas: '$developing_areas', gaps: '$gaps' } } } },
+      { $replaceRoot: { newRoot: '$report' } },
+    ]).option({ maxTimeMS: 5000 }),
+    ExtractedSkillProfile.find({ submission_id: { $in: submissionIds } }).select('submission_id skills').lean(),
   ]);
   const reportBySubmission = new Map();
   for (const report of reports) {
@@ -100,6 +109,53 @@ async function latestAdminReviewsForApplicants(applicantIds) {
   return reviewByUser;
 }
 
+function hasApplicationSnapshot(application) {
+  return Boolean(application.reviewSnapshotAt || application.profileSubmissionId || application.readinessReportId);
+}
+
+async function adminReviewsForApplications(applications) {
+  const captured = applications.filter(hasApplicationSnapshot);
+  const legacy = applications.filter((application) => !hasApplicationSnapshot(application));
+  const submissionIds = captured.map((application) => application.profileSubmissionId).filter(Boolean);
+  const reportIds = captured.map((application) => application.readinessReportId).filter(Boolean);
+  const [legacyReviews, submissions, reports, profiles] = await Promise.all([
+    latestAdminReviewsForApplicants(legacy.map((application) => application.applicant?._id).filter(Boolean)),
+    submissionIds.length ? ProfileSubmission.find({ _id: { $in: submissionIds } }).select('_id user_id target_role').lean() : [],
+    reportIds.length ? ReadinessReport.find({ _id: { $in: reportIds }, status: 'completed' })
+      .select('_id submission_id score strong_areas developing_areas gaps').lean() : [],
+    submissionIds.length ? ExtractedSkillProfile.find({ submission_id: { $in: submissionIds } }).select('submission_id skills').lean() : [],
+  ]);
+  const submissionById = new Map(submissions.map((submission) => [submission._id.toString(), submission]));
+  const reportById = new Map(reports.map((report) => [report._id.toString(), report]));
+  const profileBySubmission = new Map(profiles.map((profile) => [profile.submission_id.toString(), profile]));
+  const reviews = new Map();
+
+  for (const application of applications) {
+    const applicantId = (application.applicant?._id ?? application.applicant)?.toString();
+    if (!hasApplicationSnapshot(application)) {
+      const legacyReview = legacyReviews.get(applicantId);
+      if (legacyReview) reviews.set(application._id.toString(), legacyReview);
+      continue;
+    }
+    // A captured absence or a deleted snapshot stays absent. A later profile
+    // must not change the evidence attached to an existing application.
+    const submission = submissionById.get(application.profileSubmissionId?.toString());
+    if (!submission || submission.user_id.toString() !== applicantId) continue;
+    const capturedReport = reportById.get(application.readinessReportId?.toString());
+    const report = capturedReport?.submission_id.toString() === submission._id.toString() ? capturedReport : null;
+    const profile = profileBySubmission.get(submission._id.toString());
+    reviews.set(application._id.toString(), {
+      targetRole: submission.target_role,
+      roleReadinessScore: report?.score ?? null,
+      strongSkills: report?.strong_areas ?? [],
+      developingSkills: report?.developing_areas ?? [],
+      missingSkills: report?.gaps ?? [],
+      extractedSkills: profile?.skills ?? [],
+    });
+  }
+  return reviews;
+}
+
 function selectAdminCandidates(candidates, message) {
   const query = message.toLowerCase();
   const tokens = query.split(/[^a-z0-9@.+-]+/).filter((token) => token.length > 2);
@@ -117,19 +173,25 @@ function selectAdminCandidates(candidates, message) {
  * provider while including every fact an admin commonly asks for.
  */
 async function loadAdminContext() {
-  const [jobs, statusRows, applicationRows, applications, candidateRows] = await Promise.all([
+  const [jobs, statusRows, applicationRows, applications, candidateRows, jobStatusRows] = await Promise.all([
     Job.find()
       .select('title company city skills experienceLevel description status createdAt updatedAt')
       .sort({ createdAt: -1 })
+      .limit(MAX_ADMIN_CONTEXT_JOBS)
       .lean(),
     Application.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
-    Application.aggregate([{ $group: { _id: '$job', total: { $sum: 1 }, statuses: { $push: '$status' } } }]),
+    Application.aggregate([
+      { $group: { _id: { job: '$job', status: '$status' }, count: { $sum: 1 } } },
+      { $group: { _id: '$_id.job', total: { $sum: '$count' }, statuses: { $push: { status: '$_id.status', count: '$count' } } } },
+    ]),
     Application.find()
       .sort({ updatedAt: -1 })
+      .limit(MAX_ADMIN_CONTEXT_APPLICATIONS)
       .populate('applicant', 'name email')
       .populate('job', 'title company city skills experienceLevel')
       .lean({ virtuals: false }),
     Application.aggregate([{ $group: { _id: '$applicant' } }, { $count: 'count' }]),
+    Job.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
   ]);
 
   const statusCounts = emptyStatusCounts();
@@ -140,7 +202,7 @@ async function loadAdminContext() {
   const applicationsByJob = activeJobs.map((job) => {
     const row = groupedByJob.get(job._id.toString());
     const counts = emptyStatusCounts();
-    for (const status of row?.statuses ?? []) counts[status] = (counts[status] ?? 0) + 1;
+    for (const { status, count } of row?.statuses ?? []) counts[status] = count;
     return {
       jobId: job._id.toString(),
       title: job.title,
@@ -153,14 +215,11 @@ async function loadAdminContext() {
     };
   });
 
-  const reviews = await latestAdminReviewsForApplicants(
-    applications.map((application) => application.applicant?._id).filter(Boolean),
-    { details: true },
-  );
+  const reviews = await adminReviewsForApplications(applications);
   const candidates = applications.map((application) => {
     const applicant = application.applicant;
     const job = application.job;
-    const review = reviews.get(applicant?._id?.toString());
+    const review = reviews.get(application._id.toString());
     return {
       applicationId: application._id.toString(),
       applicant: {
@@ -185,12 +244,14 @@ async function loadAdminContext() {
     role: 'admin',
     stats: {
       refreshedAt: new Date().toISOString(),
-      totalJobs: jobs.length,
-      openJobs: activeJobs.length,
+      totalJobs: jobStatusRows.reduce((total, row) => total + row.count, 0),
+      openJobs: jobStatusRows.filter((row) => !row._id || row._id === 'open').reduce((total, row) => total + row.count, 0),
       totalApplications: Object.values(statusCounts).reduce((total, count) => total + count, 0),
       totalCandidates: candidateRows[0]?.count ?? 0,
       statusCounts,
       candidateRecordsAvailable: candidates.length,
+      jobRecordsIncluded: jobs.length,
+      detailCoverage: 'Details include up to 200 recent jobs and 250 recent applications. Global totals include all records.',
     },
     openRoles: applicationsByJob,
     candidates,
@@ -210,6 +271,7 @@ Answer only from the supplied admin workspace snapshot: open job postings, appli
 Write concise, practical Markdown that is easy to scan. Start with a direct answer or short heading. Use compact tables only when they materially improve comparison; otherwise use bullets. For candidate questions, name the role and application status, then include readiness or skills only when present. End with one useful operational next step when appropriate.`;
 
 export async function getAssistantContext(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   if (req.user.role === 'admin') {
     res.json(await loadAdminContext());
     return;
@@ -219,6 +281,7 @@ export async function getAssistantContext(req, res) {
 }
 
 export async function chat(req, res) {
+  res.set('Cache-Control', 'private, no-store');
   const data = messageSchema.parse(req.body);
   const isAdmin = req.user.role === 'admin';
   const context = isAdmin ? await loadAdminContext() : toContext(await loadAnalysis(req.user.id, data.analysisId));
@@ -230,7 +293,7 @@ export async function chat(req, res) {
         candidateCoverage: {
           available: context.stats.candidateRecordsAvailable,
           included: selectAdminCandidates(context.candidates, data.message).length,
-          note: 'Candidate records are selected by the current question; global totals come from database aggregates.',
+          note: 'Candidate details are selected from up to 250 recent applications. Older details may be absent; global totals come from complete database aggregates.',
         },
       }
     : {

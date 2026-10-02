@@ -68,7 +68,7 @@ export default function UploadPage() {
     return () => { pollCancelled.current = true; };
   }, [poll]);
 
-  async function handleUpload(file, github, leetcode, role) {
+  async function handleUpload(file, github, linkedinUrl, linkedinSummaryText, leetcode, role) {
     setError('');
     setLoading(true);
     setPhase('upload');
@@ -76,6 +76,8 @@ export default function UploadPage() {
       const form = new FormData();
       form.append('resume', file);
       form.append('github_username', github);
+      form.append('linkedinUrl', linkedinUrl);
+      form.append('linkedinSummaryText', linkedinSummaryText);
       form.append('leetcode_username', leetcode);
       form.append('target_role', role);
 
@@ -198,7 +200,7 @@ export default function UploadPage() {
           <div className="student-analysis-benefit"><span>01</span><div><strong>A skill map</strong><small>See strengths, developing areas, and gaps.</small></div></div>
           <div className="student-analysis-benefit"><span>02</span><div><strong>A readiness signal</strong><small>Understand your profile against the target role.</small></div></div>
           <div className="student-analysis-benefit"><span>03</span><div><strong>A practical plan</strong><small>Focus your learning on the next most useful step.</small></div></div>
-          <div className="student-analysis-note"><Icon name="check" size={15} /> PDF resume required · GitHub and LeetCode are optional</div>
+           <div className="student-analysis-note"><Icon name="check" size={15} /> PDF resume required · external profiles are supplementary</div>
         </aside>
       </div>
     </div>

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { env } from '../config/env.js';
 import { AppError } from '../utils/errors.js';
 import { withTransientRetry, isTransientError } from '../utils/retry.js';
+import { assertRequestBudget, requestTimeout, requestSignal } from '../utils/requestBudget.js';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
@@ -33,15 +34,16 @@ async function embedRequest(text) {
   if (!env.GEMINI_API_KEY) {
     throw new AppError('GEMINI_API_KEY is required for embeddings', 503, 'ai_configuration_error');
   }
-  const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:embedContent?key=${env.GEMINI_API_KEY}`;
+  const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:embedContent`;
   const res = await axios.post(
     url,
     {
       model: `models/${env.EMBEDDING_MODEL}`,
       content: { parts: [{ text }] },
     },
-    { timeout: 30000 }
+    { timeout: requestTimeout(30000), signal: requestSignal(), headers: { 'x-goog-api-key': env.GEMINI_API_KEY } }
   );
+  assertRequestBudget();
   const values = res.data?.embedding?.values;
   if (!Array.isArray(values) || values.length === 0) {
     throw new Error('Embedding response missing values');
@@ -53,7 +55,7 @@ async function embedBatchRequest(names) {
   if (!env.GEMINI_API_KEY) {
     throw new AppError('GEMINI_API_KEY is required for embeddings', 503, 'ai_configuration_error');
   }
-  const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:batchEmbedContents?key=${env.GEMINI_API_KEY}`;
+  const url = `${API_BASE}/models/${env.EMBEDDING_MODEL}:batchEmbedContents`;
   const res = await axios.post(
     url,
     {
@@ -62,8 +64,9 @@ async function embedBatchRequest(names) {
         content: { parts: [{ text }] },
       })),
     },
-    { timeout: 60000 }
+    { timeout: requestTimeout(60000), signal: requestSignal(), headers: { 'x-goog-api-key': env.GEMINI_API_KEY } }
   );
+  assertRequestBudget();
   const embeddings = res.data?.embeddings;
   if (!Array.isArray(embeddings) || embeddings.length !== names.length) {
     throw new Error('Batch embedding response missing values');

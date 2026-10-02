@@ -2,10 +2,13 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../src/app.js';
 import { connectDB, disconnectDB } from '../src/config/db.js';
+import { env } from '../src/config/env.js';
+import { assertDisposableTestDatabase } from './test-environment.js';
 
 export { app };
 
 export async function initDb() {
+  assertDisposableTestDatabase(env.MONGO_URI);
   await connectDB({ retry: false });
 }
 
@@ -15,6 +18,7 @@ export async function closeDb() {
 
 export async function clearDb() {
   if (!mongoose.connection.db) return;
+  assertDisposableTestDatabase(env.MONGO_URI);
   const collections = await mongoose.connection.db.collections();
   await Promise.all(collections.map((c) => c.deleteMany({})));
 }

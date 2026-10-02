@@ -18,7 +18,24 @@ export const authLimiter = rateLimit({
 export const analyzeLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: testLimit ?? 10,
+  keyGenerator: (req) => req.user.id,
   message: { error: 'rate_limited', message: 'Too many analysis requests, please slow down.' },
+  ...standard,
+});
+
+export const assistantLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: testLimit ?? 20,
+  keyGenerator: (req) => req.user.id,
+  message: { error: 'rate_limited', message: 'Too many assistant requests, please slow down.' },
+  ...standard,
+});
+
+export const profileLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: testLimit ?? 5,
+  keyGenerator: (req) => req.user.id,
+  message: { error: 'rate_limited', message: 'Too many profile extraction requests, please try again later.' },
   ...standard,
 });
 

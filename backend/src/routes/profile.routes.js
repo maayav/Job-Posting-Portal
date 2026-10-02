@@ -3,6 +3,7 @@ import { ProfileSubmission } from '../models/profileSubmission.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireOwnership } from '../middleware/ownership.middleware.js';
 import { uploadResume, validateResumeFile } from '../middleware/upload.middleware.js';
+import { profileLimiter } from '../middleware/rateLimit.middleware.js';
 import * as profileController from '../controllers/profile.controller.js';
 
 const router = Router();
@@ -11,6 +12,7 @@ router.use(requireAuth);
 
 router.post(
   '/',
+  profileLimiter,
   uploadResume,
   validateResumeFile,
   profileController.createProfile
@@ -21,7 +23,7 @@ router.get(
   requireOwnership(ProfileSubmission),
   profileController.getProfile
 );
-router.post('/:id/retry-extraction', requireOwnership(ProfileSubmission), profileController.retryExtraction);
+router.post('/:id/retry-extraction', profileLimiter, requireOwnership(ProfileSubmission), profileController.retryExtraction);
 
 router.delete(
   '/:id',

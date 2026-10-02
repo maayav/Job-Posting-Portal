@@ -1,6 +1,11 @@
+import { assertDisposableTestDatabase, createTestDatabaseUri } from './test-environment.js';
+
 process.env.NODE_ENV = 'test';
-process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/placement_skill_gap_test';
+process.env.MONGO_URI = process.env.TEST_MONGO_URI || createTestDatabaseUri();
+assertDisposableTestDatabase(process.env.MONGO_URI);
+if (process.env.TEST_RESUME_STORAGE_DIR) process.env.RESUME_STORAGE_DIR = process.env.TEST_RESUME_STORAGE_DIR;
 process.env.JWT_SECRET = 'test-secret';
+process.env.GITHUB_TOKEN = '';
 // Drift tests need the real key (loaded from .env by dotenv); all other tests
 // run with mocked AI services and a dummy key.
 if (process.env.RUN_DRIFT_TEST !== '1') {

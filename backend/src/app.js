@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { env } from './config/env.js';
 import { corsOptions } from './config/cors.js';
 import { apiLimiter } from './middleware/rateLimit.middleware.js';
+import { serverlessRequestBudget } from './middleware/requestBudget.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
@@ -27,6 +29,8 @@ if (process.env.VERCEL || env.NODE_ENV === 'production') {
 }
 
 app.disable('x-powered-by');
+app.use(serverlessRequestBudget);
+app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '2mb' }));
 app.use(apiLimiter);

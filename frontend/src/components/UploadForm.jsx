@@ -1,9 +1,27 @@
 import { useEffect, useState } from 'react';
 import { api, errorMessage } from '../api/client';
 
+function isValidLinkedInUrl(value) {
+  if (!value) return true;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password || url.port
+      || !['linkedin.com', 'www.linkedin.com'].includes(url.hostname.toLowerCase())) return false;
+    const path = url.pathname.replace(/\/+$/, '');
+    if (!path.startsWith('/in/')) return false;
+    const slug = decodeURIComponent(path.slice('/in/'.length));
+    return /^[\p{L}\p{N}][\p{L}\p{N}_-]{0,199}$/u.test(slug)
+      && `https://www.linkedin.com/in/${encodeURIComponent(slug)}/`.length <= 500;
+  } catch {
+    return false;
+  }
+}
+
 export default function UploadForm({ onSubmit, loading, requestedRole }) {
   const [file, setFile] = useState(null);
   const [github, setGithub] = useState('');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [linkedinSummaryText, setLinkedinSummaryText] = useState('');
   const [leetcode, setLeetcode] = useState('');
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState('');
@@ -43,16 +61,32 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setError('');
     if (!file) {
       setError('Choose a resume PDF first.');
+      return;
+    }
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      setError('Only PDF resumes are accepted.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Resume must be 5MB or smaller.');
       return;
     }
     if (!role) {
       setError('Select a target role.');
       return;
     }
-    if (error) return;
-    onSubmit(file, github.trim(), leetcode.trim(), role);
+    if (!isValidLinkedInUrl(linkedinUrl.trim())) {
+      setError('Enter a public HTTPS LinkedIn profile URL, such as https://www.linkedin.com/in/example-user/.');
+      return;
+    }
+    if (linkedinSummaryText.trim().length > 10000) {
+      setError('LinkedIn summary must be 10,000 characters or fewer.');
+      return;
+    }
+    onSubmit(file, github.trim(), linkedinUrl.trim(), linkedinSummaryText.trim(), leetcode.trim(), role);
   }
 
   return (
@@ -73,6 +107,29 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
           onChange={(e) => setGithub(e.target.value)}
           placeholder="e.g. github.com/maayav or maayav"
         />
+      </label>
+
+      <label>
+        LinkedIn profile URL <span className="optional">(optional)</span>
+        <input
+          type="url"
+          value={linkedinUrl}
+          onChange={(e) => setLinkedinUrl(e.target.value)}
+          placeholder="https://www.linkedin.com/in/example-user/"
+        />
+        <span className="muted small">URL only. Vortex does not scrape LinkedIn.</span>
+      </label>
+
+      <label>
+        LinkedIn About or profile text <span className="optional">(optional)</span>
+        <textarea
+          rows="4"
+          maxLength="10000"
+          value={linkedinSummaryText}
+          onChange={(e) => setLinkedinSummaryText(e.target.value)}
+          placeholder="Paste selected public profile text you want Vortex to consider."
+        />
+        <span className="muted small">User-provided text only · up to 10,000 characters.</span>
       </label>
 
       <label>
@@ -99,6 +156,8 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
 
       {rolesError && <p className="error">Could not load target roles: {rolesError}</p>}
       {error && <p className="error">{error}</p>}
+
+      <p className="muted small">GitHub and LeetCode lookups are supplementary and may be unavailable. LinkedIn is never fetched automatically.</p>
 
       <button className="primary" disabled={loading || roles.length === 0}>
         {loading ? 'Uploading & extracting skills…' : 'Upload & extract skills'}

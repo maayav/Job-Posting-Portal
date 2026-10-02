@@ -29,6 +29,7 @@ export async function getReport(req, res) {
   if (report.status !== 'completed') {
     throw new AppError('Report is not ready yet', 409, 'report_not_ready');
   }
+  res.set('Cache-Control', 'private, no-store');
   res.json({ ...toJson(report), study_plan: await hydrateStudyPlan(report.study_plan) });
 }
 

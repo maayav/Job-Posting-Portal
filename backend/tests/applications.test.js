@@ -74,11 +74,73 @@ describe('Job applications', () => {
       expect(res.body.application.statusHistory[0].status).toBe('applied');
     });
 
+    it('stores the profile and completed readiness report used at application time', async () => {
+      const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+      const { ReadinessReport } = await import('../src/models/readinessReport.js');
+      const { Application } = await import('../src/models/application.js');
+      const submission = await ProfileSubmission.create({
+        user_id: studentId,
+        resume_file_ref: 'snapshot.pdf',
+        resume_text: 'Resume evidence',
+        target_role: 'SDE',
+      });
+      const report = await ReadinessReport.create({
+        submission_id: submission._id,
+        target_role: 'SDE',
+        status: 'completed',
+        score: 82,
+        completedAt: new Date(),
+      });
+
+      const response = await applyAs(studentToken);
+      expect(response.status).toBe(201);
+      const application = await Application.findById(response.body.application.id).lean();
+      expect(application.profileSubmissionId.toString()).toBe(submission._id.toString());
+      expect(application.readinessReportId.toString()).toBe(report._id.toString());
+    });
+
     it('returns 409 when the same student applies twice', async () => {
       await applyAs(studentToken, jobId);
       const res = await applyAs(studentToken, jobId);
       expect(res.status).toBe(409);
       expect(res.body.error).toBe('already_applied');
+    });
+
+    it.each(['profile', 'report'])('does not substitute newer evidence when the captured %s is deleted', async (missing) => {
+      const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+      const { ReadinessReport } = await import('../src/models/readinessReport.js');
+      const original = await ProfileSubmission.create({ user_id: studentId, resume_file_ref: 'original.pdf', resume_text: 'Original evidence', target_role: 'SDE' });
+      const originalReport = await ReadinessReport.create({ submission_id: original._id, target_role: 'SDE', status: 'completed', score: 42, completedAt: new Date() });
+      const applied = await applyAs(studentToken);
+      const newer = await ProfileSubmission.create({ user_id: studentId, resume_file_ref: 'newer.pdf', resume_text: 'Newer evidence', target_role: 'AI Engineer' });
+      await ReadinessReport.create({ submission_id: newer._id, target_role: 'AI Engineer', status: 'completed', score: 99, completedAt: new Date() });
+      if (missing === 'profile') await original.deleteOne();
+      else await originalReport.deleteOne();
+      const details = await request(app).get(`/api/admin/applications/${applied.body.application.id}`).set(authHeader(adminToken));
+      expect(details.status).toBe(200);
+      expect(details.body.candidate.atsScore).toBeNull();
+      if (missing === 'profile') expect(details.body.review).toBeNull();
+      else expect(details.body.review.submissionId).toBe(String(original._id));
+    });
+
+    it('preserves an application captured before any analysis existed', async () => {
+      const applied = await applyAs(studentToken);
+      const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+      const { ReadinessReport } = await import('../src/models/readinessReport.js');
+      const later = await ProfileSubmission.create({ user_id: studentId, resume_file_ref: 'later.pdf', resume_text: 'Later evidence', target_role: 'SDE' });
+      await ReadinessReport.create({ submission_id: later._id, target_role: 'SDE', status: 'completed', score: 99, completedAt: new Date() });
+      const details = await request(app).get(`/api/admin/applications/${applied.body.application.id}`).set(authHeader(adminToken));
+      expect(details.body.review).toBeNull();
+    });
+
+    it('preserves the absence of a completed report at application time', async () => {
+      const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+      const { ReadinessReport } = await import('../src/models/readinessReport.js');
+      const submission = await ProfileSubmission.create({ user_id: studentId, resume_file_ref: 'later.pdf', resume_text: 'Evidence', target_role: 'SDE' });
+      const applied = await applyAs(studentToken);
+      await ReadinessReport.create({ submission_id: submission._id, target_role: 'SDE', status: 'completed', score: 99, completedAt: new Date() });
+      const details = await request(app).get(`/api/admin/applications/${applied.body.application.id}`).set(authHeader(adminToken));
+      expect(details.body.review.atsScore).toBeNull();
     });
 
     it('derives the applicant from the JWT and ignores a client-supplied applicant', async () => {
@@ -115,6 +177,7 @@ describe('Job applications', () => {
 
       const mine = await request(app).get('/api/applications/me').set(authHeader(studentToken));
       expect(mine.status).toBe(200);
+      expect(mine.headers['cache-control']).toBe('private, no-store');
       expect(mine.body.applications).toHaveLength(1);
       expect(mine.body.applications[0].applicant.id).toBe(studentId);
       expect(mine.body.applications[0].job.title).toBe('MERN Stack Developer');
@@ -122,6 +185,15 @@ describe('Job applications', () => {
       const other = await request(app).get('/api/applications/me').set(authHeader(otherStudentToken));
       expect(other.body.applications).toHaveLength(1);
       expect(other.body.applications[0].applicant.id).toBe(otherStudentId);
+    });
+
+    it('prevents caching of administrator application lists and dashboard data', async () => {
+      await applyAs(studentToken);
+      for (const url of ['/api/admin/applications', '/api/admin/dashboard', '/api/admin/dashboard/application-summary']) {
+        const response = await request(app).get(url).set(authHeader(adminToken));
+        expect(response.status).toBe(200);
+        expect(response.headers['cache-control']).toBe('private, no-store');
+      }
     });
 
     it('supports status filtering on own applications', async () => {
