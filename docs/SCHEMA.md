@@ -157,3 +157,9 @@ Students can read only their own applications and cannot change statuses. Admins
 Captured application reviews never substitute later profiles/reports when a captured reference is absent or deleted. Resume storage is currently filesystem based; Vercel references may outlive ephemeral files and do not establish durable storage.
 
 Production connection setup disables automatic index creation. Deploying the model alone does not replace the old `{submission_id, status}` index; see the migration procedure in [DEPLOYMENT.md](../DEPLOYMENT.md).
+
+## Profile assessment additions
+
+ProfileSubmission stores `codingProfileUrl`, `codingSummaryText`, and `source_evidence`: the bounded GitHub repository snapshot and LeetCode unique solved/difficulty/language totals observed during extraction. `demo_key` identifies local seed reviews and `demo_content_hash` detects changes to the generated resume content. Repository snapshots preserve `readmeStatus` so absent documentation can be distinguished from an unavailable lookup. ExtractedSkillProfile accepts `coding_user_provided` alongside the other four source names. User text is labelled as unverified evidence.
+
+ReadinessReport adds `stage`, nullable `profile_assessment`, and nullable `career_actions`. The profile rubric is versioned as `profile-evidence-v1`. Missing sources have null scores and do not enter the overall average. Projects, curated practice suggestions, and LinkedIn draft outlines are saved with the report rather than regenerated during each read. Existing report compatibility is retained; a new analysis is needed to produce the additions.

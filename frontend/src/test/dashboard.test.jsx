@@ -152,11 +152,12 @@ describe('Dashboard layout', () => {
       </MemoryRouter>
     );
 
-    await screen.findByRole('heading', { name: /ats score/i });
+    await screen.findByRole('heading', { name: /role readiness/i });
     await screen.findByRole('heading', { name: /readiness trend/i });
     const headings = Array.from(document.querySelectorAll('h2')).map((h) => h.textContent);
     expect(headings).toEqual([
-      'ATS Score',
+      'Role readiness',
+      'Your wider profile',
       'What to study for your target roles',
       'Software Development Engineer roadmap',
       'Prepare for the roles you applied to',
@@ -209,7 +210,7 @@ describe('Dashboard layout', () => {
     expect(screen.getByRole('link', { name: /start analysis/i }).getAttribute('href')).toBe('/analyze?role=ML%20Engineer');
 
     expect(screen.queryByText(/skill breakdown/i)).toBeNull();
-    expect(screen.queryByText(/role readiness/i)).toBeNull();
+    expect(screen.queryByText(/ATS score/i)).toBeNull();
   });
 
   it('clears an inaccessible stale report and shows the empty state', async () => {
@@ -289,7 +290,7 @@ describe('Dashboard layout', () => {
     fireEvent.click(screen.getByRole('tab', { name: /Review\s*1/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'View' }));
     expect(await screen.findByRole('heading', { name: 'Candidate A' })).toBeTruthy();
-    expect(screen.getByText('ATS score')).toBeTruthy();
+    expect(screen.getByText('Profile evidence')).toBeTruthy();
     if (hasResume) expect(screen.getByRole('button', { name: /open resume/i })).toBeTruthy();
     if (linkedinUrl) expect(screen.getByRole('link', { name: /linkedin/i }).getAttribute('href')).toBe(linkedinUrl);
     expect(screen.queryByText('No external profiles attached')).toBeNull();

@@ -5,7 +5,7 @@ import { fetchLeetcodeProfile } from './leetcodeService.js';
 import { generateEmbeddings } from './ai/embeddingProvider.js';
 import { env } from '../config/env.js';
 
-const SECTION_MARKER = /===\s*(?:RESUME|GITHUB PROFILE|LINKEDIN USER-PROVIDED SUMMARY|LEETCODE PROFILE)\s*===/gi;
+const SECTION_MARKER = /===\s*(?:RESUME|GITHUB PROFILE|LINKEDIN USER-PROVIDED SUMMARY|LEETCODE PROFILE|CODING USER-PROVIDED SUMMARY)\s*===/gi;
 
 export function sanitizeSourceText(value) {
   return String(value ?? '').replace(SECTION_MARKER, '[profile section marker]');
@@ -19,6 +19,10 @@ export function buildProfileText(submission, github) {
   if (submission.linkedinSummaryText) {
     parts.push('\n=== LINKEDIN USER-PROVIDED SUMMARY ===');
     parts.push(sanitizeSourceText(submission.linkedinSummaryText));
+  }
+  if (submission.codingSummaryText) {
+    parts.push('\n=== CODING USER-PROVIDED SUMMARY ===');
+    parts.push(sanitizeSourceText(submission.codingSummaryText));
   }
 
   if (Array.isArray(github?.repos) && github.repos.length) {
@@ -114,7 +118,17 @@ export async function processExtraction(submissionId, githubData) {
     throw err;
   }
 
+  const savedGithub = submission.source_evidence?.github?.available
+    ? { username: submission.github_username, ...(submission.toObject ? submission.toObject({ flattenMaps: true }).source_evidence.github : submission.source_evidence.github) } : null;
+  githubData = githubData || savedGithub;
   const leetcode = await fetchLeetcodeProfile(submission.leetcode_username);
+  // Keep a bounded snapshot of exactly what this analysis observed. Later report
+  // views do not re-fetch profiles or silently change their evidence.
+  const sourceEvidence = {
+    capturedAt: new Date(),
+    github: { available: Boolean(githubData), partial: Boolean(githubData?.partial), fetchedAt: githubData?.fetchedAt, repos: (githubData?.repos ?? []).slice(0, 10) },
+    leetcode: { available: leetcode.status === 'ok', ...leetcode.metrics },
+  };
   const profileText = buildProfileText(submission, githubData) + (leetcode.evidence ? '\n=== LEETCODE PROFILE ===\n' + sanitizeSourceText(leetcode.evidence) : '');
   const { skills: geminiSkills, model: usedModel } = await extractSkills(profileText);
   const skills = mergeSkills(geminiSkills);
@@ -138,7 +152,7 @@ export async function processExtraction(submissionId, githubData) {
     { $set: { skills, gemini_model: usedModel, embeddings, embedding_model: embeddingModel, embedding_version: embeddingVersion } },
     { upsert: true, returnDocument: 'after' }
   );
-  await ProfileSubmission.findByIdAndUpdate(submissionId, { $set: { extraction_status: 'completed', extraction_error: null, leetcode_status: leetcode.status } });
+  await ProfileSubmission.findByIdAndUpdate(submissionId, { $set: { extraction_status: 'completed', extraction_error: null, source_evidence: sourceEvidence, leetcode_status: leetcode.status } });
 
   return saved;
 }

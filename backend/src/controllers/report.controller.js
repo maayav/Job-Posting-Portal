@@ -14,6 +14,8 @@ function toJson(report) {
     startedAt: report.startedAt,
     completedAt: report.completedAt,
     score: report.score,
+    profile_assessment: report.profile_assessment ?? null,
+    career_actions: report.career_actions ?? null,
     strong_areas: report.strong_areas,
     developing_areas: report.developing_areas,
     gaps: report.gaps,
@@ -128,6 +130,7 @@ export async function getRoadmap(req, res) {
         ? (report.gaps ?? []).map((gap) => ({ skill: gap.skill, percent: gap.percent }))
         : [],
       study_plan: plan,
+      career_actions: report.status === 'completed' ? report.career_actions ?? null : null,
     };
   });
 

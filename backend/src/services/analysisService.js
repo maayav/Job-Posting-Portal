@@ -6,7 +6,8 @@ import { SkillOntology } from '../models/skillOntology.js';
 import { processExtraction } from './skillService.js';
 import { generateEmbeddings as embedSkillsBatch } from './ai/embeddingProvider.js';
 import { generateReport, buildStudyPlan } from './scoringService.js';
-import { enrichStudyPlan } from './ai/studyPlanService.js';
+import { enrichCareerPlan } from './ai/studyPlanService.js';
+import { buildProfileAssessment } from './profileAssessmentService.js';
 import { assertRequestBudget, withinRequestBudget } from '../utils/requestBudget.js';
 
 export const STALE_ANALYSIS_MS = 10 * 60 * 1000;
@@ -21,7 +22,7 @@ export async function reconcileAnalysisJobs(now = Date.now()) {
         { status: 'queued', createdAt: { $lt: cutoff } },
       ],
     },
-    { $set: { status: 'failed', errorCode: 'analysis_timeout', completedAt: new Date(now) } },
+    { $set: { status: 'failed', stage: 'failed', errorCode: 'analysis_timeout', completedAt: new Date(now) } },
   );
   return result.modifiedCount ?? 0;
 }
@@ -44,7 +45,7 @@ export async function runAnalysis(reportId) {
     // take over a processing job owned by another request.
     report = await ReadinessReport.findOneAndUpdate(
       { _id: reportId, status: 'queued' },
-      { $set: { status: 'processing', startedAt: new Date(), errorCode: null } },
+      { $set: { status: 'processing', stage: 'evidence', startedAt: new Date(), errorCode: null } },
       { returnDocument: 'after', maxTimeMS: 5000 },
     );
     if (!report) return null;
@@ -60,6 +61,11 @@ export async function runAnalysis(reportId) {
     if (!skillProfile || skillProfile.skills.length === 0) {
       skillProfile = await withinRequestBudget(() => processExtraction(submission._id, null));
     }
+    const advanceStage = (stage) => withinRequestBudget(() => ReadinessReport.updateOne(
+      { _id: reportId, status: 'processing', startedAt: report.startedAt },
+      { $set: { stage } }, { maxTimeMS: 5000 },
+    ));
+    await advanceStage('matching');
 
     const rawOntology = await withinRequestBudget(() => SkillOntology.find({ roles: { $elemMatch: { role_name: report.target_role } } }).lean());
     if (rawOntology.length === 0) {
@@ -106,8 +112,14 @@ export async function runAnalysis(reportId) {
     const candidateVectors = skillProfile.skills.map((skill, i) => ({ ...skill.toObject(), vector: vectors[i] }));
 
     const result = await withinRequestBudget(() => generateReport(ontologySkills, candidateVectors));
+    const assessmentSubmission = await withinRequestBudget(() => ProfileSubmission.findById(submission._id));
+    const profileAssessment = buildProfileAssessment(assessmentSubmission ?? submission, skillProfile.skills, ontologySkills);
+    await advanceStage('planning');
     const developingPlan = await withinRequestBudget(() => buildStudyPlan(result.developing_areas.map((area) => ({ ...area, priority: 0.4 }))));
-    result.study_plan = await withinRequestBudget(() => enrichStudyPlan([...result.study_plan, ...developingPlan], report.target_role, skillProfile.skills.map((skill) => skill.name)));
+    const careerPlan = await withinRequestBudget(() => enrichCareerPlan([...result.study_plan, ...developingPlan], report.target_role, skillProfile.skills.map((skill) => skill.name), {
+      requiredSkills: ontologySkills.map((skill) => skill.skill_name), assessment: profileAssessment,
+    }));
+    result.study_plan = careerPlan.studyPlan;
 
     if (!Number.isFinite(result.score)) {
       throw new Error('scoring_failed');
@@ -118,13 +130,15 @@ export async function runAnalysis(reportId) {
       { _id: reportId, status: 'processing', startedAt: report.startedAt },
       { $set: {
         score: result.score,
+        profile_assessment: profileAssessment,
+        career_actions: careerPlan.careerActions,
         strong_areas: result.strong_areas,
         developing_areas: result.developing_areas,
         gaps: result.gaps,
         study_plan: result.study_plan,
         embedding_model: env.EMBEDDING_MODEL,
         embedding_version: env.EMBEDDING_VERSION,
-        status: 'completed', errorCode: null,
+        status: 'completed', stage: 'completed', errorCode: null,
         completedAt: new Date(), generated_at: new Date(),
       } },
       { returnDocument: 'after', maxTimeMS: 5000 },
@@ -137,7 +151,7 @@ export async function runAnalysis(reportId) {
     // A stale reaper or another terminal transition must win over a late runner.
     const failed = await ReadinessReport.findOneAndUpdate(
       { _id: reportId, status: report ? 'processing' : 'queued', ...(report ? { startedAt: report.startedAt } : {}) },
-      { $set: { status: 'failed', errorCode, completedAt: new Date() } },
+      { $set: { status: 'failed', stage: 'failed', errorCode, completedAt: new Date() } },
       { returnDocument: 'after', maxTimeMS: 5000 },
     );
     if (failed) logTransition(failed, 'failed', { errorCode });

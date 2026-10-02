@@ -50,6 +50,20 @@ describe('Profile ingestion & security', () => {
     adminToken = (await loginUser('admin@test.com', 'secret123')).token;
   });
 
+  it('imports LinkedIn PDF text only for an authenticated user without saving a profile', async () => {
+    const pdf = minimalPdfBuffer();
+    expect((await request(app).post('/api/profile/linkedin-preview').attach('linkedin', pdf, 'profile.pdf')).status).toBe(401);
+    const response = await request(app).post('/api/profile/linkedin-preview').set(authHeader(token)).attach('linkedin', pdf, 'profile.pdf');
+    expect(response.status).toBe(200);
+    expect(response.body.source).toBe('user_provided_pdf');
+    expect(response.body.text.length).toBeGreaterThan(0);
+    expect(response.headers['cache-control']).toBe('private, no-store');
+    const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+    expect(await ProfileSubmission.countDocuments()).toBe(0);
+    const invalid = await request(app).post('/api/profile/linkedin-preview').set(authHeader(token)).attach('linkedin', Buffer.from('not a PDF'), 'profile.pdf');
+    expect(invalid.status).toBe(400);
+  });
+
   it('rejects non-PDF files', async () => {
     const r = await request(app)
       .post('/api/profile')

@@ -273,3 +273,13 @@ Mark one notification, or all of the current user's notifications, as read. User
 | DELETE | `/api/wishlist/:jobId` | Remove a saved job (`204`) |
 
 Wishlists are private to each student; administrators receive `403`. The student dashboard shows saved jobs with Apply and Remove actions, and the Jobs page shows the saved state on each card.
+
+## Profile evidence and career actions
+
+`POST /api/profile` also accepts `codingProfileUrl` (allowlisted HackerRank, Codeforces, or CodeChef HTTPS profile URL) and `codingSummaryText` (up to 10,000 characters). These platforms are not fetched. LinkedIn still supports `linkedinUrl` and `linkedinSummaryText`; URLs alone are not skill evidence.
+
+`POST /api/profile/linkedin-preview` requires authentication and the profile rate limiter. Send multipart field `linkedin` containing a PDF. It uses the existing upload/file validation middleware and returns `{text, truncated, source: "user_provided_pdf"}` with private/no-store caching. Text is capped at 10,000 characters. The browser caps this optional upload at 4MB; backend multipart/PDF limits still apply. This preview neither stores the PDF nor invokes AI.
+
+`GET /api/analyze/submission/:id/status` requires ownership of the profile and returns the latest report status and stage, or 204 when none exists. `GET /api/analyze/:id/status` also includes `stage`. Stages are `queued`, `evidence`, `matching`, `planning`, `completed`, and `failed`; they are milestones, not percentages.
+
+Completed report responses now include nullable `profile_assessment` and `career_actions`. The assessment lists source availability, source scores and formulas, coverage, shared skills, resume-only skills, and sampled repositories. Actions contain projects, fixed-catalog practice links, and editable LinkedIn drafts. Existing reports are not automatically reprocessed and may have null values. No endpoint publishes posts.

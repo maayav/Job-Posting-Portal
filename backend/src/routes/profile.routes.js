@@ -2,13 +2,14 @@ import { Router } from 'express';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireOwnership } from '../middleware/ownership.middleware.js';
-import { uploadResume, validateResumeFile } from '../middleware/upload.middleware.js';
+import { uploadResume, uploadLinkedInPdf, validateResumeFile } from '../middleware/upload.middleware.js';
 import { profileLimiter } from '../middleware/rateLimit.middleware.js';
 import * as profileController from '../controllers/profile.controller.js';
 
 const router = Router();
 
 router.use(requireAuth);
+router.post('/linkedin-preview', profileLimiter, uploadLinkedInPdf, validateResumeFile, profileController.previewLinkedInPdf);
 
 router.post(
   '/',

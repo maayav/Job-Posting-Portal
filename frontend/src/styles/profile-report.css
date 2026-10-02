@@ -1,0 +1,46 @@
+.profile-overall { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.profile-overall strong { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; letter-spacing: -.06em; }
+.profile-overall span, .profile-source-score span { color: var(--muted); font-size: .8rem; }
+.profile-source-grid, .career-action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: 14px; margin: 22px 0; }
+.profile-source, .career-action { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); overflow-wrap: anywhere; }
+.profile-source-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.profile-source h3, .career-action h3 { margin: 0 0 8px; font-size: 1rem; }
+.profile-source .chip { font-size: .65rem; }
+.profile-source-score { display: flex; align-items: baseline; gap: 7px; margin: 18px 0 10px; }
+.profile-source-score strong { font-size: 2rem; line-height: 1.1; }
+.profile-meter { height: 4px; background: var(--line); margin-bottom: 18px; border-radius: 4px; overflow: hidden; }
+.profile-meter span { display: block; width: 100%; height: 100%; background: var(--text); transform-origin: left; }
+.profile-assessment details { margin-top: 16px; }
+.profile-assessment summary { cursor: pointer; padding: 8px 0; font-size: .82rem; }
+.profile-assessment details p { margin: 10px 0; line-height: 1.6; }
+.profile-comparison { border-top: 1px solid var(--line); margin: 22px 0; padding-top: 20px; }
+.profile-comparison ul { list-style: none; margin: 0; padding: 0; }
+.profile-comparison li { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: .84rem; }
+.profile-comparison li span { color: var(--muted); }
+.profile-repositories ul { padding-left: 20px; }
+.career-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.career-tabs button { min-height: 42px; padding: 9px 15px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); transition: background .18s ease, border-color .18s ease; }
+.career-tabs button[aria-pressed=true] { background: var(--text); color: var(--bg); border-color: var(--text); }
+.career-action .section-kicker { display: block; margin-bottom: 12px; }
+.career-action h4 { font-size: .8rem; margin: 16px 0 8px; }
+.career-action ul { padding-left: 19px; font-size: .85rem; line-height: 1.6; }
+.career-action li { margin: 8px 0; }
+.career-action textarea { width: 100%; min-height: 190px; resize: vertical; font: inherit; line-height: 1.6; background: var(--panel); color: var(--text); padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.career-action a { display: inline-block; padding: 10px 0; }
+.analysis-activity { padding: clamp(22px, 4vw, 36px); }
+.analysis-activity ol { list-style: none; padding: 0; margin: 24px 0; }
+.analysis-activity li { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+.analysis-activity li.is-current, .analysis-activity li.is-done { color: var(--text); }
+.analysis-step-mark { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 50%; font-size: .75rem; }
+.analysis-activity .is-current .analysis-step-mark { background: var(--text); color: var(--bg); animation: evidence-pulse 1.6s ease-in-out infinite; }
+.analysis-activity li p { margin: 4px 0 0; }
+.analysis-signal { display: flex; height: 40px; align-items: center; gap: 5px; margin-bottom: 22px; }
+.analysis-signal span { width: 5px; height: 25px; background: var(--text); border-radius: 4px; animation: evidence-wave 1.2s ease-in-out infinite; }
+.analysis-signal span:nth-child(2) { animation-delay: .12s; }
+.analysis-signal span:nth-child(3) { animation-delay: .24s; }
+.analysis-signal span:nth-child(4) { animation-delay: .36s; }
+.analysis-signal span:nth-child(5) { animation-delay: .48s; }
+@keyframes evidence-wave { 0%, 100% { transform: scaleY(.35); opacity: .45; } 50% { transform: scaleY(1); opacity: 1; } }
+@keyframes evidence-pulse { 50% { opacity: .55; } }
+@media (max-width: 600px) { .profile-source, .career-action { padding: 16px; } .career-tabs button { flex: 1 1 130px; } .profile-assessment .section-heading { align-items: start; gap: 16px; } }
+@media (prefers-reduced-motion: reduce) { .analysis-signal span, .analysis-activity .is-current .analysis-step-mark { animation: none; } }

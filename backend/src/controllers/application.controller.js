@@ -104,6 +104,8 @@ async function reviewForApplication(application, { details = false } = {}) {
       targetRole: submission.target_role,
       atsScore: report?.score ?? null,
       roleReadinessScore: report?.score ?? null,
+      profileScore: report?.profile_assessment?.score ?? null,
+      profileCoverage: report?.profile_assessment ? `${report.profile_assessment.assessedSources}/${report.profile_assessment.totalSources} sources` : null,
       githubUsername: submission.github_username || null,
       leetcodeUrl: submission.leetcode_username ? `https://leetcode.com/u/${encodeURIComponent(submission.leetcode_username)}/` : null,
       githubUrl: submission.github_username
@@ -186,6 +188,7 @@ function toDashboardApplication(application, review) {
     reviewStageLabel: REVIEW_STAGE_LABELS[response.status],
     atsScore: review?.atsScore ?? null,
     roleReadinessScore: review?.roleReadinessScore ?? null,
+    profileScore: review?.profileScore ?? null,
   };
 }
 

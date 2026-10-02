@@ -8,14 +8,25 @@ import { normalizeUsername, fetchGithubProfile } from '../services/githubService
 import { processExtraction } from '../services/skillService.js';
 import { normalizeLinkedInSummary, normalizeLinkedInUrl } from '../services/linkedinService.js';
 import { AppError } from '../utils/errors.js';
+import { normalizeCodingProfileUrl, normalizeCodingSummary } from '../services/codingProfileService.js';
 
 const createSchema = z.object({
   github_username: z.string().trim().optional().default(''),
   leetcode_username: z.string().trim().max(120).optional().default(''),
   linkedinUrl: z.string().trim().max(500).optional().default(''),
   linkedinSummaryText: z.string().trim().max(10000).optional().default(''),
+  codingProfileUrl: z.string().trim().max(500).optional().default(''),
+  codingSummaryText: z.string().trim().max(10000).optional().default(''),
   target_role: z.string().trim().min(1, 'Target role is required').max(100),
 });
+
+export async function previewLinkedInPdf(req, res) {
+  const text = await extractResumeText(req.file.buffer);
+  const truncated = text.length > 10000;
+  res.set('Cache-Control', 'private, no-store');
+  // The uploaded PDF is held only in memory; no file, profile, or AI call is made.
+  res.json({ text: normalizeLinkedInSummary(text.slice(0, 10000)), truncated, source: 'user_provided_pdf' });
+}
 
 async function assertKnownRole(targetRole) {
   const available = await SkillOntology.distinct('roles.role_name');
@@ -55,6 +66,8 @@ export async function createProfile(req, res) {
   }
   const linkedinUrl = normalizeLinkedInUrl(data.linkedinUrl);
   const linkedinSummaryText = normalizeLinkedInSummary(data.linkedinSummaryText);
+  const codingProfileUrl = normalizeCodingProfileUrl(data.codingProfileUrl);
+  const codingSummaryText = normalizeCodingSummary(data.codingSummaryText);
 
   const resume_text = await extractResumeText(req.file.buffer);
   assertLooksLikeResume(resume_text);
@@ -77,6 +90,8 @@ export async function createProfile(req, res) {
       leetcode_username,
       linkedinUrl,
       linkedinSummaryText,
+      codingProfileUrl,
+      codingSummaryText,
       linkedinDataSource: linkedinSummaryText ? 'user_provided_text' : null,
     });
   } catch (error) {
@@ -99,6 +114,8 @@ export async function createProfile(req, res) {
   }
 
   res.set('Cache-Control', 'private, no-store');
+  // Extraction updates source statuses on a separately loaded document.
+  submission = await ProfileSubmission.findById(submission._id);
   res.status(201).json({
     id: submission._id.toString(),
     target_role: submission.target_role,
@@ -109,6 +126,8 @@ export async function createProfile(req, res) {
     linkedinUrl: submission.linkedinUrl,
     linkedinSummaryText: submission.linkedinSummaryText,
     linkedinDataSource: submission.linkedinDataSource,
+    codingProfileUrl: submission.codingProfileUrl,
+    codingDataSource: submission.codingSummaryText ? 'user_provided_text' : null,
     extraction_status: extraction.status,
     extraction_error: extraction.error ?? null,
     submitted_at: submission.submitted_at,
@@ -139,6 +158,8 @@ export async function getProfile(req, res) {
     linkedinUrl: submission.linkedinUrl,
     linkedinSummaryText: submission.linkedinSummaryText,
     linkedinDataSource: submission.linkedinDataSource,
+    codingProfileUrl: submission.codingProfileUrl,
+    codingDataSource: submission.codingSummaryText ? 'user_provided_text' : null,
     submitted_at: submission.submitted_at,
     created_at: submission.createdAt,
     extracted_skills,

@@ -1,6 +1,6 @@
 # Vortex deployment guide
 
-Both existing production projects were updated to commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e` and verified on 2 October 2026 at 10:20:41 UTC. This release contains source implementation commit `3f8facde7cf1bec00276f9b0d965428ae0352d22` and its initial verification documentation. Production feature coverage is limited to the checks recorded below.
+The earlier audit release updated both production projects to commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`, verified on 2 October 2026 at 10:20:41 UTC. Its source implementation is `3f8facde7cf1bec00276f9b0d965428ae0352d22`. Historical deployment evidence below refers to that release. See [Profile release verification](docs/PROFILE_RELEASE_VERIFICATION.md) for the newer profile-assessment changes and their verification scope.
 
 ## Confirmed public services
 
@@ -29,7 +29,7 @@ Browser
        -> Resume provider contract -> filesystem fallback
 ```
 
-LinkedIn is never scraped or fetched. Its supported input is a validated profile URL and optional text pasted by the user.
+LinkedIn is never scraped or fetched. Its supported input is a validated profile URL and optional text pasted by the user or imported from their profile PDF. PDF preview is authenticated, bounded, kept in memory, and does not call AI or save the PDF.
 
 ## Local preparation
 
@@ -42,7 +42,7 @@ npm run dev
 
 For Windows, use the root Node scripts rather than Linux-only process commands. See `docs/SETUP.md` for local environment and MongoDB setup.
 
-The latest local frontend run passed 51 tests and production build; lint reported 17 existing warnings and no errors. Backend/runtime and frontend dependency audits both reported zero vulnerabilities. The final isolated backend suite passed 306 tests with two drift skips; an isolated unit run passed 141 tests. These test counts overlap and must not be summed.
+The profile release passed 61 frontend tests and production build; lint reported 18 existing warnings and no errors. Backend/runtime and frontend dependency audits both reported zero vulnerabilities. The isolated backend suite passed 326 tests with two intentional real-provider drift skips. Focused demo and dashboard checks overlap with the full suites and must not be added to those counts.
 
 Run frontend tests, lint, and build before release. Backend tests must use the disposable test database described in `docs/BASELINE_AUDIT.md`; never point database-drop hooks at a shared or production database. Normal automated tests mock provider calls and do not need real AI keys.
 

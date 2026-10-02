@@ -1,10 +1,19 @@
+import { createHash } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
 import { connectDB, disconnectDB } from '../src/config/db.js';
 import { User } from '../src/models/user.js';
 import { Job } from '../src/models/job.js';
 import { Application, APPLICATION_STATUSES } from '../src/models/application.js';
 import { ProfileSubmission } from '../src/models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../src/models/extractedSkillProfile.js';
-import { buildStudyPlan } from '../src/services/scoringService.js';
+import { generateReport } from '../src/services/scoringService.js';
+import { buildProfileAssessment } from '../src/services/profileAssessmentService.js';
+import { buildCareerActions } from '../src/services/careerActionService.js';
+import { createDemoResumePdf, demoResumeContent } from './demo-resumes.js';
+import { saveResume, readResume, deleteResume } from '../src/services/storageService.js';
+import { extractResumeText } from '../src/services/resumeService.js';
+import { assertLocalDemoDatabase } from './demo-guard.js';
+import { env } from '../src/config/env.js';
 import { ReadinessReport } from '../src/models/readinessReport.js';
 
 // DEVELOPMENT / DEMO ONLY — idempotent application seed data.
@@ -12,7 +21,7 @@ import { ReadinessReport } from '../src/models/readinessReport.js';
 //   node scripts/seed-applications.js --admin=admin@example.com
 //
 // Requires an existing admin. Uses existing jobs; creates up to 8 demo students
-// if they do not already exist. Applications span at least 4 jobs and every
+// if they do not already exist. Applications cover up to 60 admin-owned jobs and every
 // pipeline status. Running it again never duplicates applications (unique
 // applicant+job index).
 //
@@ -42,97 +51,36 @@ const STATUS_MIX = [
   'under_review',
 ];
 
-const DEMO_SKILLS = [
-  [['React', 'frontend_framework'], ['JavaScript', 'language'], ['Node.js', 'backend_framework'], ['MongoDB', 'database']],
-  [['React', 'frontend_framework'], ['TypeScript', 'language'], ['Node.js', 'backend_framework'], ['Docker', 'devops_tool']],
-  [['Figma', 'other'], ['React', 'frontend_framework'], ['JavaScript', 'language'], ['CSS', 'other']],
-  [['Python', 'language'], ['SQL', 'database'], ['Pandas', 'other'], ['Docker', 'devops_tool']],
-  [['React', 'frontend_framework'], ['Node.js', 'backend_framework'], ['AWS', 'cloud_platform'], ['Jest', 'testing_tool']],
-  [['JavaScript', 'language'], ['React', 'frontend_framework'], ['Express', 'backend_framework'], ['MongoDB', 'database']],
-  [['Python', 'language'], ['PyTorch', 'ml_framework'], ['SQL', 'database'], ['Git', 'devops_tool']],
-  [['Java', 'language'], ['Selenium', 'testing_tool'], ['SQL', 'database'], ['Docker', 'devops_tool']],
-];
-
-function demoReviewFor(index, job) {
-  const skills = DEMO_SKILLS[index % DEMO_SKILLS.length];
-  const strong = skills.slice(0, 2).map(([skill], offset) => ({ skill, percent: 88 - offset * 5 }));
-  const developing = skills.slice(2, 3).map(([skill]) => ({ skill, percent: 68 }));
-  const missingSkill = job.skills?.find((skill) => !skills.some(([candidate]) => candidate.toLowerCase() === skill.toLowerCase())) || 'System Design';
-  const gaps = [{ skill: missingSkill, percent: 38, priority: 0.82, m: 0.38 }];
-  return {
-    skills: skills.map(([name, category], skillIndex) => ({
-      name,
-      category,
-      sources: skillIndex % 2 === 0 ? ['resume', 'github'] : ['resume'],
-      evidence: [{ source: 'resume', text: `Built and documented a ${name} project for the placement portfolio.` }],
-      proficiency_signals: { projects_count: Math.min(3, skillIndex + 1), has_production_usage: skillIndex === 0, mentions_depth: skillIndex === 0 ? 'high' : 'medium' },
-    })),
-    report: {
-      score: 74 + (index % 5),
-      strong_areas: strong,
-      developing_areas: developing,
-      gaps,
-      study_plan: [{
-        skill: missingSkill,
-        priority: 0.82,
-        resources: [],
-        done: false,
-      }],
-    },
-  };
-}
-
-async function ensureDemoReviews(students, jobs) {
-  let created = 0;
-  for (let index = 0; index < students.length; index += 1) {
-    const student = students[index];
-    const job = jobs[index % jobs.length];
-    const fileRef = `demo-review/${student.email}.pdf`;
-    const review = demoReviewFor(index, job);
-    review.report.study_plan = await buildStudyPlan(review.report.gaps);
-    const submission = await ProfileSubmission.findOneAndUpdate(
-      { user_id: student._id, resume_file_ref: fileRef },
-      {
-        $set: {
-          resume_text: `Demo portfolio for ${student.name}. Built projects using ${review.skills.map((skill) => skill.name).join(', ')}.`,
-          github_username: `demo-${student.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-          github_status: 'ok',
-          target_role: job.title,
-          extraction_status: 'completed',
-          extraction_error: null,
-        },
-        $setOnInsert: { user_id: student._id, resume_file_ref: fileRef, submitted_at: new Date() },
-      },
-      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-    );
-    await ExtractedSkillProfile.findOneAndUpdate(
-      { submission_id: submission._id },
-      { $set: { skills: review.skills, gemini_model: 'demo-seed' } },
-      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-    );
-    await ReadinessReport.findOneAndUpdate(
-      { submission_id: submission._id },
-      {
-        $set: {
-          target_role: job.title,
-          status: 'completed',
-          score: review.report.score,
-          strong_areas: review.report.strong_areas,
-          developing_areas: review.report.developing_areas,
-          gaps: review.report.gaps,
-          study_plan: review.report.study_plan,
-          embedding_model: 'demo-seed',
-          embedding_version: 'demo-seed',
-          completedAt: new Date(),
-          generated_at: new Date(),
-        },
-        $setOnInsert: { submission_id: submission._id, startedAt: new Date() },
-      },
-      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
-    );
-    created += 1;
+export async function ensureDemoReview(student, job, index) {
+  const key = `${student.email}:${job._id}`;
+  const required = [...new Set(job.skills ?? [])];
+  const chosen = required.slice(0, Math.max(1, required.length - (index % 3)));
+  const content = demoResumeContent(student, job, chosen);
+  const contentHash = createHash('sha256').update(JSON.stringify(content)).digest('hex');
+  const skills = chosen.map((name, i) => ({ name, category: 'other', confidence: 'medium', sources: ['resume'], evidence: [{ source: 'resume', text: content.projects[i] }], proficiency_signals: { projects_count: 1, has_production_usage: false, mentions_depth: 'medium' } }));
+  let submission = await ProfileSubmission.findOne({ demo_key: key });
+  // Upgrade earlier placeholder records when they refer to this exact demo role.
+  if (!submission) submission = await ProfileSubmission.findOne({ user_id: student._id, target_role: job.title, resume_file_ref: `demo-review/${student.email}.pdf` });
+  const oldRef = submission?.resume_file_ref;
+  let fileRef = oldRef;
+  let buffer;
+  try { if (fileRef) buffer = await readResume(fileRef); } catch { /* Rebuild missing demo files. */ }
+  if (!buffer || submission?.demo_content_hash !== contentHash) {
+    buffer = await createDemoResumePdf(student, job, chosen);
+    fileRef = await saveResume(buffer, `${student.name}-demo-resume.pdf`);
   }
-  return created;
+  const resumeText = await extractResumeText(buffer);
+  const fields = { demo_key: key, demo_content_hash: contentHash, resume_file_ref: fileRef, resume_text: resumeText, target_role: job.title, github_username: '', github_status: 'none', leetcode_username: '', leetcode_status: 'none', linkedinUrl: '', linkedinSummaryText: '', linkedinDataSource: null, codingProfileUrl: '', codingSummaryText: '', source_evidence: { capturedAt: new Date(), github: { available: false, repos: [] }, leetcode: { available: false, languages: [] } }, extraction_status: 'completed', extraction_error: null };
+  if (submission) { submission.set(fields); await submission.save(); }
+  else submission = await ProfileSubmission.create({ ...fields, user_id: student._id });
+  if (oldRef && oldRef !== fileRef) await deleteResume(oldRef).catch(() => {});
+  await ExtractedSkillProfile.findOneAndUpdate({ submission_id: submission._id }, { $set: { skills, gemini_model: 'demo-seed', embeddings: [], embedding_model: '', embedding_version: '' } }, { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true });
+  const ontology = required.map((skill_name) => ({ skill_name, weight: 1 }));
+  const result = await generateReport(ontology, skills);
+  const profileAssessment = buildProfileAssessment(submission, skills, ontology);
+  const actions = buildCareerActions({ role: job.title, plan: result.study_plan, requiredSkills: required, assessment: profileAssessment });
+  const report = await ReadinessReport.findOneAndUpdate({ submission_id: submission._id }, { $set: { ...result, target_role: job.title, status: 'completed', stage: 'completed', errorCode: null, profile_assessment: profileAssessment, career_actions: actions, embedding_model: 'demo-seed', embedding_version: 'demo-seed', completedAt: new Date(), generated_at: new Date() }, $setOnInsert: { submission_id: submission._id, startedAt: new Date() } }, { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true });
+  return { submission, report, fileRef };
 }
 
 function parseAdminArg(argv) {
@@ -163,6 +111,7 @@ async function main() {
     process.exit(1);
   }
 
+  assertLocalDemoDatabase(env.MONGO_URI, env.NODE_ENV);
   await connectDB({ retry: false });
 
   const admin = await User.findOne({ email: adminEmail.toLowerCase() });
@@ -172,7 +121,7 @@ async function main() {
     process.exit(1);
   }
 
-  const jobs = await Job.find({}).sort({ createdAt: -1 }).limit(4).lean();
+  const jobs = await Job.find({ createdBy: admin._id }).sort({ title: 1 }).limit(60).lean();
   if (jobs.length < 4) {
     console.error(`Only ${jobs.length} jobs found — seed at least 4 jobs first (scripts/seed-jobs.js).`);
     await disconnectDB();
@@ -181,7 +130,7 @@ async function main() {
 
   const createdStudents = await ensureDemoStudents();
   console.log(`[dev/demo only] students created: ${createdStudents.length || 'none (already present)'}`);
-  const students = await User.find({ email: { $in: DEMO_STUDENTS.map((s) => s.email) } }).lean();
+  const students = await User.find({ email: { $in: DEMO_STUDENTS.map((s) => s.email) } }).sort({ email: 1 }).lean();
 
   let created = 0;
   let skipped = 0;
@@ -194,33 +143,50 @@ async function main() {
       const student = students[studentIndex];
       if (!student) continue;
 
+      const review = await ensureDemoReview(student, job, studentIndex);
       const existing = await Application.findOne({ applicant: student._id, job: job._id });
+      const oldApplicationRef = existing?.resumeFileRef;
+      let applicationRef = oldApplicationRef;
+      let applicationBuffer;
+      try { if (applicationRef && applicationRef !== review.fileRef) applicationBuffer = await readResume(applicationRef); } catch { /* Rebuild missing demo snapshot. */ }
+      const profileBuffer = await readResume(review.fileRef);
+      if (!applicationBuffer?.equals(profileBuffer)) {
+        applicationRef = await saveResume(profileBuffer, `${student.name}-application.pdf`);
+      }
+      const snapshot = { profileSubmissionId: review.submission._id, readinessReportId: review.report._id, reviewSnapshotAt: new Date(), resumeFileRef: applicationRef, resumeOriginalName: `${student.name}-demo-resume.pdf`, resumeSource: 'profile', applicantEmail: student.email };
       if (existing) {
+        existing.set(snapshot);
+        existing.resumeUrl = `/api/applications/${existing._id}/resume`;
+        await existing.save();
+        if (oldApplicationRef && oldApplicationRef !== applicationRef && oldApplicationRef !== review.fileRef) await deleteResume(oldApplicationRef).catch(() => {});
         skipped += 1;
         continue;
       }
 
       const status = STATUS_MIX[(jobIndex * 3 + slot) % STATUS_MIX.length];
-      await Application.create({
+      const application = await Application.create({
+        ...snapshot,
         applicant: student._id,
         job: job._id,
         status,
         appliedAt: new Date(Date.now() - (jobIndex * 3 + slot) * 86400000),
         coverLetter: `Demo application to ${job.title} at ${job.company || 'the company'}.`,
       });
+      application.resumeUrl = `/api/applications/${application._id}/resume`;
+      await application.save();
       created += 1;
     }
   }
 
   const count = await Application.countDocuments({});
-  const reviewCount = await ensureDemoReviews(students, jobs);
+  const reviewCount = await ProfileSubmission.countDocuments({ demo_key: { $ne: null } });
   console.log(`Done: ${created} created, ${skipped} skipped (idempotent). Total applications now: ${count}.`);
   console.log(`Demo candidate reviews ready: ${reviewCount}.`);
   console.log(`Statuses in seed set: ${APPLICATION_STATUSES.join(', ')}`);
   await disconnectDB();
 }
 
-main().catch(async (err) => {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(async (err) => {
   console.error('seed-applications failed:', err.message);
   await disconnectDB();
   process.exit(1);

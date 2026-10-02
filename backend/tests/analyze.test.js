@@ -1,4 +1,4 @@
-vi.mock('../src/services/ai/studyPlanService.js', () => ({ enrichStudyPlan: vi.fn(async (plan) => plan) }));
+vi.mock('../src/services/ai/studyPlanService.js', () => ({ enrichCareerPlan: vi.fn(async (plan) => ({ studyPlan: plan, careerActions: { mode: "curated", projects: [], practice: [], posts: [] } })) }));
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import fs from 'node:fs';
@@ -93,11 +93,18 @@ describe('Analyze pipeline', () => {
 
     const status = await waitForStatus(token, created.body.report_id);
     expect(status.status).toBe('completed');
+    const stage = await request(app).get(`/api/analyze/submission/${sid}/status`).set(authHeader(token));
+    expect(stage.status).toBe(200);
+    expect(stage.body.stage).toBe('completed');
+    const forbidden = await request(app).get(`/api/analyze/submission/${sid}/status`).set(authHeader(otherToken));
+    expect([403, 404]).toContain(forbidden.status);
 
     const report = await request(app)
       .get(`/api/report/${created.body.report_id}`)
       .set('Authorization', `Bearer ${token}`);
     expect(report.status).toBe(200);
+    expect(report.body.profile_assessment.version).toBe('profile-evidence-v1');
+    expect(report.body.career_actions.mode).toBe('curated');
     expect(report.body.score).toBeGreaterThanOrEqual(0);
     expect(report.body.score).toBeLessThanOrEqual(100);
     expect(report.body.embedding_model).toBe('gemini-embedding-2');
@@ -159,7 +166,7 @@ describe('Analyze pipeline', () => {
   it('returns the same active job when simultaneous requests race past the initial lookup', async () => {
     const sid = await createSubmission(token, '');
     const { ReadinessReport } = await import('../src/models/readinessReport.js');
-    const { enrichStudyPlan } = await import('../src/services/ai/studyPlanService.js');
+    const { enrichCareerPlan } = await import('../src/services/ai/studyPlanService.js');
     const originalFindOne = ReadinessReport.findOne;
     let arrivals = 0;
     let release;
@@ -174,9 +181,9 @@ describe('Analyze pipeline', () => {
         return existing;
       });
     });
-    enrichStudyPlan.mockImplementationOnce(async (plan) => {
+    enrichCareerPlan.mockImplementationOnce(async (plan) => {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return plan;
+      return { studyPlan: plan, careerActions: { mode: "curated", projects: [], practice: [], posts: [] } };
     });
     try {
       const responses = await Promise.all([0, 1].map(() => request(app).post('/api/analyze').set(authHeader(token)).send({ submission_id: sid })));
@@ -185,7 +192,7 @@ describe('Analyze pipeline', () => {
       expect(await ReadinessReport.countDocuments({ submission_id: sid })).toBe(1);
     } finally {
       spy.mockRestore();
-      enrichStudyPlan.mockImplementation(async (plan) => plan);
+      enrichCareerPlan.mockImplementation(async (plan) => ({ studyPlan: plan, careerActions: { mode: "curated", projects: [], practice: [], posts: [] } }));
     }
   });
 

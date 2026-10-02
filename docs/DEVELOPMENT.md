@@ -1,274 +1,66 @@
-# Development Log
+# Developer workflow
 
-Living document tracking build progress against `EXECUTION_PLAN.md` (v7). Updated continuously as work proceeds.
+This is the current day-to-day guide for changing Vortex. For a first installation, follow [Setup](SETUP.md). For a guided explanation of the request lifecycle, rate limits, scoring, AI services, and deployment, read [the personal study guide](STUDY_GUIDE.md).
 
-**Last updated:** 2026-09-13
+## Project map
 
-## Where we are
+- `frontend/src/` is the React and Vite browser application. Pages live in `pages/`; shared navigation, forms, dialogs, and guards live in `components/`; `api/client.js` is the shared Axios client.
+- `backend/src/app.js` composes Express middleware and route mounts. Route files call controllers; controllers validate/translate HTTP requests; services contain reusable workflows; `models/` describe MongoDB records.
+- `backend/api/index.js` is the Vercel function entry point. `backend/server.js` starts the local Node server.
+- `backend/ontology/` defines role skills and weights. `backend/resources/` holds curated resource links. `scripts/build-role-catalog.mjs` creates the public landing-page catalog from repository data.
+- `docs/API.md`, `docs/SCHEMA.md`, and `DEPLOYMENT.md` describe endpoints, data records, and release checks.
 
-- Phase 1 (Foundation & Security) — **done**
-- Phase 2 (Profile Ingestion) — **done**
-- Phase 3 (AI Extraction) — **done**
-- Phase 4 (Deterministic Scoring) — **done**
-- Phase 5 (Report & Frontend) — **done**
-- Phase 6 (Progress Tracking) — **done**
-- Phase 8 (Hardening & Docs) — **done**
-- Phase 7 (deferred features) — intentionally skipped
+## Start a local development session
 
-## Environment & setup
+From the repository root, follow [Setup](SETUP.md) once to install dependencies, create `backend/.env`, and start MongoDB. Then run:
 
-| Item | Value |
-|---|---|
-| Repo root | `/home/gman/dev/projects/pride_proj` (git, default branch `main`) |
-| Backend | Node 24, Express 5, Mongoose 9, plain ESM JS, port **5000** |
-| MongoDB | Docker `mongo:7` (`docker compose up -d mongo`), `mongodb://127.0.0.1:27017/placement_skill_gap` |
-| Frontend | Vite + React (not yet scaffolded) |
-| Groq model | **`openai/gpt-oss-120b`** (extraction and assistant); fallback models are configured with `GROQ_FALLBACK_MODELS` |
-| Embedding model | `gemini-embedding-2`, version tag `2026-09` (spec pinned `text-embedding-004`, which is retired — see decisions) |
-| GitHub | Authenticated fine-grained PAT (user `maayav`) |
-| Server control | `node scripts/server.js start|stop` (pidfile + log at `backend/server.log`) |
-
-## Decisions & deviations from the spec
-
-1. **Embedding model swap:** spec pinned `text-embedding-004`, which no longer exists for this key. Using `gemini-embedding-2` with `embedding_version: "2026-09"` recorded on every stored vector. Drift regression test still required (Section 14).
-2. **Generation provider:** Groq's OpenAI-compatible chat API is used for extraction and assistant responses. Gemini remains only for embeddings.
-3. **Skill extraction runs at upload time** (`POST /api/profile`), not inside `/api/analyze`. This enables the "review extracted skills before scoring" screen (Phase 5 UX). `/api/analyze` reuses the cached `ExtractedSkillProfile` and only does embedding + deterministic scoring + study plan. Gemini quota is spent once per submission.
-4. **Async jobs:** in-process fire-and-forget runner with in-Mongo lifecycle state (per spec — no Bull/Redis).
-5. **pdf-parse v2** (`PDFParse` class) — ESM-native, used instead of v1.
-6. **Tests:** Vitest + supertest against the dockerized Mongo (separate `test` DB) rather than Jest.
-
-## Progress details
-
-### Phase 1 — Foundation & Security (done, commit `bd70398`)
-- `GET /api/health` returns exactly `{ status: "ok", timestamp }` (ISO-8601 UTC), no extra fields.
-- Auth: register/login, bcrypt hashing (10 rounds), JWT (7d expiry), role `student`/`admin`.
-- Rate limiting: auth (50/15min), analyze (10/min), global API (120/min).
-- Upload pipeline: multer memory → magic-byte check (`file-type`) → server-generated random filename → saved outside public dir; 5 MB (5,242,880 B) cap; wrong-type / spoofed-extension / oversized all rejected (400/413).
-- Env validation via zod at startup; `.env` gitignored, `.env.example` committed.
-- Verified: register/login, duplicate email 409, bad login 401, validation errors, bad uploads rejected, ownership 403s, delete 204.
-
-### Phase 2 — Profile Ingestion (done, commit `bd70398`)
-- `ProfileSubmission` model: `resume_file_ref`, `resume_text` (sensitive), canonical `github_username`, `github_status`, `target_role` (SDE / ML Engineer), extraction status fields.
-- `POST /api/profile`: saves PDF → pdf-parse text extraction → GitHub collection (best-effort) → creates submission.
-- GitHub service (Section 8 bounds): ≤10 newest repos, 800-char README excerpt, languages/topics/manifests (`package.json`, `requirements.txt`), forks skipped, 24h per-username cache in Mongo, normalize URL→username, partial-results on failure (`github_status`).
-- `GET /api/profile/:id` excludes full `resume_text`; `DELETE` removes file + cascades (submission, skill profile, reports).
-- Ownership middleware on all profile routes — verified cross-user 403.
-- 3 sample resumes generated (`backend/sample-resumes/`) for tests + demo.
-
-### Phase 3 — AI Extraction (done, commit `0918e71`)
-- `geminiService.js`: strict JSON extraction with zod schema validation, transient retry (3 attempts, 1s/2s/4s), malformed-JSON retry-once then `errorCode: extraction_invalid`; maps 404/500/429 → clean errorCodes (`service_unavailable` / `extraction_invalid`). Never logs resume text.
-- `skillService.js`: builds bounded prompt input (resume + GitHub), dedups/merges skills, confidence by fixed rule (high = 2+ sources w/ evidence, medium = 1 source, low = bare keyword) — Gemini never decides confidence.
-- `ExtractedSkillProfile` model (skills + sources + evidence, per submission, upsert).
-- **Bug found & fixed:** `gemini-2.5-flash` returned 404 → switched to `gemini-3.5-flash`.
-- Verified on 3 sample resumes: skills + evidence trace back to resume/GitHub; messy resume degraded to GitHub-only skills.
-
-### Phase 4 — Deterministic Scoring (done, commit `c24e9da`)
-- `SkillOntology` (31 skills: SDE + ML Engineer, weights, cached `gemini-embedding-2` vectors, version `2026-09`) + `ResourceCatalog` (37 curated verified resources) seeded via `scripts/seed-ontology.js`.
-- `embeddingService.js`: bare-skill-name embedding (lowercase+trim), vector normalization, cosine similarity.
-- `scoringService.js`: exact Section 6 formula `score = 100·Σ(wᵢ·mᵢ)/Σwᵢ`; thresholds 80/60 → strong/developing/gap; gap priority `wᵢ(1−mᵢ)` rescaled to [0,1]; study plan from `ResourceCatalog` exact normalized match; no fuzzy matching.
-- `analysisService.js`: async in-process job (queued→processing→completed/failed), lifecycle logging (no resume/evidence in logs), graceful `errorCode`s.
-- `POST /api/analyze`: partial-unique-index idempotency (duplicate → same report id + 202), 60s cooldown from `completedAt` → 429 fixed body, rate limited.
-- `GET /api/analyze/:id/status`, `GET /api/report/:id` (owner/admin), `PATCH /api/report/:id/study-plan/:itemId` (owner).
-- Verified: score determinism (same submission → 91 twice), gap breakdown + study plan with curated resources, cooldown 429, cross-user 403.
-- **Bugs found & fixed:** `weight` lives inside `roles[]` (not skill root) → NaN score; gap entries missing required `priority` → failed report; NaN score hardened with finiteness guard; failure path now raw-updates status (avoids re-validating stale NaN fields).
-
-## How to run
-
-```bash
-cd backend
-docker compose up -d mongo          # from repo root
-node scripts/server.js start        # API on :5000
-node scripts/server.js stop
+```sh
+npm run dev
 ```
 
-### Phase 5 — Report & Frontend (done, commit `c31f2cf`)
-- Vite + React 19 + react-router + Recharts; Vite proxy `/api` → `:5000`.
-- `AuthContext` (JWT in localStorage, 401 auto-logout), protected routes.
-- Upload flow: PDF + GitHub + target role → skill review (evidence shown) → Analyze → polling → dashboard.
-- Dashboard: score ring, strong/developing/gap chips, prioritized study plan with checkboxes wired to PATCH.
-- Verified full journey through the proxy: register → upload → 18 skills extracted → analyze → score 90 (ML Engineer).
+The root runner starts the API on port `5000` and Vite on `5173`. The Vite `/api` proxy forwards browser requests to the API. Use the URL Vite prints; if the default port is occupied, Vite may choose another one. Do not terminate an unfamiliar process just to free a port.
 
-### Phase 6 — Progress Tracking (done, commit `e3ebb7e`)
-- `GET /api/report/history` (own only, no userId in URL) and `GET /api/users/:userId/reports` (admin only) — mounted at `/api/users` per spec.
-- Recharts score-trend line on the dashboard (renders with ≥2 completed reports).
-- Verified: student2 sees empty history (isolation), non-admin gets 403 on the admin route, admin sees history.
+PowerShell supports the same workflow. If its execution policy blocks the npm shim, use `npm.cmd`, for example `npm.cmd run dev`. Stop the processes from the terminal that started them with Ctrl+C.
 
-### Phase 8 — Hardening & Docs (done)
-- **Test suite:** 35 tests + 2 opt-in drift tests (`vitest`, supertest, dockerized Mongo test DB). Covers auth (hash/JWT/expiry), upload security (magic bytes/5MB/missing/spoofed), ownership + admin access, delete cascades file, GitHub degradation, scoring formula/thresholds/priority rescaling/exact-match resources, analyze idempotency (partial unique index), cooldown 429 fixed body, retry after failure, clean errorCodes.
-- **Bugs found & fixed during testing:**
-  - `global-setup.js` ran without the test env overrides and **dropped the dev database** — now sets `MONGO_URI` itself.
-  - Rate limiter (10/min) tripped across tests — test mode uses a high limit.
-  - Test-mode job runner made synchronous (`runAnalysis` awaited) for deterministic tests.
-  - Ontology loader didn't merge shared skills across role files (Python lost its SDE role) — now merges roles by skill name.
-- **Observability:** job lifecycle logged (`analysis_job` with report/submission ids, status, errorCode; no resume text/evidence). Gemini/GitHub failures logged with attempt count.
-- **Drift regression:** `tests/drift.test.js` (opt-in via `RUN_DRIFT_TEST=1`) + `tests/fixtures/drift-baseline.json` (SDE 89, ML Engineer 91, tolerance ±2, model/version pinned). Regenerate with `npm run drift-baseline`.
-- **Ops scripts:** `scripts/refresh-ontology.js` (edit weights in `ontology/*.json`, re-embed + upsert), `scripts/server.js` (start/stop), `npm audit` clean (0 vulnerabilities).
-- **Docs:** `docs/API.md`, `docs/SETUP.md`, `docs/SCHEMA.md`.
-- **Security checklist (Section 10):** rate limits ✓, secrets env-only ✓, zod validation everywhere ✓, upload hardening ✓, resume text never returned/logged ✓, owner-or-admin checks on every scoped route ✓, bcrypt ✓, stateless JWT ✓, `maxPoolSize` ✓, retries/idempotency ✓, `npm audit` clean ✓. HTTPS/HSTS is a reverse-proxy concern documented in SETUP.md.
+## Follow a feature through the code
 
-## Incident log
+For a browser workflow, begin with the page or component and find the API call it makes. Follow the request into `frontend/src/api/client.js`, then locate the matching route in `backend/src/routes/`. Read that route's middleware, controller, services, and model calls. Finally, follow the response back to the React component and identify its loading, success, and error states.
 
-### 2026-09-14 — resource link audit + expanded catalog
+When changing an API, preserve the validation, authentication, role/ownership checks, and limits around the route. Keep provider keys and database credentials in backend environment variables; any `VITE_` variable is public after the frontend is built. Never use real personal resume/profile data to smoke-test an integration.
 
-- Added `scripts/check-resource-links.js` — HEAD with GET fallback, reports status/final URL/flags (404, timeouts, unexpected host redirects).
-- First audit (37 links): **2 broken** (jschallenger.com/react, freeCodeCamp React curriculum path — pre-existing, left as-is pending decision), **9 suspicious** (LeetCode 403 = bot block; Node.js/PyTorch/HF/GeeksforGeeks/Mode redirects; OpenCV version redirect; Express trailing slash).
-- Expanded catalog to **92 entries** (`resources/resources-extra.json`) with websites + YouTube per skill; new `video` resource type added to `ResourceCatalog` and `ReadinessReport.study_plan` enums.
-- Seeder now does a **full sync** (removes stale catalog entries no longer in the JSON files).
-- Post-expansion audit: 75 ok, 14 suspicious, **2 broken (both pre-existing)**. Two new links that were broken (`@AutomationStepByStep`, scikit-learn tutorial path) were fixed to verified URLs.
-- Drafted 8 additional role skill matrices in `ontology/drafts/new-roles-draft.json` (**not live** at that stage; awaiting review). The drafting script is incremental and resumable (`--only=`, `--force`).
+## Local checks
 
-### 2026-09-14 — provider requests running too long
+Run checks from the repository root:
 
-- Provider requests were slow because each operation retried against a rate-limited upstream with long retry-after waits, and piped logs hid progress. Fixed: shorter timeouts, capped retry waits, incremental progress, resume support, and visible lifecycle logging.
-- Hang investigation: provider calls now have explicit timeouts, while frontend polling is bounded and reports a controlled error when an operation exceeds its limit. No stuck jobs were found in Mongo.
-
-
-### 2026-09-14 — `service_unavailable` on extraction and analyze (root cause: Gemini free-tier quota)
-
-**Symptoms:** upload-time extraction and `/api/analyze` both returned `service_unavailable`.
-
-**Raw upstream error captured** (now logged verbatim by `geminiService`; previously only the mapped code was visible):
+```sh
+npm run lint
+npm run build
+npm --prefix frontend test
+npm --prefix backend run test:unit
 ```
-Gemini transient failure (attempt 1): HTTP 429 RESOURCE_EXHAUSTED You exceeded your current quota...
-* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash
-Please retry in 54.09s.
+
+The backend unit suite mocks external dependencies and does not require MongoDB. The full suite, `npm test`, also runs backend integration tests against a disposable database on a local loopback MongoDB server. The test harness refuses remote or authenticated database targets. Provider-drift checks are opt-in and can spend real API quota; do not enable them unless you intend that effect.
+
+Before committing documentation or code, review the changed files and run:
+
+```sh
+git diff --check
+git status --short
+git diff --stat
 ```
-Also seen: `HTTP 503 UNAVAILABLE This model is currently experiencing high demand.`
 
-**Diagnosis checklist:**
-1. `GEMINI_API_KEY` present in the running app — yes (dotenv injects into `process.env`, not `/proc/environ`; identical 53-char key in `.env`/dotenv/curl; requests reach Google with a valid key — quota/model errors, not `400 invalid key`).
-2. Model names valid/enabled — yes, both returned HTTP 200 standalone.
-3. Standalone calls with the same key/model — succeed when quota is available, fail with raw 429 once exhausted.
+Do not stage unrelated user files or generated local data. Keep credentials, `backend/.env`, local databases, logs, uploaded resumes, and build output out of commits.
 
-**Root cause:** free-tier quota is **20 requests/min per model**. One analysis issued ~17 calls (1 extraction + ~16 individual embeddings) → quota exhausted in seconds → 429/503 → mapped to `service_unavailable`. Fixed 1s/2s/4s backoff was useless against a 12–55s quota window.
+## Seed data carefully
 
-**Fixes applied:**
-- `embeddingService.embedSkillsBatch()` — all candidate skills embedded in **one** `batchEmbedContents` call (per-analysis calls drop from ~17 to 2). Seed and drift scripts batched too (27 skills = 1 call).
-- Retry loop now honors the API's `Please retry in Ns` / `Retry-After` (capped 60s) instead of fixed backoff.
-- Raw HTTP status + API error body now logged on every transient failure.
-- Extraction model switched to **`gemini-3.5-flash`** — each model has its own free-tier bucket; `gemini-3.6-flash` was saturated.
-- Drift test env fix: `global-setup.js` no longer poisons the worker env with `GEMINI_API_KEY=test-key` when `RUN_DRIFT_TEST=1`, so dotenv loads the real key.
+Seed scripts write to the database named by `backend/.env`; confirm it is a disposable local database first. `npm --prefix backend run seed` can call Gemini to create embeddings and fully synchronizes curated resources, including deleting resource rows absent from its seed input. `npm --prefix backend run seed:resources` refreshes curated links without an AI call and preserves database-only custom links. Demo job and application scripts create records and may create demo users. Read [Setup](SETUP.md#4-seed-the-local-role-catalog) before running a seed command.
 
-### 2026-09-14 — second wave: `503 high demand` on the primary model → model fallback chain
+## Release workflow
 
-**Symptom:** extraction/analyze failed with `service_unavailable` again; raw log showed `HTTP 503 UNAVAILABLE This model is currently experiencing high demand.` (plus one 30s timeout) — model overload, not quota.
+The current frontend is the Cloudflare Pages project `vortex`; the API is the Vercel project `vortex-api`. The Pages project is not connected to the Git repository, so a push alone does not publish frontend changes. Follow [Deployment](../DEPLOYMENT.md) for the established build/upload path and safe verification steps. Verify the source revision after an API deployment and the frontend build marker after a Pages upload. `/api/health` checks liveness only; it does not prove database readiness, authentication, AI integrations, or durable resume storage.
 
-**Fix:** `geminiService` now tries a fallback chain: `GEMINI_MODEL` first, then `GEMINI_FALLBACK_MODELS` (`gemini-flash-lite-latest,gemini-3-flash-preview` — each has separate quota buckets and capacity). Transient failures on a model move to the next; malformed JSON still retries once then fails as `extraction_invalid`. Generation timeout raised to 60s. The model that actually succeeded is recorded on `ExtractedSkillProfile.gemini_model`.
+Do not upload real resumes, run signup/login, start analyses, modify production data, or spend provider quota as part of a release check unless the task explicitly calls for a controlled test and uses approved demo data.
 
-**Verified:** with `gemini-3.5-flash` returning 503, extraction failed over to `gemini-flash-lite-latest`; profile records `gemini_flash_lite` and the report completed with score 90.
+## Older project notes
 
-> Note: `Unable to load script: moz-extension://.../atbc.js` in the browser console is a Firefox extension error, unrelated to this app.
-
-**Verified after fix:** upload → `extraction_status: "completed"`; analyze → `status: "completed"`, score 91; server log shows one transient 503 logged raw, then a successful retry.
-
-## Demo credentials (dev DB)
-
-| Email | Password | Role |
-|---|---|---|
-| student1@test.com | secret123 | admin |
-| student2@test.com | secret123 | student |
-
-Regenerate sample resumes: `npm run gen-resumes` (3 PDFs under `backend/sample-resumes/`).
-
-## API surface (implemented)
-
-| Method | Endpoint | Status |
-|---|---|---|
-| GET | `/api/health` | done |
-| POST | `/api/auth/register` | done |
-| POST | `/api/auth/login` | done |
-| POST | `/api/profile` | done (uploads + extraction) |
-| GET | `/api/profile/:id` | done |
-| DELETE | `/api/profile/:id` | done |
-| POST | `/api/analyze` | done (async job, idempotent, cooldown) |
-| GET | `/api/analyze/:id/status` | done |
-| GET | `/api/report/:id` | done |
-| PATCH | `/api/report/:id/study-plan/:itemId` | done |
-| GET | `/api/report/history` | done (own history only) |
-| GET | `/api/users/:userId/reports` | done (admin only) |
----
-
-## Job Portal Integration — Phase 1 Baseline (2026-09-15)
-
-- **Instruction sources:** `JOB_PORTAL_INTEGRATION_AUDIT_REQUEST.md` (audit) and the owner-approved implementation brief.
-- **Git state before changes:** branch `main`; tracked working tree clean; untracked audit documents preserved.
-- **Backend test baseline (before any job-portal change):** `npx vitest run` → **4 files passed + 1 skipped; 35 tests passed + 2 skipped** (drift tests are opt-in via `RUN_DRIFT_TEST=1`).
-- **Infrastructure:** Docker MongoDB container `placement_mongo` running on `127.0.0.1:27017`; backend port `5000`; frontend port `5173`.
-- **Role mapping decision (owner-approved):** `student` = Job Seeker, `admin` = Placement Portal Admin. **No new `seeker` role.**
-- **Job API namespace decision:** new isolated `/api/jobs` routes; no existing endpoint renamed, removed, or altered; canonical `GET /api/health` response untouched.
-- **Access decisions (owner-approved):** job search requires login (no anonymous browsing); students and admins share the existing login; any admin can edit/delete any job posting.
-- **Response/error conventions to follow:** zod validation in controllers, `AppError` + centralized error handler, `{ "error": "...", "message": "..." }`, `401` for missing/invalid JWT, `403` for role violations, `404` for missing jobs, `400` for validation failures.
-
-### Job Portal Integration — Phases 2-4 (2026-09-15)
-
-- **Phase 2 (backend):** `Job` model (`backend/src/models/job.js`) with derived `skillsLower`/`cityLower` search fields and indexes on `skillsLower`, `cityLower`, `experienceLevel`, `createdAt`, `(cityLower, experienceLevel)`. Controller + routes at `/api/jobs` — authenticated GET; admin-only POST/PUT/DELETE via existing `requireRole('admin')`. Server-set `createdBy`; strict zod schemas reject unknown keys (including a client-supplied `createdBy`).
-- **Phase 3 (tests):** `backend/tests/jobs.test.js` — 28 tests covering auth (401), RBAC (student 403 on writes), admin CRUD, `createdBy` derivation/rejection, validation (missing/negative/empty/duplicate/invalid id/missing job/empty update), search (case-insensitive skills, ANY-match, whitespace-insensitive, experience `<=`, case-insensitive exact city, combined AND, pagination defaults, `limit` capped at 50, stable empty shape, newest-first sort, response fields). Full suite: **63 passed + 2 skipped, no regressions**.
-- **Phase 4 (frontend):** New pages `JobSearchPage`, `AdminJobsPage`; components `JobFilters`, `JobCard`, `JobForm`; `ProtectedRoute` extended with an optional `requiredRole` prop (renders a 403 view for non-admins). Routes `/jobs` (all authenticated) and `/admin/jobs` (admin only) added; navigation links added to all authenticated top bars (Admin Jobs link rendered only for `user.role === 'admin'`). Frontend lint clean (pre-existing warnings only) and `vite build` succeeds.
-- **Search semantics (v1, as implemented):** `skills` comma-separated ANY-match, case/whitespace-insensitive; `experience` = seeker's years, returns `experienceLevel <= experience`; `city` case-insensitive exact match; `page` default 1, `limit` default 20 (max 50, clamped); sorted `createdAt` descending.
-
-### Job Portal Integration — Phase 5 (2026-09-15)
-
-- **Scripts:** `backend/scripts/create-admin.js` (promote existing or create with `ADMIN_PASSWORD` env; bcrypt via the existing pre-save hook; never prints passwords) and `backend/scripts/seed-jobs.js` (idempotent dev/demo seed by title+city+admin; requires an existing admin; touches only the `jobs` collection).
-- **Docs:** job endpoints added to `docs/API.md`; `Job` schema + search semantics added to `docs/SCHEMA.md`; admin provisioning updated in `docs/SETUP.md`; README feature overview updated.
-- **Final report:** `docs/JOB_PORTAL_IMPLEMENTATION_REPORT.md`.
-- **Verification:** backend suite 63 passed + 2 skipped; `vite build` succeeds; oxlint clean (pre-existing warnings only); live HTTP checks for auth/RBAC/CRUD/search; create-admin and seed-jobs exercised (seed run twice → idempotent).
-- **Git:** backend (`f596671`), frontend (`d671692`), docs/scripts commit follows; pushed to `origin` (`github.com/maayav/Job-Posting-Poral`).
-
-### 2026-09-15 — Extraction prompt v2 + job skill normalization
-
-- **Skill extraction prompt (v2):** replaced `PROMPT_TEMPLATE` in `backend/src/services/geminiService.js` with a schema-first prompt that extracts 8–40 technical skills, each with `category` (9-value enum), up to 2 evidence excerpts, and `proficiency_signals` (`projects_count` 0–5, `has_production_usage`, `mentions_depth`). Zod schema extended with forgiving coercion (`category` → `other`, depth → `low`, count clamped 0–5); `ExtractedSkillProfile` stores the new fields; `skillService.mergeSkills` merges them. 4 schema unit tests added (`tests/extraction-schema.test.js`).
-- **Finding (ML gaps):** extraction quality improved (categories + proficiency; no invented ML skills when the profile lacks them — verified with a no-GitHub upload), but non-ML profiles still show **no gaps** for ML Engineer. Root cause is the matching layer, not extraction: embedding cosine similarity between unrelated tech terms is 63–77% (e.g. ontology `PyTorch` ← candidate `Python` 74.7%, `Machine Learning` ← `Python` 71.5%, `Statistics` ← `JavaScript` 64.3%), and the gap threshold is <60%. The scoring pipeline was intentionally left unchanged per the task; a follow-up is needed (e.g. gate matches by evidence/proficiency or raise the gap threshold).
-- **Job skill normalization:** new `backend/src/utils/skillNormalizer.js` with an explicit synonym map (design vs frontend kept distinct: `ui/ux`/`product design` → `UI/UX`; `reactjs`/`react.js` → `React`; `nodejs`/`node` → `Node.js`; etc.). Jobs are canonicalized on create/update (model pre-validate + controller), duplicates-after-normalization are rejected (400), and search normalizes query skills the same way. Frontend mirrors the map in `frontend/src/utils/skills.js` for JobForm/JobFilters, with example hints.
-- **Tests/verification:** job suite 34 tests (6 new: synonym normalization on create/update, synonym search, UI/UX vs React separation, ANY-match); full backend suite **73 passed + 2 skipped**; frontend lint 0 errors and build ✓. Manual: `skills=UI/UX` returns only the design job; `skills=react` returns React jobs; `product design` matches via synonym; `city=chennai` exact; seeded jobs re-canonicalized via `seed-jobs.js`.
-
-### 2026-09-15 — Dynamic target roles + page/navigation reorder
-
-- **`GET /api/roles`** (`backend/src/routes/role.routes.js`, `role.controller.js`, `config/roles.js`): authenticated endpoint returning all `role_name` values distinct in `SkillOntology`, sorted with configured labels (`SDE → Software Development Engineer`; unknown roles fall back to their id). `POST /api/profile` no longer uses a hard-coded `target_role` enum — it validates against the live ontology role set; `ProfileSubmission.target_role` relaxed to a plain string.
-- **Frontend:** `UploadForm` fetches `/roles` and renders every role dynamically (default = first role; loading/error states). New shared `NavBar` with order **Jobs → Dashboard → New Analysis → AI Assistant** (+ Admin Jobs for admins). Routes: `/` now renders the Jobs page for authenticated users; New Analysis moved to `/analyze`; new placeholder `/assistant` page (no assistant backend exists — page is honest placeholder). Dashboard reordered: ATS Score → Skill breakdown → Study plan → Role readiness; the score-trend chart is no longer rendered (component/API kept).
-- **Tests:** backend `tests/roles.test.js` (401 unauth, returns all ontology roles with labels, empty ontology) + dynamic-role profile test; frontend Vitest + jsdom + Testing Library added (`npm test` in frontend): UploadForm shows all roles + default + error state, root `/` lands on Jobs, nav order (student and admin), deep links, dashboard section order with no trend chart. Results: backend **77 passed + 2 skipped**, frontend **10 passed**, lint 0 errors, build ✓.
-- **Manual:** `GET /api/roles` → SDE + ML Engineer; inserting a temp `Cybersecurity Analyst` ontology role made it appear in `/api/roles` and accept a profile upload (no code change); removed after verification.
-
-### 2026-09-15 — Landing page moved to Dashboard
-
-- `/` now renders the Dashboard for authenticated users (was Jobs). `/jobs` remains the Jobs page and is still first in the nav order (Jobs → Dashboard → New Analysis → AI Assistant); `/analyze`, `/assistant`, `/admin/jobs` unchanged.
-- Frontend tests updated: root lands on the Dashboard (with report → ATS Score; without report → "No report yet" empty state). Frontend suite **11 passed**; lint 0 errors; build ✓.
-
-### 2026-09-15 — All drafted target roles loaded into the ontology
-
-- **Why the dropdown only showed 2 roles:** the live `SkillOntology` initially contained only `SDE` and `ML Engineer`; the additional role matrices in `ontology/drafts/new-roles-draft.json` had not been imported, so `GET /api/roles` (correctly) returned only those two.
-- **What changed:** new `scripts/import-role-drafts.js` converts the reviewed draft into per-role ontology seed files (weights normalized 1–5 → 0–1, with alias mapping so shared skills merge: `RESTful APIs`→`REST APIs`, `Scikit-Learn`→`scikit-learn`, `Spark`→`Apache Spark`, `IAM (Identity and Access Management)`→`IAM`). `ontology-loader.js` now reads every top-level `ontology/*.json` (drafts/ ignored) instead of hard-coding two filenames. `embedSkillsBatch` chunks requests (50/request) for large seeds.
-- **Result:** 74 unique skills across **10 roles** — SDE, ML Engineer, Full-Stack Developer, Backend Developer, Data Scientist, Data Engineer, DevOps Engineer, Cybersecurity Analyst, QA/Test Engineer, Cloud Engineer. Shared skills carry one weight per role (e.g. Python: 9 roles, Docker: 9, AWS: 7). `npm run seed` embeds them in a single batch call.
-- **Verification:** `GET /api/roles` returns all 10; a full upload → analyze run with target role **Data Scientist** completed (score 84, strong: Git/SQL/Python/PyTorch/scikit-learn/Pandas). New `tests/ontology-source.test.js` guards the seed source (all roles present, shared skills merged, weights in (0,1]). Backend **80 passed + 2 skipped**; frontend **11 passed**; build ✓.
-
-### 2026-09-15 — Frontend visual redesign
-
-- Refreshed the existing React UI with a dark editorial "mission control" visual system: centered floating navigation, lime/blue/orange signal palette, responsive cards, score treatments, job hero section, and mobile-safe layout.
-- Added `lenis` smooth scrolling and `motion` entrance transitions without changing API contracts or page data flows.
-- Added shared motion-aware `NavBar`, preserved the existing Jobs/Dashboard/New Analysis/AI Assistant route order, and kept the score-trend component in the codebase without rendering it on the dashboard.
-- Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.
-
-### 2026-09-15 — Monochrome minimalist/brutalist visual pass
-
-- Removed tactical/cyber language from the UI (`Placement network / live board`, `personal console`, signal-based copy) and replaced it with neutral editorial labels.
-- Replaced the green/blue/orange palette with black, white, and grey only: sharp borders, offset shadows, minimal pill usage, high-contrast type, and monochrome score states.
-- Kept Lenis smooth scrolling and Motion transitions, but made them quieter and more editorial. Existing routes, data flows, and API behavior are unchanged.
-- Frontend verification: **11 tests passed**, lint 0 errors, Vite build ✓.
-
-### 2026-09-15 — Vortex landing page, dark mode, resource audit, prompt polish
-
-- **Landing page:** new public `/` marketing page for the product now branded **Vortex** (was SkillGap): hero with animated product visual, "Trusted by" rolling marquee, "How it works" steps, split narrative, and end CTA. Sections use Motion `whileInView` with `once: false`, so content assembles while scrolling down and recedes when scrolling back up.
-- **Dark mode:** new `ThemeContext` with a persisted `light`/`dark` preference (`localStorage` + `data-theme` on `<html>`). Toggle is available in the app nav and the landing nav. Both themes keep the same monochrome brutalist system (black/white/grey).
-- **Branding:** navbar and landing now use "Vortex" (mark "V"); login product label and page title updated.
-- **Resources:** full link audit re-run and fixed — 8 URLs updated to current/verified destinations (freeCodeCamp React, Frontend Mentor replacing the dead jschallenger link, Node.js docs, PyTorch docs/tutorials, SQL tutorial, GeeksforGeeks DSA, Hugging Face LLM course). Result: **0 broken** (82 ok, 8 benign redirects) across 90 catalog entries; reseeded.
-- **Gemini prompts:** extraction prompt tightened — explicit empty-result contract (`{"skills": []}`), no gap-filling, evidence must be copied (never paraphrased), bare-keyword handling, casing-variant merging, and strict category/JSON rules. Role-drafting prompt now requires canonical names, a realistic weight distribution, and no duplicates.
-- **Verification:** backend **80 passed + 2 skipped**; frontend **12 passed** (added dark-mode toggle test, IntersectionObserver test polyfill); lint 0 errors; build ✓.
-
-### 2026-09-15 — Admin application dashboard
-
-- Added `Application` model with unique `{ applicant, job }` index, status enum, initial `applied` history entry, and admin transition history.
-- Added student routes: `POST /api/applications` (student-only apply, duplicate `409`) and `GET /api/applications/me` (own records only).
-- Added admin routes: `GET /api/admin/applications`, `PATCH /api/admin/applications/:applicationId/status`, aggregation-backed `GET /api/admin/dashboard/application-summary`, and application-driven `GET /api/admin/dashboard` for the candidate review workspace.
-- Added `AdminApplicationsPage` with summary cards, applications-by-job table, filters/pagination, and six-column pipeline; added `MyApplicationsPage` and student Apply/Applied behavior on job cards.
-- Added idempotent `scripts/seed-applications.js` for development/demo records across all statuses.
-- Dark mode now applies before first paint, has a login-page toggle, and keeps the monochrome theme consistent.
-- Verification: backend **98 passed + 2 skipped**, frontend **12 passed**, frontend lint 0 errors, build ✓.
+Some audit and implementation reports in `docs/` are historical snapshots. They preserve useful reasoning and decisions, but their paths, counts, and status claims may describe an older revision. Use this file and the linked current guides when working with the checked-out code.

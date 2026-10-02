@@ -27,7 +27,7 @@ describe('Assistant ownership and grounding', () => {
   it('uses only stored scores and gaps',async()=>{
     const r=await chat(token,{message:'What next?',analysisId:String(report._id),score:100,skills:['PyTorch']});
     expect(r.status).toBe(200); expect(r.body.reply).toBeTruthy();
-    const prompt=generateAssistantReply.mock.calls[0][0];expect(prompt).toContain('System Design');expect(prompt).toContain('"atsScore":42');expect(prompt).not.toContain('"atsScore":100');
+    const prompt=generateAssistantReply.mock.calls[0][0];expect(prompt).toContain('System Design');expect(prompt).toContain('"roleReadinessScore":42');expect(prompt).not.toContain('"roleReadinessScore":100');
   });
   it('asks for scan-friendly Markdown without weakening grounding or safety',async()=>{
     const r=await chat(token,{message:'What next?',analysisId:String(report._id)});

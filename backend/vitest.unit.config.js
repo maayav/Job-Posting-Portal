@@ -11,7 +11,7 @@ export default defineConfig({
       'tests/serverless-cors.test.js', 'tests/storage-service.test.js',
       'tests/test-environment.test.js', 'tests/resume-bounds.test.js',
       'tests/api-handler.test.js', 'tests/ontology-source.test.js',
-      'tests/study-plan-ai.test.js',
+      'tests/study-plan-ai.test.js', 'tests/profile-assessment.test.js',
     ],
   },
 });

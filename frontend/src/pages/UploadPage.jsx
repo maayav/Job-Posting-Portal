@@ -6,6 +6,7 @@ import ExtractedSkillReview from '../components/ExtractedSkillReview';
 import { api, errorMessage } from '../api/client';
 import { motion, useReducedMotion } from 'motion/react';
 import Icon from '../components/Icon';
+import AnalysisActivity from '../components/AnalysisActivity';
 import '../styles/student-experience.css';
 
 const POLL_MS = 4000;
@@ -20,6 +21,7 @@ export default function UploadPage() {
   const [skills, setSkills] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState('queued');
   const pollCancelled = useRef(false);
 
   const poll = useCallback(async (id) => {
@@ -28,6 +30,7 @@ export default function UploadPage() {
       if (pollCancelled.current) return;
       const res = await api.get(`/analyze/${id}/status`);
       const status = res.data.status;
+      setStage(res.data.stage ?? status);
       if (status === 'completed') {
         localStorage.setItem('report_id', id);
         localStorage.removeItem('analysis_report_id');
@@ -57,18 +60,33 @@ export default function UploadPage() {
           if (pollCancelled.current) return;
           setSubmission(res.data);
           setSkills(res.data.extracted_skills ?? []);
-          setPhase(res.data.extraction_status === 'completed' ? 'review' : 'review');
+          setPhase(savedReportId ? 'analyzing' : 'review');
         })
         .catch(() => localStorage.removeItem('analysis_submission_id'));
     }
     if (savedReportId) {
       setPhase('analyzing');
-      poll(savedReportId);
+      poll(savedReportId).catch((err) => { if (!pollCancelled.current) { setError(errorMessage(err)); setPhase('review'); } });
     }
     return () => { pollCancelled.current = true; };
   }, [poll]);
 
-  async function handleUpload(file, github, linkedinUrl, linkedinSummaryText, leetcode, role) {
+  useEffect(() => {
+    if (phase !== 'analyzing' || !submission?.id) return;
+    let cancelled = false;
+    let timer;
+    async function watch() {
+      try {
+        const { data } = await api.get(`/analyze/submission/${submission.id}/status`);
+        if (!cancelled && data?.stage) setStage(data.stage);
+      } catch { /* The analysis request owns error handling; monitoring is optional. */ }
+      if (!cancelled) timer = setTimeout(watch, POLL_MS);
+    }
+    watch();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [phase, submission?.id]);
+
+  async function handleUpload(file, github, linkedinUrl, linkedinSummaryText, leetcode, role, extra = {}) {
     setError('');
     setLoading(true);
     setPhase('upload');
@@ -80,6 +98,8 @@ export default function UploadPage() {
       form.append('linkedinSummaryText', linkedinSummaryText);
       form.append('leetcode_username', leetcode);
       form.append('target_role', role);
+      form.append('codingProfileUrl', extra.codingProfileUrl ?? '');
+      form.append('codingSummaryText', extra.codingSummaryText ?? '');
 
       const res = await api.post('/profile', form);
       const submissionId = res.data.id;
@@ -111,6 +131,7 @@ export default function UploadPage() {
   async function handleAnalyze() {
     setError('');
     setPhase('analyzing');
+    setStage('queued');
     try {
       const res = await api.post('/analyze', { submission_id: submission.id });
       const id = res.data.report_id;
@@ -119,6 +140,7 @@ export default function UploadPage() {
       if (res.status === 202 && res.data.status === 'completed') {
         localStorage.setItem('report_id', id);
         localStorage.removeItem('analysis_report_id');
+        localStorage.removeItem('analysis_submission_id');
         navigate('/dashboard');
         return;
       }
@@ -155,19 +177,21 @@ export default function UploadPage() {
           <motion.div
             key={phase}
             className="student-analysis-phase"
-            initial={false}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: 'easeOut' }}
           >
             {phase === 'upload' && (
               <>
-                <UploadForm requestedRole={searchParams.get('role')} onSubmit={handleUpload} loading={loading} />
+                {loading && <AnalysisActivity extracting />}
+                <div hidden={loading}><UploadForm requestedRole={searchParams.get('role')} onSubmit={handleUpload} loading={loading} /></div>
                 {error && <p className="error card-error">{error}</p>}
               </>
             )}
 
             {phase === 'review' && (
               <>
+                {loading && <AnalysisActivity extracting />}
                 <ExtractedSkillReview skills={skills} extractionError={submission?.extraction_status === 'failed' ? submission?.extraction_error : null} />
                 {['unavailable', 'not_found'].includes(submission?.leetcode_status) && <p className="muted small">The public LeetCode profile could not be retrieved. The analysis uses your other available evidence.</p>}
                 {error && <p className="error card-error">{error}</p>}
@@ -184,12 +208,7 @@ export default function UploadPage() {
             )}
 
             {phase === 'analyzing' && (
-              <div className="card center student-analyzing-card" role="status">
-                <div className="student-analysis-orbit"><span /><span /><span /></div>
-                <p className="section-kicker">A MOMENT TO CONNECT THE DOTS</p>
-                <h2>Analyzing your profile…</h2>
-                <p className="muted">Comparing your skills with {submission?.target_role} and preparing your readiness report and study roadmap.</p>
-              </div>
+              <AnalysisActivity stage={stage} role={submission?.target_role} />
             )}
           </motion.div>
         </div>
@@ -198,8 +217,8 @@ export default function UploadPage() {
           <h2>Evidence into direction.</h2>
           <p className="muted">Vortex maps what you already know to the role you want, then turns the gaps into practical next moves.</p>
           <div className="student-analysis-benefit"><span>01</span><div><strong>A skill map</strong><small>See strengths, developing areas, and gaps.</small></div></div>
-          <div className="student-analysis-benefit"><span>02</span><div><strong>A readiness signal</strong><small>Understand your profile against the target role.</small></div></div>
-          <div className="student-analysis-benefit"><span>03</span><div><strong>A practical plan</strong><small>Focus your learning on the next most useful step.</small></div></div>
+          <div className="student-analysis-benefit"><span>02</span><div><strong>Readiness and profile scores</strong><small>Compare role skills, project evidence, and coding practice with clear source coverage.</small></div></div>
+          <div className="student-analysis-benefit"><span>03</span><div><strong>A practical plan</strong><small>What to study, projects to build, problems to practice, and ideas to share on LinkedIn.</small></div></div>
            <div className="student-analysis-note"><Icon name="check" size={15} /> PDF resume required · external profiles are supplementary</div>
         </aside>
       </div>

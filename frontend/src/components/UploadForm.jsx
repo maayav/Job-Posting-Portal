@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, errorMessage } from '../api/client';
+import { MAX_RESUME_BYTES } from '../utils/uploads';
 
 function isValidLinkedInUrl(value) {
   if (!value) return true;
@@ -23,6 +24,10 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [linkedinSummaryText, setLinkedinSummaryText] = useState('');
   const [leetcode, setLeetcode] = useState('');
+  const [codingProfileUrl, setCodingProfileUrl] = useState('');
+  const [codingSummaryText, setCodingSummaryText] = useState('');
+  const [importingLinkedIn, setImportingLinkedIn] = useState(false);
+  const [importNotice, setImportNotice] = useState('');
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState('');
   const [rolesError, setRolesError] = useState('');
@@ -54,8 +59,8 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
     if (f && !f.name.toLowerCase().endsWith('.pdf')) {
       setError('Only PDF resumes are accepted.');
     }
-    if (f && f.size > 5 * 1024 * 1024) {
-      setError('Resume must be 5MB or smaller.');
+    if (f && f.size > MAX_RESUME_BYTES) {
+      setError('Resume must be 4MB or smaller.');
     }
   }
 
@@ -70,8 +75,8 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       setError('Only PDF resumes are accepted.');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Resume must be 5MB or smaller.');
+    if (file.size > MAX_RESUME_BYTES) {
+      setError('Resume must be 4MB or smaller.');
       return;
     }
     if (!role) {
@@ -86,7 +91,22 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       setError('LinkedIn summary must be 10,000 characters or fewer.');
       return;
     }
-    onSubmit(file, github.trim(), linkedinUrl.trim(), linkedinSummaryText.trim(), leetcode.trim(), role);
+    onSubmit(file, github.trim(), linkedinUrl.trim(), linkedinSummaryText.trim(), leetcode.trim(), role, { codingProfileUrl: codingProfileUrl.trim(), codingSummaryText: codingSummaryText.trim() });
+  }
+
+  async function importLinkedIn(event) {
+    const pdf = event.target.files?.[0];
+    if (!pdf) return;
+    setError(''); setImportNotice('');
+    if (!pdf.name.toLowerCase().endsWith('.pdf') || pdf.size > 4 * 1024 * 1024) { setError('Choose a LinkedIn PDF smaller than 4MB.'); return; }
+    setImportingLinkedIn(true);
+    try {
+      const form = new FormData(); form.append('linkedin', pdf);
+      const { data } = await api.post('/profile/linkedin-preview', form);
+      setLinkedinSummaryText(data.text);
+      setImportNotice(data.truncated ? 'The first 10,000 characters were imported. Review and edit the text below.' : 'PDF text imported. Review and edit it before submitting your profile.');
+    } catch (err) { setError(errorMessage(err)); }
+    finally { setImportingLinkedIn(false); event.target.value = ''; }
   }
 
   return (
@@ -96,7 +116,7 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       <label className="student-file-field">
         Resume (PDF)
         <input className="student-file-input" type="file" accept=".pdf,application/pdf" onChange={handleFile} />
-        <span className="muted small">{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : 'PDF only · up to 5MB'}</span>
+        <span className="muted small">{file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB` : 'PDF only · up to 4MB'}</span>
       </label>
 
       <label>
@@ -118,6 +138,12 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
           placeholder="https://www.linkedin.com/in/example-user/"
         />
         <span className="muted small">URL only. Vortex does not scrape LinkedIn.</span>
+      </label>
+
+      <label>
+        Import your LinkedIn profile PDF <span className="optional">(optional)</span>
+        <input type="file" accept=".pdf,application/pdf" onChange={importLinkedIn} disabled={loading || importingLinkedIn} />
+        <span className="muted small" role="status">{importingLinkedIn ? 'Reading the profile PDF…' : importNotice || 'Up to 4MB. The PDF fills the editable text field below; it is not stored.'}</span>
       </label>
 
       <label>
@@ -143,6 +169,16 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       </label>
 
       <label>
+        HackerRank, Codeforces, or CodeChef profile <span className="optional">(optional)</span>
+        <input type="url" value={codingProfileUrl} onChange={(e) => setCodingProfileUrl(e.target.value)} placeholder="https://www.hackerrank.com/profile/your-name" maxLength={500} />
+      </label>
+      <label>
+        Coding practice evidence <span className="optional">(optional)</span>
+        <textarea rows={4} maxLength={10000} value={codingSummaryText} onChange={(e) => setCodingSummaryText(e.target.value)} placeholder="Paste your practice summary, solved problem names, languages, and what you learned." />
+        <span className="muted small">This is labelled as user-provided evidence. These platforms are not fetched automatically.</span>
+      </label>
+
+      <label>
         Target role
         <select value={role} onChange={(e) => setRole(e.target.value)} disabled={roles.length === 0}>
           {roles.length === 0 && <option value="">{rolesError ? 'Roles unavailable' : 'Loading roles…'}</option>}
@@ -159,7 +195,7 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
 
       <p className="muted small">GitHub and LeetCode lookups are supplementary and may be unavailable. LinkedIn is never fetched automatically.</p>
 
-      <button className="primary" disabled={loading || roles.length === 0}>
+      <button className="primary" disabled={loading || importingLinkedIn || roles.length === 0}>
         {loading ? 'Uploading & extracting skills…' : 'Upload & extract skills'}
       </button>
     </form>

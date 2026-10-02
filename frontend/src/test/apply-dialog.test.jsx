@@ -56,6 +56,18 @@ describe('ApplyDialog', () => {
     expect(api.post).not.toHaveBeenCalled();
   });
 
+  it.each([
+    [new File(['text'], 'resume.txt', { type: 'text/plain' }), 'Only PDF resumes are accepted.'],
+    [new File([new Uint8Array(4 * 1024 * 1024 + 1)], 'resume.pdf', { type: 'application/pdf' }), 'Resume must be 4MB or smaller.'],
+  ])('rejects an invalid application resume before sending it', async (file, message) => {
+    render(<ApplyDialog job={job} user={user} onClose={vi.fn()} onApplied={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText(/upload a different resume/i));
+    fireEvent.change(screen.getByLabelText('Application resume PDF'), { target: { files: [file] } });
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
+    expect(await screen.findByText(message)).toBeTruthy();
+    expect(api.post).not.toHaveBeenCalled();
+  });
+
   it('treats an already-applied response as success', async () => {
     const onApplied = vi.fn();
     api.post.mockRejectedValue({ response: { status: 409, data: { error: 'already_applied' } } });

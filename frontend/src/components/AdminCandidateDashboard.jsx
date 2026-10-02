@@ -92,7 +92,7 @@ function DetailPanel({ application, review, loading, onStatusChange, changing, o
       <span><b>Role</b>{job.title || 'Archived role'}</span><span><b>Target role</b>{candidateReview.targetRole || job.title || '—'}</span><span><b>Company</b>{job.company || '—'}</span><span><b>Applied</b>{new Date(application.appliedAt).toLocaleDateString()}</span><span><b>Requirement</b>{job.experienceLevel == null ? '—' : `${job.experienceLevel} yr${job.experienceLevel === 1 ? '' : 's'} · ${job.city || '—'}`}</span>
       {candidate.phone && <span><b>Phone</b>{candidate.phone}</span>}
     </div>
-    <div className="candidate-scores"><Score label="Role readiness" value={candidateReview.roleReadinessScore ?? candidateReview.atsScore} /><span className="muted small"><span>ATS score</span> uses this same weighted readiness metric.</span></div>
+    <div className="candidate-scores"><Score label="Role readiness" value={candidateReview.roleReadinessScore ?? candidateReview.atsScore} /><Score label="Profile evidence" value={candidateReview.profileScore} /><span className="muted small">{candidateReview.profileCoverage || 'Source assessment not available on this report.'}</span></div>
     <section className="candidate-detail-section">
       <div className="section-heading"><h3>AI evaluation</h3><span className={'status-badge status-' + application.status}>{displayStage}</span></div>
       <SkillGroup label="Matched skills" items={candidateReview.strongSkills} tone="good" /><SkillGroup label="Developing skills" items={candidateReview.developingSkills} tone="mid" /><SkillGroup label="Missing skills" items={candidateReview.missingSkills} tone="low" />

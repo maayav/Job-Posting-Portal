@@ -64,6 +64,16 @@ describe('GitHub public profile boundaries', () => {
     expect(cache.findOneAndUpdate).toHaveBeenCalledOnce();
     expect(mocks.githubClient.get).toHaveBeenCalledWith('/users/public-test/repos', expect.objectContaining({ params: { sort: 'pushed', per_page: 10 }, maxContentLength: 1024 * 1024, timeout: expect.any(Number) }));
   });
+  it('distinguishes missing READMEs from unavailable README requests', async () => {
+    githubFixture();
+    const original = mocks.githubClient.get.getMockImplementation();
+    mocks.githubClient.get.mockImplementation((url, args) => url.endsWith('/readme') ? Promise.reject({ response: { status: 403 } }) : original(url, args));
+    const unavailable = await fetchGithubProfile('public-test', { cache: freshCache(), client: mocks.githubClient });
+    expect(unavailable.repos[0].readmeStatus).toBe('unavailable');
+    mocks.githubClient.get.mockImplementation((url, args) => url.endsWith('/readme') ? Promise.reject({ response: { status: 404 } }) : original(url, args));
+    const absent = await fetchGithubProfile('public-test', { cache: freshCache(), client: mocks.githubClient });
+    expect(absent.repos[0].readmeStatus).toBe('absent');
+  });
   it('returns an existing fresh cache without HTTP and caps legacy repo arrays', async () => {
     const cache = freshCache();
     cache.findOne.mockResolvedValue({ fetchedAt: new Date(), data: { username: 'wrong', repos: Array.from({ length: 30 }, () => repo({ readme: 'r'.repeat(5000) })) } });
@@ -161,7 +171,7 @@ describe('GitHub public profile boundaries', () => {
 describe('optional public LeetCode evidence', () => {
   it('reports only explicitly listed solved languages with no proficiency claim', async () => {
     mocks.leetcodePost.mockResolvedValue(leetcodeFixture([{ languageName: 'JavaScript', problemsSolved: 12 }, { languageName: 'Python', problemsSolved: 0 }]));
-    await expect(fetchLeetcodeProfile('public-test')).resolves.toEqual({ status: 'ok', evidence: 'Solved 12 LeetCode problems using JavaScript.' });
+    await expect(fetchLeetcodeProfile('public-test')).resolves.toMatchObject({ status: 'ok', evidence: 'Solved 12 LeetCode problems using JavaScript.', metrics: { totalSolved: null, languages: [{ name: 'JavaScript', solved: 12 }] } });
     expect(mocks.leetcodePost).toHaveBeenCalledWith('https://leetcode.com/graphql/', expect.objectContaining({ variables: { username: 'public-test' } }), expect.objectContaining({ timeout: 10000, maxContentLength: 100000 }));
   });
   it.each(['not a username', 'https://example.com/', 'x'.repeat(121)])('rejects invalid input %s without HTTP', async (input) => {
@@ -233,6 +243,14 @@ describe('LinkedIn user-provided source boundaries', () => {
 });
 
 describe('safe extraction orchestration without database/provider calls', () => {
+  it('does not publish fresh source metrics when extraction fails', async () => {
+    mocks.findSubmission.mockResolvedValue({ _id: 'demo-submission', resume_text: 'Built React dashboards.', leetcode_username: 'public-test', source_evidence: { leetcode: { available: true, totalSolved: 4 } } });
+    mocks.leetcodePost.mockResolvedValue({ data: { data: { matchedUser: { languageProblemCount: [{ languageName: 'Python', problemsSolved: 12 }], submitStatsGlobal: { acSubmissionNum: [{ difficulty: 'All', count: 12 }] } } } } });
+    mocks.extract.mockRejectedValue(new Error('provider failed'));
+    await expect(processExtraction('demo-submission', null)).rejects.toThrow('provider failed');
+    expect(mocks.saveSkills).not.toHaveBeenCalled();
+    expect(mocks.updateSubmission).not.toHaveBeenCalled();
+  });
   it.each([
     { linkedinSummaryText: '', github: null },
     { linkedinSummaryText: '', github: { username: 'public-test', repos: [repo({ readme: 'Built React dashboards.', manifests: {} })] } },

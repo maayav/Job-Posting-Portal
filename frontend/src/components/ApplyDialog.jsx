@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, errorMessage } from '../api/client';
+import { MAX_RESUME_BYTES } from '../utils/uploads';
 
 export default function ApplyDialog({ job, user, onClose, onApplied }) {
   const [email, setEmail] = useState(user?.email ?? '');
@@ -32,6 +33,14 @@ export default function ApplyDialog({ job, user, onClose, onApplied }) {
     }
     if (resumeMode === 'upload' && !file) {
       setError('Choose a PDF resume to upload, or use your saved profile resume.');
+      return;
+    }
+    if (resumeMode === 'upload' && !file.name.toLowerCase().endsWith('.pdf')) {
+      setError('Only PDF resumes are accepted.');
+      return;
+    }
+    if (resumeMode === 'upload' && file.size > MAX_RESUME_BYTES) {
+      setError('Resume must be 4MB or smaller.');
       return;
     }
 
@@ -110,12 +119,13 @@ export default function ApplyDialog({ job, user, onClose, onApplied }) {
               />
               <span>
                 Upload a different resume
-                <small>PDF only, up to 5 MB. This one is attached to this application.</small>
+                <small>PDF only, up to 4 MB. This one is attached to this application.</small>
               </span>
             </label>
             {resumeMode === 'upload' && (
               <input
                 type="file"
+                aria-label="Application resume PDF"
                 accept=".pdf,application/pdf"
                 onChange={(event) => setFile(event.target.files?.[0] ?? null)}
               />

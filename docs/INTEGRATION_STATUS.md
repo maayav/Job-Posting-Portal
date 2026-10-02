@@ -1,6 +1,6 @@
 # Vortex integration and deployment status
 
-Verification date: 2 October 2026; post-release HTTP checks at 10:20:41 UTC. Both existing production projects serve commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`. This record distinguishes verified release/configuration evidence, safe live checks, mocked tests, and untested production workflows.
+Historical audit verification: 2 October 2026, 10:20:41 UTC, production commit `65db9f28bd4c1c8cecc8004d68441b6bf117d33e`. The evidence below belongs to that earlier release. Current profile-assessment features and their newer local/live coverage are recorded in [Profile release verification](PROFILE_RELEASE_VERIFICATION.md). This historical record distinguishes verified configuration, safe live checks, mocked tests, and untested production workflows.
 
 ## Deployment status
 

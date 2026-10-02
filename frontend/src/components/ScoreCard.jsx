@@ -11,8 +11,8 @@ export default function ScoreCard({ score, targetRole, generatedAt }) {
     >
       <div className="score-copy">
         <p className="section-kicker">01 / READINESS SIGNAL</p>
-        <h2>ATS Score</h2>
-        <p className="score-context">This is Vortex's single weighted role-readiness signal for your target role, based on the evidence in your profile.</p>
+        <h2>Role readiness</h2>
+        <p className="score-context">How closely your supported skills match the target role. Your wider profile assessment below looks at each source separately.</p>
         <div className="score-tags">
           <span className="chip">{targetRole}</span>
           <span className="score-status"><i /> Analysis complete</span>

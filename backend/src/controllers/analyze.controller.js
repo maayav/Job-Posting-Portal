@@ -79,12 +79,23 @@ export async function createAnalysis(req, res) {
 
 export async function getAnalysisStatus(req, res) {
   const report = req.resource;
+  res.set('Cache-Control', 'private, no-store');
   res.json({
     report_id: report._id.toString(),
     submission_id: report.submission_id.toString(),
     status: report.status,
+    stage: report.stage ?? report.status,
     errorCode: report.errorCode,
     startedAt: report.startedAt,
     completedAt: report.completedAt,
   });
+}
+
+// The profile ID is known before the serverless POST finishes. This read-only
+// endpoint lets the UI show actual stages while that request is still running.
+export async function getSubmissionAnalysisStatus(req, res) {
+  const report = await ReadinessReport.findOne({ submission_id: req.resource._id }).sort({ createdAt: -1 });
+  if (!report) return res.status(204).end();
+  req.resource = report;
+  return getAnalysisStatus(req, res);
 }

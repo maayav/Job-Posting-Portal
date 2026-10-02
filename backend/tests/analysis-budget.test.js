@@ -3,20 +3,21 @@ import { ReadinessReport } from '../src/models/readinessReport.js';
 import { ProfileSubmission } from '../src/models/profileSubmission.js';
 import { ExtractedSkillProfile } from '../src/models/extractedSkillProfile.js';
 import { SkillOntology } from '../src/models/skillOntology.js';
-import { enrichStudyPlan } from '../src/services/ai/studyPlanService.js';
+import { enrichCareerPlan } from '../src/services/ai/studyPlanService.js';
 import { generateReport } from '../src/services/scoringService.js';
 import { reconcileAnalysisJobs, runAnalysis, STALE_ANALYSIS_MS } from '../src/services/analysisService.js';
 import { withRequestBudget } from '../src/utils/requestBudget.js';
 
 vi.mock('../src/config/env.js', () => ({ env: { EMBEDDING_MODEL: 'pinned', EMBEDDING_VERSION: 'v1' } }));
-vi.mock('../src/models/readinessReport.js', () => ({ ReadinessReport: { findOneAndUpdate: vi.fn(), updateMany: vi.fn() } }));
+vi.mock('../src/models/readinessReport.js', () => ({ ReadinessReport: { findOneAndUpdate: vi.fn(), updateMany: vi.fn(), updateOne: vi.fn().mockResolvedValue({ matchedCount: 1 }) } }));
 vi.mock('../src/models/profileSubmission.js', () => ({ ProfileSubmission: { findById: vi.fn() } }));
 vi.mock('../src/models/extractedSkillProfile.js', () => ({ ExtractedSkillProfile: { findOne: vi.fn() } }));
 vi.mock('../src/models/skillOntology.js', () => ({ SkillOntology: { find: vi.fn() } }));
+vi.mock('../src/services/profileAssessmentService.js', () => ({ buildProfileAssessment: vi.fn(() => ({ score: 50, assessedSources: 1, totalSources: 5 })) }));
 vi.mock('../src/services/skillService.js', () => ({ processExtraction: vi.fn() }));
 vi.mock('../src/services/ai/embeddingProvider.js', () => ({ generateEmbeddings: vi.fn() }));
 vi.mock('../src/services/scoringService.js', () => ({ generateReport: vi.fn(), buildStudyPlan: vi.fn().mockResolvedValue([]) }));
-vi.mock('../src/services/ai/studyPlanService.js', () => ({ enrichStudyPlan: vi.fn() }));
+vi.mock('../src/services/ai/studyPlanService.js', () => ({ enrichCareerPlan: vi.fn() }));
 
 let report;
 beforeEach(() => {
@@ -30,7 +31,7 @@ beforeEach(() => {
   });
   SkillOntology.find.mockReturnValue({ lean: vi.fn().mockResolvedValue([{ roles: [{ role_name: 'Test role', weight: 1 }], embedding_model: 'pinned', embedding_version: 'v1', embedding_vector: [1, 0] }]) });
   generateReport.mockResolvedValue({ score: 84, strong_areas: [], developing_areas: [], gaps: [], study_plan: [] });
-  enrichStudyPlan.mockResolvedValue([]);
+  enrichCareerPlan.mockResolvedValue({ studyPlan: [], careerActions: { projects: [], practice: [], posts: [] } });
 });
 afterEach(() => vi.useRealTimers());
 
@@ -51,7 +52,7 @@ describe('Analysis ownership and timeout persistence', () => {
 
   it('persists a controlled timeout and permits a new attempt after failure', async () => {
     vi.useFakeTimers();
-    enrichStudyPlan.mockImplementation(() => new Promise(() => {}));
+    enrichCareerPlan.mockImplementation(() => new Promise(() => {}));
     ReadinessReport.findOneAndUpdate.mockResolvedValueOnce({ ...report, status: 'failed', errorCode: 'analysis_timeout' });
     const result = withRequestBudget(() => runAnalysis('report'), { timeoutMs: 100 });
     const expectation = expect(result).resolves.toMatchObject({ status: 'failed', errorCode: 'analysis_timeout' });

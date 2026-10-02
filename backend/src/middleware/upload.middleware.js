@@ -12,6 +12,7 @@ const upload = multer({
 });
 
 export const uploadResume = upload.single('resume');
+export const uploadLinkedInPdf = upload.single('linkedin');
 
 export async function validateResumeFile(req, res, next) {
   if (!req.file) {

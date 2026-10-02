@@ -12,7 +12,7 @@ import '../styles/landing-page.css';
 
 const MotionLink = motion.create(Link);
 const faqs = [
-  ['What do I need to get started?', 'Create an account and upload your resume as a PDF, up to 5 MB. You can also add your public GitHub and LeetCode profiles. Choose a role, then review the skills Vortex found before you run the analysis.'],
+  ['What do I need to get started?', 'Create an account and upload your resume as a PDF, up to 4 MB. You can also add your public GitHub and LeetCode profiles. Choose a role, then review the skills Vortex found before you run the analysis.'],
   ['What does the readiness score mean?', 'It compares the skills found in your profile with the skills in your chosen role guide. It can help you choose what to study next. It is not a prediction of whether you will get hired.'],
   ['Where do the learning links come from?', 'The study plan uses a curated catalog of documentation, courses, and tutorials matched to each skill. You can open those same links in the role guide above.'],
   ['Can a placement team use it?', 'Yes. Admins can post and close jobs, review applications, change candidate statuses, and ask the assistant questions about their workspace. Students have their own job search, analysis, and application history.'],
@@ -93,7 +93,7 @@ export default function LandingPage() {
           <ol className="landing-workflow-list">
             {[
               ['Upload your resume', 'Add a PDF and choose your target role. GitHub and LeetCode profiles are optional.'],
-              ['Check the extracted skills', 'Correct anything that looks wrong or add missing skills before you continue.'],
+              ['Check the extracted skills', 'Review the skills and their sources before you continue.'],
               ['Work through your plan', 'See your strengths and gaps, open learning resources, and mark off what you finish.'],
               ['Find a role and keep track', 'Search jobs by skill, experience, and location. Keep your applications and their statuses in one place.'],
             ].map(([title, copy], index) => <Reveal as="li" key={title} direction="right">

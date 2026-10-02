@@ -80,7 +80,7 @@ describe('bounded source-aware extraction schema', () => {
   it('bounds names, total skills, source labels, evidence count and quote length', () => {
     expect(skillSchema.safeParse({ skills: [{ name: 'x'.repeat(101) }] }).success).toBe(false);
     expect(skillSchema.safeParse({ skills: Array.from({ length: 101 }, () => ({ name: 'React' })) }).success).toBe(false);
-    expect(skillSchema.safeParse({ skills: [{ name: 'React', sources: Array(5).fill('resume') }] }).success).toBe(false);
+    expect(skillSchema.safeParse({ skills: [{ name: 'React', sources: Array(6).fill('resume') }] }).success).toBe(false);
     expect(skillSchema.safeParse({ skills: [{ name: 'React', evidence: Array(9).fill({ source: 'resume', text: 'React' }) }] }).success).toBe(false);
     expect(skillSchema.safeParse({ skills: [{ name: 'React', evidence: [{ source: 'resume', text: 'x'.repeat(501) }] }] }).success).toBe(false);
   });

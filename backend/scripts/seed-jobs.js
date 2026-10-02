@@ -1,6 +1,8 @@
 import { connectDB, disconnectDB } from '../src/config/db.js';
 import { Job } from '../src/models/job.js';
 import { User } from '../src/models/user.js';
+import { assertLocalDemoDatabase } from './demo-guard.js';
+import { env } from '../src/config/env.js';
 import { AI_ENGINEER_JOB } from './ai-engineer-job.js';
 
 // DEVELOPMENT / DEMO ONLY — idempotent job seed data.
@@ -299,6 +301,7 @@ async function main() {
     process.exit(1);
   }
 
+  assertLocalDemoDatabase(env.MONGO_URI, env.NODE_ENV);
   await connectDB({ retry: false });
 
   const admin = await User.findOne({ email: adminEmail.toLowerCase() });

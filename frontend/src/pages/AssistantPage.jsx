@@ -12,6 +12,9 @@ const SUGGESTIONS = [
   'What should I learn first?',
   'Why is my readiness score low?',
   'Suggest a project for my missing skills.',
+  'Compare my resume with my GitHub and coding practice evidence.',
+  'Which practice problems should I work on next?',
+  'Help me draft a LinkedIn post about my next project.',
 ];
 
 const ADMIN_SUGGESTIONS = [

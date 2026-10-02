@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { profileAssessmentSchema, careerActionsSchema } from './reportSections.js';
 
 const areaSchema = new mongoose.Schema(
   {
@@ -52,6 +53,9 @@ const readinessReportSchema = new mongoose.Schema(
     startedAt: { type: Date, default: null },
     completedAt: { type: Date, default: null },
     score: { type: Number, default: null, min: 0, max: 100 },
+    profile_assessment: { type: profileAssessmentSchema, default: null },
+    career_actions: { type: careerActionsSchema, default: null },
+    stage: { type: String, enum: ['queued', 'evidence', 'matching', 'planning', 'completed', 'failed'], default: 'queued' },
     strong_areas: { type: [areaSchema], default: [] },
     developing_areas: { type: [areaSchema], default: [] },
     gaps: { type: [gapSchema], default: [] },

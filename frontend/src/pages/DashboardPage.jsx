@@ -9,6 +9,8 @@ import ApplyButton from '../components/ApplyButton';
 import SaveButton from '../components/SaveButton';
 import { api, errorMessage } from '../api/client';
 import roleCatalog from '../data/role-catalog.json';
+import ProfileAssessment from '../components/ProfileAssessment';
+import CareerActions from '../components/CareerActions';
 
 // Recharts is heavy and only needed for the trend card, so it loads separately.
 const ProgressChart = lazy(() => import('../components/ProgressChart'));
@@ -213,6 +215,8 @@ function StudentDashboard() {
             )
           )}
 
+          {report && <ProfileAssessment key={report.report_id} assessment={report.profile_assessment} targetRole={report.target_role} />}
+
           {activeRole && (
             <section className="dashboard-roadmaps" aria-label="Study roadmaps">
               <div className="page-title-row dashboard-section-title">
@@ -236,6 +240,7 @@ function StudentDashboard() {
                 </label>
               </div>
               {renderRoadmapBody()}
+              {activeRoadmap?.career_actions && <CareerActions key={activeRoadmap.report_id} actions={activeRoadmap.career_actions} />}
             </section>
           )}
 

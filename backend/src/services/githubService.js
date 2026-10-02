@@ -98,9 +98,11 @@ async function collectRepo(owner, repoName, client, deadline) {
   try {
     const readme = await ghGet(`/repos/${owner}/${repoName}/readme`, { raw: true, client, deadline });
     repo.readme = truncate(readme, README_EXCERPT_CHARS);
-  } catch {
+    repo.readmeStatus = 'ok';
+  } catch (error) {
     assertRequestBudget();
     repo.readme = '';
+    repo.readmeStatus = error.code === 'github_not_found' ? 'absent' : 'unavailable';
   }
 
   try {
@@ -138,7 +140,8 @@ function boundedCachedRepo(repo) {
     language: typeof repo.language === 'string' ? repo.language.slice(0, 50) : '',
     description: truncate(repo.description, 500),
     topics: Array.isArray(repo.topics) ? repo.topics.filter((topic) => typeof topic === 'string').slice(0, 30).map((topic) => topic.slice(0, 100)) : [],
-    readme: truncate(repo.readme, README_EXCERPT_CHARS), languages,
+    readme: truncate(repo.readme, README_EXCERPT_CHARS),
+    readmeStatus: ['ok', 'absent', 'unavailable'].includes(repo.readmeStatus) ? repo.readmeStatus : repo.readme?.trim() ? 'ok' : 'unavailable', languages,
     manifests: Object.fromEntries(MANIFEST_FILES.filter((file) => typeof repo.manifests?.[file] === 'string').map((file) => [file, repo.manifests[file].slice(0, 2000)])),
   };
 }
