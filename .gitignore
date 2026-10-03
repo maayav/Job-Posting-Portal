@@ -12,3 +12,4 @@ backend/.server.pid
 backend/scripts/.server.pid
 .vercel
 backend/.vercel
+.wrangler
