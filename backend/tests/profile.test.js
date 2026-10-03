@@ -173,6 +173,48 @@ describe('Profile ingestion & security', () => {
     expect(profile.body.linkedinSummaryText).toContain('Built React dashboards');
   });
 
+  it('persists GitHub source evidence when manifest filenames contain dots', async () => {
+    const mongoose = (await import('mongoose')).default;
+    const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+    const { User } = await import('../src/models/user.js');
+    const owner = await User.findOne({ email: 'owner@test.com' });
+
+    const doc = await ProfileSubmission.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId() },
+      {
+        $set: {
+          user_id: owner._id,
+          resume_file_ref: 'source-evidence.pdf',
+          resume_text: 'Resume evidence',
+          target_role: 'SDE',
+          source_evidence: {
+            capturedAt: new Date(),
+            github: {
+              available: true,
+              partial: false,
+              fetchedAt: new Date(),
+              repos: [{
+                name: 'demo',
+                description: 'Demo project',
+                readme: 'Built a React dashboard.',
+                readmeStatus: 'ok',
+                language: 'JavaScript',
+                topics: ['demo'],
+                languages: { JavaScript: 100, 'C++': 40 },
+                manifests: { 'package.json': '{"dependencies":{"react":"latest"}}', 'requirements.txt': 'flask' },
+              }],
+            },
+            leetcode: { available: false, totalSolved: null, easy: null, medium: null, hard: null, languages: [] },
+          },
+        },
+      },
+      { upsert: true, returnDocument: 'after' },
+    );
+
+    expect(doc.source_evidence.github.repos[0].manifests['package.json']).toContain('react');
+    expect(doc.source_evidence.github.repos[0].languages.JavaScript).toBe(100);
+  });
+
   it('rejects non-LinkedIn profile URLs', async () => {
     const r = await request(app)
       .post('/api/profile')

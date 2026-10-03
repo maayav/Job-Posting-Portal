@@ -29,8 +29,8 @@ const profileSubmissionSchema = new mongoose.Schema(
         repos: [{
           _id: false, name: String, description: String, readme: String, readmeStatus: String,
           language: String, topics: [String],
-          languages: { type: Map, of: Number },
-          manifests: { type: Map, of: String },
+          languages: { type: mongoose.Schema.Types.Mixed },
+          manifests: { type: mongoose.Schema.Types.Mixed },
         }],
       },
       leetcode: {

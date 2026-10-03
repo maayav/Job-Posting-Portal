@@ -18,13 +18,46 @@ function isValidLinkedInUrl(value) {
   }
 }
 
+function parseCodingProfile(value) {
+  const input = value.trim();
+  const empty = { leetcode: '', codingProfileUrl: '' };
+  if (!input) return empty;
+  if (/^[a-zA-Z0-9._-]{1,120}$/.test(input)) return { ...empty, leetcode: input };
+  if (input.length > 500) return null;
+
+  try {
+    const url = new URL(/^(?:www\.)?leetcode\.com\//i.test(input) ? `https://${input}` : input);
+    const host = url.hostname.toLowerCase();
+    const path = url.pathname.replace(/\/+$/, '');
+    if (url.username || url.password || url.port) return null;
+
+    if (['leetcode.com', 'www.leetcode.com'].includes(host)) {
+      const profile = path.match(/^\/(?:(?:u|profile)\/)?([a-zA-Z0-9._-]{1,120})$/);
+      return ['https:', 'http:'].includes(url.protocol) && profile
+        ? { ...empty, leetcode: profile[1] }
+        : null;
+    }
+
+    const profilePaths = {
+      'hackerrank.com': /^\/(?:profile\/)?[\w-]{1,100}$/,
+      'codeforces.com': /^\/profile\/[\w.-]{1,100}$/,
+      'codechef.com': /^\/users\/[\w-]{1,100}$/,
+    };
+    const profilePath = profilePaths[host.replace(/^www\./, '')];
+    return url.protocol === 'https:' && profilePath?.test(path)
+      ? { ...empty, codingProfileUrl: input }
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function UploadForm({ onSubmit, loading, requestedRole }) {
   const [file, setFile] = useState(null);
   const [github, setGithub] = useState('');
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [linkedinSummaryText, setLinkedinSummaryText] = useState('');
-  const [leetcode, setLeetcode] = useState('');
-  const [codingProfileUrl, setCodingProfileUrl] = useState('');
+  const [codingProfile, setCodingProfile] = useState('');
   const [codingSummaryText, setCodingSummaryText] = useState('');
   const [importingLinkedIn, setImportingLinkedIn] = useState(false);
   const [importNotice, setImportNotice] = useState('');
@@ -91,7 +124,12 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       setError('LinkedIn summary must be 10,000 characters or fewer.');
       return;
     }
-    onSubmit(file, github.trim(), linkedinUrl.trim(), linkedinSummaryText.trim(), leetcode.trim(), role, { codingProfileUrl: codingProfileUrl.trim(), codingSummaryText: codingSummaryText.trim() });
+    const parsedCodingProfile = parseCodingProfile(codingProfile);
+    if (!parsedCodingProfile) {
+      setError('Enter a LeetCode username or profile URL, or a public HTTPS HackerRank, Codeforces, or CodeChef profile URL.');
+      return;
+    }
+    onSubmit(file, github.trim(), linkedinUrl.trim(), linkedinSummaryText.trim(), parsedCodingProfile.leetcode, role, { codingProfileUrl: parsedCodingProfile.codingProfileUrl, codingSummaryText: codingSummaryText.trim() });
   }
 
   async function importLinkedIn(event) {
@@ -159,23 +197,21 @@ export default function UploadForm({ onSubmit, loading, requestedRole }) {
       </label>
 
       <label>
-        LeetCode username or profile URL <span className="optional">(optional)</span>
+        Coding profile username or URL <span className="optional">(optional)</span>
         <input
           type="text"
-          value={leetcode}
-          onChange={(e) => setLeetcode(e.target.value)}
-          placeholder="e.g. leetcode.com/u/maayav or maayav"
+          value={codingProfile}
+          onChange={(e) => setCodingProfile(e.target.value)}
+          placeholder="e.g. maayav or https://codeforces.com/profile/maayav"
+          maxLength={500}
         />
+        <span className="muted small">LeetCode username or a LeetCode, HackerRank, Codeforces, or CodeChef profile URL. One profile at a time.</span>
       </label>
 
       <label>
-        HackerRank, Codeforces, or CodeChef profile <span className="optional">(optional)</span>
-        <input type="url" value={codingProfileUrl} onChange={(e) => setCodingProfileUrl(e.target.value)} placeholder="https://www.hackerrank.com/profile/your-name" maxLength={500} />
-      </label>
-      <label>
         Coding practice evidence <span className="optional">(optional)</span>
         <textarea rows={4} maxLength={10000} value={codingSummaryText} onChange={(e) => setCodingSummaryText(e.target.value)} placeholder="Paste your practice summary, solved problem names, languages, and what you learned." />
-        <span className="muted small">This is labelled as user-provided evidence. These platforms are not fetched automatically.</span>
+        <span className="muted small">This is labelled as user-provided evidence. HackerRank, Codeforces, and CodeChef are not fetched automatically.</span>
       </label>
 
       <label>

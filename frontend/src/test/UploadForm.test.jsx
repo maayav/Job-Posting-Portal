@@ -114,7 +114,7 @@ describe('UploadForm target-role selector', () => {
     await waitFor(() => expect(screen.getByLabelText(/target role/i).value).toBe('SDE'));
     const resume = new File(['pdf'], 'resume.pdf', { type: 'application/pdf' });
     fireEvent.change(screen.getByLabelText(/resume \(pdf\)/i), { target: { files: [resume] } });
-    fireEvent.change(screen.getByLabelText(/hackerrank, codeforces, or codechef profile/i), { target: { value: 'https://www.hackerrank.com/profile/demo-user' } });
+    fireEvent.change(screen.getByLabelText(/coding profile username or url/i), { target: { value: 'https://www.hackerrank.com/profile/demo-user' } });
     fireEvent.change(screen.getByLabelText(/coding practice evidence/i), { target: { value: 'Solved array problems using Python.' } });
     fireEvent.submit(screen.getByRole('button', { name: /upload & extract skills/i }).closest('form'));
     expect(onSubmit).toHaveBeenCalledWith(resume, '', '', '', '', 'SDE', {
@@ -170,5 +170,102 @@ describe('UploadForm target-role selector', () => {
     fireEvent.submit(form);
     expect(onSubmit).toHaveBeenCalledWith(resume, '', correctedUrl, '', '', 'SDE', { codingProfileUrl: '', codingSummaryText: '' });
     expect(screen.queryByText(/enter a public https linkedin profile url/i)).toBeNull();
+  });
+});
+
+describe('UploadForm combined coding profile', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.get.mockResolvedValue({ data: { roles: [{ id: 'SDE', label: 'Software Development Engineer' }] } });
+  });
+
+  async function readyForm() {
+    const onSubmit = vi.fn();
+    render(<UploadForm onSubmit={onSubmit} loading={false} />);
+    await waitFor(() => expect(screen.getByLabelText(/target role/i).value).toBe('SDE'));
+    const resume = new File(['pdf'], 'resume.pdf', { type: 'application/pdf' });
+    fireEvent.change(screen.getByLabelText(/resume \(pdf\)/i), { target: { files: [resume] } });
+    const input = screen.getByLabelText(/coding profile username or url/i);
+    const form = screen.getByRole('button', { name: /upload & extract skills/i }).closest('form');
+    return { onSubmit, resume, input, form };
+  }
+
+  it('renders one optional field for all supported coding profiles', async () => {
+    const { input, form, onSubmit, resume } = await readyForm();
+    expect(screen.getAllByLabelText(/coding profile username or url/i)).toHaveLength(1);
+    expect(screen.queryByLabelText(/^leetcode username or profile url/i)).toBeNull();
+    expect(screen.queryByLabelText(/^hackerrank, codeforces, or codechef profile/i)).toBeNull();
+    expect(input.required).toBe(false);
+    fireEvent.submit(form);
+    expect(onSubmit).toHaveBeenCalledWith(resume, '', '', '', '', 'SDE', { codingProfileUrl: '', codingSummaryText: '' });
+  });
+
+  it.each([
+    ['  demo_user-1  ', 'demo_user-1'],
+    ['https://leetcode.com/u/demo-user/', 'demo-user'],
+    ['leetcode.com/u/demo-user', 'demo-user'],
+    ['https://www.leetcode.com/profile/demo.user/', 'demo.user'],
+  ])('routes LeetCode input %s to its username field', async (value, username) => {
+    const { onSubmit, resume, input, form } = await readyForm();
+    fireEvent.change(input, { target: { value } });
+    fireEvent.submit(form);
+    expect(onSubmit).toHaveBeenCalledWith(resume, '', '', '', username, 'SDE', { codingProfileUrl: '', codingSummaryText: '' });
+  });
+
+  it.each([
+    'https://www.hackerrank.com/profile/demo-user',
+    'https://hackerrank.com/demo-user',
+    'https://codeforces.com/profile/demo.user',
+    'https://www.codechef.com/users/demo_user',
+  ])('routes supported profile %s to its evidence link field', async (url) => {
+    const { onSubmit, resume, input, form } = await readyForm();
+    fireEvent.change(input, { target: { value: `  ${url}  ` } });
+    fireEvent.submit(form);
+    expect(onSubmit).toHaveBeenCalledWith(resume, '', '', '', '', 'SDE', { codingProfileUrl: url, codingSummaryText: '' });
+  });
+
+  it.each([
+    'https://example.com/profile/demo-user',
+    'https://leetcode.com.evil.example/u/demo-user',
+    'https://leetcode.com/',
+    'https://leetcode.com/u/demo-user/extra',
+    'http://codeforces.com/profile/demo-user',
+    'https://www.hackerrank.com:444/profile/demo-user',
+    'https://user:password@codechef.com/users/demo-user',
+    'https://codeforces.com/demo-user',
+    'https://codeforces.com/profile/demo-user https://leetcode.com/u/demo-user/',
+    'invalid username',
+    'a'.repeat(121),
+  ])('rejects invalid coding profile %s before submission', async (value) => {
+    const { onSubmit, input, form } = await readyForm();
+    fireEvent.change(input, { target: { value } });
+    fireEvent.submit(form);
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText(/^enter a leetcode username or profile url/i)).toBeTruthy();
+
+    fireEvent.change(input, { target: { value: 'https://codechef.com/users/demo-user' } });
+    fireEvent.submit(form);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(/^enter a leetcode username or profile url/i)).toBeNull();
+  });
+
+  it('clears the inactive backend field when switching platforms or removing the profile', async () => {
+    const { onSubmit, resume, input, form } = await readyForm();
+    fireEvent.change(screen.getByLabelText(/coding practice evidence/i), { target: { value: 'Practiced Python arrays.' } });
+
+    const profiles = [
+      { value: 'https://leetcode.com/u/demo-user/', leetcode: 'demo-user', codingProfileUrl: '' },
+      { value: 'https://codeforces.com/profile/demo-user', leetcode: '', codingProfileUrl: 'https://codeforces.com/profile/demo-user' },
+      { value: 'second-user', leetcode: 'second-user', codingProfileUrl: '' },
+      { value: '', leetcode: '', codingProfileUrl: '' },
+    ];
+    profiles.forEach(({ value, leetcode, codingProfileUrl }, index) => {
+      fireEvent.change(input, { target: { value } });
+      fireEvent.submit(form);
+      expect(onSubmit).toHaveBeenNthCalledWith(index + 1, resume, '', '', '', leetcode, 'SDE', {
+        codingProfileUrl,
+        codingSummaryText: 'Practiced Python arrays.',
+      });
+    });
   });
 });
