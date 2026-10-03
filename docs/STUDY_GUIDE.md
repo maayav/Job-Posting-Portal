@@ -80,7 +80,7 @@ When you open the website, the browser first downloads HTML, JavaScript, CSS, an
 
 Most pages are protected by `ProtectedRoute` in `frontend/src/components/ProtectedRoute.jsx`. It checks whether the browser has local user information and a token before displaying a protected workspace. This improves navigation, but it is not the final security check. A person can bypass a browser check, so the backend also checks every protected API request.
 
-The landing page includes an interactive role guide built from generated frontend data. It currently covers 21 roles, 149 ontology skills, and 293 distinct curated resource URLs. The authenticated API catalog comes from MongoDB, so the landing catalog and workspace data can differ if a database has not been seeded or has changed.
+The landing page includes an interactive role guide built from generated frontend data. It currently covers 28 roles, 149 ontology skills, and 293 distinct curated resource URLs. The authenticated API catalog comes from MongoDB, so the landing catalog and workspace data can differ if a database has not been seeded or has changed.
 
 **Follow it in code:** `frontend/index.html`, `frontend/src/main.jsx`, `frontend/src/App.jsx`, `frontend/src/components/ProtectedRoute.jsx`, `scripts/build-role-catalog.mjs`.
 

@@ -1,0 +1,125 @@
+{
+  "role": "System Administrator",
+  "skills": [
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Networking",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "skill_name": "PowerShell",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "skill_name": "Bash",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "skill_name": "DNS",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Firewalls and VPNs",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.65
+        }
+      ]
+    },
+    {
+      "skill_name": "Backup and Recovery",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.65
+        }
+      ]
+    },
+    {
+      "skill_name": "Network Monitoring",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "IAM",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Incident Response",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Compliance Frameworks",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "skill_name": "Endpoint Detection and Response",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "System Administrator",
+          "weight": 0.4
+        }
+      ]
+    }
+  ]
+}

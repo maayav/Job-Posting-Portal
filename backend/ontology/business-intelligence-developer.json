@@ -1,0 +1,125 @@
+{
+  "role": "Business Intelligence Developer",
+  "skills": [
+    {
+      "skill_name": "SQL",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.95
+        }
+      ]
+    },
+    {
+      "skill_name": "Power BI",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Modeling",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "skill_name": "ETL/ELT Design",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Dashboard Design",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Visualization",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "dbt",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.65
+        }
+      ]
+    },
+    {
+      "skill_name": "Microsoft Excel",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Snowflake",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Cleaning",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Data Storytelling",
+      "category": "data",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Query Optimization",
+      "category": "database",
+      "roles": [
+        {
+          "role_name": "Business Intelligence Developer",
+          "weight": 0.45
+        }
+      ]
+    }
+  ]
+}

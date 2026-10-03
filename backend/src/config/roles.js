@@ -16,6 +16,13 @@ export const ROLE_LABELS = {
   'Network Engineer': 'Network Engineer',
   'Database Administrator': 'Database Administrator',
   'Business Analyst': 'Business Analyst',
+  'Product Manager': 'Product Manager',
+  'Business Intelligence Developer': 'Business Intelligence Developer',
+  'Penetration Tester': 'Penetration Tester',
+  'Solutions Architect': 'Solutions Architect',
+  'System Administrator': 'System Administrator',
+  'AR/VR Developer': 'AR/VR Developer',
+  'Cloud Security Engineer': 'Cloud Security Engineer',
 };
 
 export function roleLabel(roleName) {

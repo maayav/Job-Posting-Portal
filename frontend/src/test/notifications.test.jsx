@@ -33,6 +33,8 @@ describe('NotificationBell', () => {
     fireEvent.click(screen.getByRole('button', { name: /notifications/i }));
     expect(await screen.findByText('Application Under Review')).toBeTruthy();
     expect(screen.getByText(/your application for/i)).toBeTruthy();
+    // Keeps native scrolling inside the viewport-anchored panel.
+    expect(screen.getByRole('dialog', { name: /notifications/i }).hasAttribute('data-lenis-prevent')).toBe(true);
   });
 
   it('marks a notification read when clicked', async () => {

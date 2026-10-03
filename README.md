@@ -6,7 +6,7 @@ It is a JavaScript MERN application: React and Vite in the browser, Express and 
 
 ## What is in the app
 
-- **Role guide:** browse the bundled guides for 21 roles, with 149 role skills and 293 distinct curated resource URLs.
+- **Role guide:** browse the bundled guides for 28 roles, with 149 role skills and 293 distinct curated resource URLs.
 - **Job search:** search by skills, keywords, experience, or city. The ontology, synonyms, and local job examples go beyond MERN.
 - **Resume analysis:** upload a PDF, choose a role, optionally add GitHub or LeetCode account names, and optionally provide LinkedIn text or import a profile PDF, and add user-provided HackerRank/Codeforces/CodeChef evidence. Vortex does not scrape LinkedIn.
 - **Profile assessment:** separate source-by-source evidence scores, repository context, coding-practice totals, project ideas, curated practice links, and editable LinkedIn post drafts. Missing sources are not scored as zero.

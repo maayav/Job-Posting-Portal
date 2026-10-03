@@ -1,0 +1,105 @@
+{
+  "role": "AR/VR Developer",
+  "skills": [
+    {
+      "skill_name": "Unity",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "C#",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "skill_name": "3D Mathematics",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Shaders",
+      "category": "framework",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "skill_name": "Game Physics",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.65
+        }
+      ]
+    },
+    {
+      "skill_name": "Prototyping",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Interaction Design",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "UI/UX",
+      "category": "design",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Testing",
+      "category": "devops",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Git",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "AR/VR Developer",
+          "weight": 0.5
+        }
+      ]
+    }
+  ]
+}

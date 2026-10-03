@@ -79,7 +79,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="notification-panel card" role="dialog" aria-label="Notifications">
+        <div className="notification-panel card" role="dialog" aria-label="Notifications" data-lenis-prevent>
           <div className="notification-head">
             <strong>Notifications</strong>
             {unreadCount > 0 && <button type="button" className="link" onClick={markAllRead}>Mark all read</button>}

@@ -598,12 +598,14 @@ button.link:hover { color: var(--accent); }
 .apply-choice input[type='file'] { margin-top: 10px; }
 
 /* Notification bell */
-.notification-bell { position: relative; display: inline-flex; }
+/* No position here: the panel anchors to the fixed topbar so it stays inside
+   the viewport even when the bell sits mid-cluster on small screens. */
+.notification-bell { display: inline-flex; }
 .notification-trigger { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; }
 .notification-count { position: absolute; top: -4px; right: -4px; min-width: 17px; padding: 1px 4px; border-radius: 999px; background: var(--text); color: var(--bg); font-family: 'DM Mono', monospace; font-size: .58rem; font-weight: 700; line-height: 1.5; }
-.notification-panel { position: absolute; top: calc(100% + 10px); right: 0; z-index: 150; width: min(340px, calc(100vw - 32px)); margin: 0; padding: 14px; }
+.notification-panel { position: absolute; top: calc(100% + 10px); right: 16px; z-index: 150; display: flex; flex-direction: column; width: min(340px, calc(100vw - 32px)); max-height: min(460px, calc(100dvh - 120px)); margin: 0; padding: 14px; }
 .notification-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.notification-list { display: grid; gap: 4px; max-height: 320px; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.notification-list { display: grid; gap: 4px; flex: 1 1 auto; min-height: 0; max-height: 320px; margin: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; list-style: none; }
 .notification-list li button { display: flex; gap: 9px; width: 100%; padding: 9px; border: 0; border-radius: 8px; background: transparent; color: var(--text); text-align: left; }
 .notification-list li button:hover { background: var(--panel-2); }
 .notification-list li.is-read .notification-body strong { font-weight: 500; color: var(--muted); }

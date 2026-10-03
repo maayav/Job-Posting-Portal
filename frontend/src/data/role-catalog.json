@@ -2955,6 +2955,1182 @@
       ]
     },
     {
+      "id": "Product Manager",
+      "label": "Product Manager",
+      "skills": [
+        {
+          "name": "Requirements Gathering",
+          "category": "architecture",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Atlassian — Requirements Gathering",
+              "url": "https://www.atlassian.com/agile/requirements"
+            },
+            {
+              "title": "Simplilearn — Business Analyst Requirement Gathering | Requirement Gathering in Business Analysis | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qZ8AtqJijrw"
+            }
+          ]
+        },
+        {
+          "name": "User Stories",
+          "category": "architecture",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Atlassian — User Stories",
+              "url": "https://www.atlassian.com/agile/project-management/user-stories"
+            },
+            {
+              "title": "Simplilearn — Agile User Stories | How To Write User Stories | Epic And User Story Examples | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=SRRQCDZQ6G4"
+            }
+          ]
+        },
+        {
+          "name": "Agile Methodologies",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Atlassian Agile Coach",
+              "url": "https://www.atlassian.com/agile"
+            },
+            {
+              "title": "Simplilearn — Agile Scrum Full Course In 4 Hours | Agile Scrum Master Training | Agile Training Video |Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=VFQtSqChlsk"
+            }
+          ]
+        },
+        {
+          "name": "Stakeholder Communication",
+          "category": "core-cs",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "ProjectManager — Stakeholder Communication",
+              "url": "https://www.projectmanager.com/blog/stakeholder-communication"
+            },
+            {
+              "title": "Adriana Girdler — Stakeholder Communication in Project Management [Stop Spinning Your Wheels] (YouTube)",
+              "url": "https://www.youtube.com/watch?v=bV9yUQV6D60"
+            }
+          ]
+        },
+        {
+          "name": "User Research",
+          "category": "design",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "GOV.UK user research guidance",
+              "url": "https://www.gov.uk/service-manual/user-research"
+            }
+          ]
+        },
+        {
+          "name": "A/B Testing",
+          "category": "core-cs",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "Firebase A/B testing guide",
+              "url": "https://firebase.google.com/docs/ab-testing"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Jira",
+          "category": "tools",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Atlassian Jira getting started guide",
+              "url": "https://www.atlassian.com/software/jira/guides/getting-started/introduction"
+            }
+          ]
+        },
+        {
+          "name": "Wireframing",
+          "category": "design",
+          "weight": 0.45,
+          "resources": [
+            {
+              "title": "Figma — What is Wireframing?",
+              "url": "https://www.figma.com/resource-library/what-is-wireframing/"
+            },
+            {
+              "title": "Simplilearn — Figma Wireframe Tutorial For Beginners | How To Create Wireframes In Figma? | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=mHoux2jITnE"
+            }
+          ]
+        },
+        {
+          "name": "Business Process Modeling",
+          "category": "architecture",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "OMG BPMN 2.0 Specification",
+              "url": "https://www.omg.org/spec/BPMN/2.0/"
+            },
+            {
+              "title": "IBM Technology — What is Business Process Modeling? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=sUdhXn1w75Y"
+            }
+          ]
+        },
+        {
+          "name": "Dashboard Design",
+          "category": "data",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "NN/g — Dashboards: Preattentive Attributes",
+              "url": "https://www.nngroup.com/articles/dashboards-preattentive/"
+            },
+            {
+              "title": "codebasics — How to Design an Effective Data Visualization Dashboard? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=HuZiJ44_71M"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Business Intelligence Developer",
+      "label": "Business Intelligence Developer",
+      "skills": [
+        {
+          "name": "SQL",
+          "category": "database",
+          "weight": 0.95,
+          "resources": [
+            {
+              "title": "PostgreSQL SQL tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial-sql.html"
+            },
+            {
+              "title": "Alex The Analyst — Learn SQL Beginner to Advanced in 4 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=OT1RErkfLNQ"
+            },
+            {
+              "title": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/"
+            },
+            {
+              "title": "SQLBolt — Interactive SQL",
+              "url": "https://sqlbolt.com/"
+            },
+            {
+              "title": "SQL Tutorial (ThoughtSpot)",
+              "url": "https://www.thoughtspot.com/sql-tutorial"
+            }
+          ]
+        },
+        {
+          "name": "Power BI",
+          "category": "tools",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Power BI getting started",
+              "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-getting-started"
+            }
+          ]
+        },
+        {
+          "name": "Data Modeling",
+          "category": "architecture",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Microsoft dimensional modeling guidance",
+              "url": "https://learn.microsoft.com/en-us/power-bi/guidance/star-schema"
+            }
+          ]
+        },
+        {
+          "name": "ETL/ELT Design",
+          "category": "architecture",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Microsoft data integration concepts",
+              "url": "https://learn.microsoft.com/en-us/azure/architecture/data-guide/relational-data/etl"
+            }
+          ]
+        },
+        {
+          "name": "Dashboard Design",
+          "category": "data",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "NN/g — Dashboards: Preattentive Attributes",
+              "url": "https://www.nngroup.com/articles/dashboards-preattentive/"
+            },
+            {
+              "title": "codebasics — How to Design an Effective Data Visualization Dashboard? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=HuZiJ44_71M"
+            }
+          ]
+        },
+        {
+          "name": "Data Visualization",
+          "category": "data",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Matplotlib Tutorials",
+              "url": "https://matplotlib.org/stable/tutorials/index.html"
+            },
+            {
+              "title": "Alex The Analyst — Power BI in Under 3 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=I0vQ_VLZTWg"
+            },
+            {
+              "title": "Matplotlib Docs",
+              "url": "https://matplotlib.org/stable/"
+            }
+          ]
+        },
+        {
+          "name": "dbt",
+          "category": "tools",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "dbt quickstart guides",
+              "url": "https://docs.getdbt.com/docs/get-started-dbt"
+            }
+          ]
+        },
+        {
+          "name": "Microsoft Excel",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Microsoft Excel help and learning",
+              "url": "https://support.microsoft.com/en-us/excel"
+            },
+            {
+              "title": "Microsoft Excel Training",
+              "url": "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb"
+            },
+            {
+              "title": "freeCodeCamp.org — Microsoft Excel Tutorial for Beginners - Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Vl0H-qTclOg"
+            }
+          ]
+        },
+        {
+          "name": "Snowflake",
+          "category": "database",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "Snowflake tutorials",
+              "url": "https://docs.snowflake.com/en/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Data Cleaning",
+          "category": "data",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Kaggle — Data Cleaning Course",
+              "url": "https://www.kaggle.com/learn/data-cleaning"
+            },
+            {
+              "title": "Corey Schafer — Python Pandas Tutorial (Part 9): Cleaning Data - Casting Datatypes and Handling Missing Values (YouTube)",
+              "url": "https://www.youtube.com/watch?v=KdmPHEnPJPs"
+            }
+          ]
+        },
+        {
+          "name": "Data Storytelling",
+          "category": "data",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Storytelling with Data",
+              "url": "https://www.storytellingwithdata.com/"
+            },
+            {
+              "title": "Harvard Business Review — Telling Stories with Data in 3 Steps (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r5_34YnCmMY"
+            }
+          ]
+        },
+        {
+          "name": "Query Optimization",
+          "category": "database",
+          "weight": 0.45,
+          "resources": [
+            {
+              "title": "PostgreSQL Performance Tips",
+              "url": "https://www.postgresql.org/docs/current/performance-tips.html"
+            },
+            {
+              "title": "Simplilearn — SQL Query Optimization | SQL Query Optimization Techniques | SQL Basics | SQL Query | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=MpczBuIk7R8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Penetration Tester",
+      "label": "Penetration Tester",
+      "skills": [
+        {
+          "name": "Penetration Testing",
+          "category": "testing",
+          "weight": 0.95,
+          "resources": [
+            {
+              "title": "PortSwigger Web Security Academy",
+              "url": "https://portswigger.net/web-security"
+            }
+          ]
+        },
+        {
+          "name": "Vulnerability Assessment",
+          "category": "security",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "OWASP security testing framework",
+              "url": "https://owasp.org/www-project-web-security-testing-guide/"
+            }
+          ]
+        },
+        {
+          "name": "Network Security",
+          "category": "security",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "NIST zero trust architecture",
+              "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+            }
+          ]
+        },
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Cryptography",
+          "category": "security",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "CryptoHack — Learn Cryptography",
+              "url": "https://cryptohack.org/"
+            },
+            {
+              "title": "freeCodeCamp.org — Cryptography for Beginners - Full Python Course (SHA-256, AES, RSA, Passwords) (YouTube)",
+              "url": "https://www.youtube.com/watch?v=kb_scuDUHls"
+            }
+          ]
+        },
+        {
+          "name": "Python",
+          "category": "language",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Python official tutorial",
+              "url": "https://docs.python.org/3/tutorial/"
+            },
+            {
+              "title": "Python Tutorial for Beginners — Learn Python in 5 Hours (YouTube)",
+              "url": "https://www.youtube.com/watch?v=t8pPdKYpowI"
+            },
+            {
+              "title": "LearnPython.org (Interactive)",
+              "url": "https://www.learnpython.org/"
+            },
+            {
+              "title": "Python Official Docs",
+              "url": "https://docs.python.org/3/"
+            }
+          ]
+        },
+        {
+          "name": "Bash",
+          "category": "language",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Ubuntu command-line tutorial",
+              "url": "https://ubuntu.com/tutorials/command-line-for-beginners"
+            }
+          ]
+        },
+        {
+          "name": "Firewalls and VPNs",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Microsoft Azure network security overview",
+              "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview"
+            }
+          ]
+        },
+        {
+          "name": "Threat Modeling",
+          "category": "architecture",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "OWASP threat modeling guide",
+              "url": "https://owasp.org/www-community/Threat_Modeling"
+            }
+          ]
+        },
+        {
+          "name": "Wireshark",
+          "category": "tools",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "Wireshark user guide",
+              "url": "https://www.wireshark.org/docs/wsug_html_chunked/"
+            }
+          ]
+        },
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "NIST incident response recommendations",
+              "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+            }
+          ]
+        },
+        {
+          "name": "Compliance Frameworks",
+          "category": "security",
+          "weight": 0.45,
+          "resources": [
+            {
+              "title": "NIST Cybersecurity Framework",
+              "url": "https://www.nist.gov/cyberframework"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Solutions Architect",
+      "label": "Solutions Architect",
+      "skills": [
+        {
+          "name": "System Design",
+          "category": "architecture",
+          "weight": 0.95,
+          "resources": [
+            {
+              "title": "ByteByteGo — System Design Guide (YouTube)",
+              "url": "https://www.youtube.com/watch?v=i7twT3x5yv8"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/karanpratapsingh/system-design"
+            },
+            {
+              "title": "System Design Primer (GitHub)",
+              "url": "https://github.com/donnemartin/system-design-primer"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Cloud Security",
+          "category": "security",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "AWS security best practices",
+              "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        },
+        {
+          "name": "REST APIs",
+          "category": "architecture",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "Postman Learning Center",
+              "url": "https://learning.postman.com/"
+            },
+            {
+              "title": "IBM Technology — What is a REST API? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=lsMQRaeKNDk"
+            },
+            {
+              "title": "REST API Tutorial",
+              "url": "https://restfulapi.net/"
+            }
+          ]
+        },
+        {
+          "name": "High Availability",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "PostgreSQL Warm Standby",
+              "url": "https://www.postgresql.org/docs/current/warm-standby.html"
+            },
+            {
+              "title": "Shiran Afergan — High Availability | Eliminate Single Points of Failure | System Design Concepts for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=USCCqS9MbHs"
+            }
+          ]
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Cisco networking basics",
+              "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html"
+            }
+          ]
+        },
+        {
+          "name": "Load Balancing",
+          "category": "architecture",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "NGINX Load Balancing",
+              "url": "https://nginx.org/en/docs/http/load_balancing.html"
+            },
+            {
+              "title": "TechWorld with Nana — Proxy vs Reverse Proxy vs Load Balancer | Simply Explained (YouTube)",
+              "url": "https://www.youtube.com/watch?v=xo5V9g9joFs"
+            }
+          ]
+        },
+        {
+          "name": "Requirements Gathering",
+          "category": "architecture",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Atlassian — Requirements Gathering",
+              "url": "https://www.atlassian.com/agile/requirements"
+            },
+            {
+              "title": "Simplilearn — Business Analyst Requirement Gathering | Requirement Gathering in Business Analysis | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=qZ8AtqJijrw"
+            }
+          ]
+        },
+        {
+          "name": "Terraform",
+          "category": "devops",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "HashiCorp Terraform tutorials",
+              "url": "https://developer.hashicorp.com/terraform/tutorials"
+            }
+          ]
+        },
+        {
+          "name": "Observability",
+          "category": "architecture",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "OpenTelemetry Documentation",
+              "url": "https://opentelemetry.io/docs/"
+            },
+            {
+              "title": "IBM Technology — Observability vs. APM vs. Monitoring (YouTube)",
+              "url": "https://www.youtube.com/watch?v=CAQ_a2-9UOI"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "System Administrator",
+      "label": "System Administrator",
+      "skills": [
+        {
+          "name": "Linux",
+          "category": "core-cs",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Linux Foundation introduction to Linux",
+              "url": "https://training.linuxfoundation.org/training/introduction-to-linux/"
+            }
+          ]
+        },
+        {
+          "name": "Networking",
+          "category": "architecture",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Cisco networking basics",
+              "url": "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html"
+            }
+          ]
+        },
+        {
+          "name": "Bash",
+          "category": "language",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "Ubuntu command-line tutorial",
+              "url": "https://ubuntu.com/tutorials/command-line-for-beginners"
+            }
+          ]
+        },
+        {
+          "name": "PowerShell",
+          "category": "language",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "Microsoft PowerShell learning resources",
+              "url": "https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/00-introduction"
+            }
+          ]
+        },
+        {
+          "name": "DNS",
+          "category": "architecture",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "Cloudflare — What is DNS?",
+              "url": "https://www.cloudflare.com/learning/dns/what-is-dns/"
+            },
+            {
+              "title": "Fireship — DNS Explained in 100 Seconds (YouTube)",
+              "url": "https://www.youtube.com/watch?v=UVR9lhUGAyU"
+            }
+          ]
+        },
+        {
+          "name": "Backup and Recovery",
+          "category": "database",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "PostgreSQL Backup and Restore",
+              "url": "https://www.postgresql.org/docs/current/backup.html"
+            },
+            {
+              "title": "IBM Technology — Disaster Recovery vs. Backup: What's the difference? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=07EHsPuKXc0"
+            }
+          ]
+        },
+        {
+          "name": "Firewalls and VPNs",
+          "category": "tools",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "Microsoft Azure network security overview",
+              "url": "https://learn.microsoft.com/en-us/azure/security/fundamentals/network-overview"
+            }
+          ]
+        },
+        {
+          "name": "Network Monitoring",
+          "category": "tools",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Zabbix Documentation",
+              "url": "https://www.zabbix.com/documentation/current/en/manual"
+            },
+            {
+              "title": "Auvik — Network Monitoring Tutorial with Auvik Software (YouTube)",
+              "url": "https://www.youtube.com/watch?v=Smn2vt6j1Do"
+            }
+          ]
+        },
+        {
+          "name": "IAM",
+          "category": "security",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "AWS IAM introduction",
+              "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+            }
+          ]
+        },
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "NIST incident response recommendations",
+              "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+            }
+          ]
+        },
+        {
+          "name": "Compliance Frameworks",
+          "category": "security",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "NIST Cybersecurity Framework",
+              "url": "https://www.nist.gov/cyberframework"
+            }
+          ]
+        },
+        {
+          "name": "Endpoint Detection and Response",
+          "category": "tools",
+          "weight": 0.4,
+          "resources": [
+            {
+              "title": "Microsoft endpoint detection and response overview",
+              "url": "https://learn.microsoft.com/en-us/defender-endpoint/overview-endpoint-detection-response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "AR/VR Developer",
+      "label": "AR/VR Developer",
+      "skills": [
+        {
+          "name": "Unity",
+          "category": "framework",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "Unity Manual",
+              "url": "https://docs.unity3d.com/Manual/index.html"
+            },
+            {
+              "title": "freeCodeCamp.org — Learn Unity - Beginner's Game Development Tutorial (YouTube)",
+              "url": "https://www.youtube.com/watch?v=gB1F9G0JXOo"
+            }
+          ]
+        },
+        {
+          "name": "C#",
+          "category": "language",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "Microsoft C# tour",
+              "url": "https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/"
+            }
+          ]
+        },
+        {
+          "name": "3D Mathematics",
+          "category": "core-cs",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "LearnOpenGL — Transformations",
+              "url": "https://learnopengl.com/Getting-started/Transformations"
+            },
+            {
+              "title": "javidx9 — Essential Mathematics For Aspiring Game Developers (YouTube)",
+              "url": "https://www.youtube.com/watch?v=DPfxjQ6sqrc"
+            }
+          ]
+        },
+        {
+          "name": "Shaders",
+          "category": "framework",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "The Book of Shaders",
+              "url": "https://thebookofshaders.com/"
+            },
+            {
+              "title": "Barney Codes — Introduction to shaders: Learn the basics! (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3mfvZ-mdtZQ"
+            }
+          ]
+        },
+        {
+          "name": "Game Physics",
+          "category": "core-cs",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "Gaffer On Games — Integration Basics",
+              "url": "https://gafferongames.com/post/integration_basics/"
+            },
+            {
+              "title": "freeCodeCamp.org — JavaScript GameDev Tutorial – Code an Animated Physics Game [Full Course] (YouTube)",
+              "url": "https://www.youtube.com/watch?v=U34l-Xz5ynU"
+            }
+          ]
+        },
+        {
+          "name": "Interaction Design",
+          "category": "design",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Interaction Design Foundation",
+              "url": "https://www.interaction-design.org/literature/topics/interaction-design"
+            },
+            {
+              "title": "Simplilearn — UI/UX Explained In 8 Minutes | UI/UX Design For Beginners | UI/UX Design Basics | Simplilearn (YouTube)",
+              "url": "https://www.youtube.com/watch?v=ODpB9-MCa5s"
+            }
+          ]
+        },
+        {
+          "name": "Prototyping",
+          "category": "design",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "GOV.UK making prototypes",
+              "url": "https://www.gov.uk/service-manual/design/making-prototypes"
+            }
+          ]
+        },
+        {
+          "name": "UI/UX",
+          "category": "design",
+          "weight": 0.55,
+          "resources": [
+            {
+              "title": "Nielsen Norman Group UX fundamentals",
+              "url": "https://www.nngroup.com/articles/definition-user-experience/"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tools",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Pro Git Book",
+              "url": "https://git-scm.com/book/en/v2"
+            },
+            {
+              "title": "Atlassian Git Tutorials",
+              "url": "https://www.atlassian.com/git/tutorials"
+            },
+            {
+              "title": "GitHub — Git for Beginners (YouTube)",
+              "url": "https://www.youtube.com/watch?v=r8jQ9hVA2qs"
+            },
+            {
+              "title": "Learn Git Branching",
+              "url": "https://learngitbranching.js.org/"
+            }
+          ]
+        },
+        {
+          "name": "Testing",
+          "category": "devops",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Automation Step by Step — Cypress Masterclass (YouTube)",
+              "url": "https://www.youtube.com/watch?v=tRI5ruE7yCA"
+            },
+            {
+              "title": "Jest Docs",
+              "url": "https://jestjs.io/docs/getting-started"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Cloud Security Engineer",
+      "label": "Cloud Security Engineer",
+      "skills": [
+        {
+          "name": "Cloud Security",
+          "category": "security",
+          "weight": 0.95,
+          "resources": [
+            {
+              "title": "AWS security best practices",
+              "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
+            }
+          ]
+        },
+        {
+          "name": "IAM",
+          "category": "security",
+          "weight": 0.9,
+          "resources": [
+            {
+              "title": "AWS IAM introduction",
+              "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+            }
+          ]
+        },
+        {
+          "name": "Network Security",
+          "category": "security",
+          "weight": 0.85,
+          "resources": [
+            {
+              "title": "NIST zero trust architecture",
+              "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+            }
+          ]
+        },
+        {
+          "name": "AWS",
+          "category": "cloud",
+          "weight": 0.8,
+          "resources": [
+            {
+              "title": "AWS in 5 Minutes — What is AWS? (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3XFODda6YXo"
+            },
+            {
+              "title": "AWS Getting Started",
+              "url": "https://aws.amazon.com/getting-started/"
+            },
+            {
+              "title": "AWS Training & Certification",
+              "url": "https://aws.amazon.com/training/"
+            }
+          ]
+        },
+        {
+          "name": "Compliance Frameworks",
+          "category": "security",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "NIST Cybersecurity Framework",
+              "url": "https://www.nist.gov/cyberframework"
+            }
+          ]
+        },
+        {
+          "name": "Threat Modeling",
+          "category": "architecture",
+          "weight": 0.75,
+          "resources": [
+            {
+              "title": "OWASP threat modeling guide",
+              "url": "https://owasp.org/www-community/Threat_Modeling"
+            }
+          ]
+        },
+        {
+          "name": "Vulnerability Assessment",
+          "category": "security",
+          "weight": 0.7,
+          "resources": [
+            {
+              "title": "OWASP security testing framework",
+              "url": "https://owasp.org/www-project-web-security-testing-guide/"
+            }
+          ]
+        },
+        {
+          "name": "Incident Response",
+          "category": "security",
+          "weight": 0.65,
+          "resources": [
+            {
+              "title": "NIST incident response recommendations",
+              "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final"
+            }
+          ]
+        },
+        {
+          "name": "Azure",
+          "category": "cloud",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "Azure fundamentals learning path",
+              "url": "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/"
+            }
+          ]
+        },
+        {
+          "name": "Cryptography",
+          "category": "security",
+          "weight": 0.6,
+          "resources": [
+            {
+              "title": "CryptoHack — Learn Cryptography",
+              "url": "https://cryptohack.org/"
+            },
+            {
+              "title": "freeCodeCamp.org — Cryptography for Beginners - Full Python Course (SHA-256, AES, RSA, Passwords) (YouTube)",
+              "url": "https://www.youtube.com/watch?v=kb_scuDUHls"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "devops",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Docker Getting Started",
+              "url": "https://docs.docker.com/get-started/"
+            },
+            {
+              "title": "TechWorld with Nana — Docker Full Course (YouTube)",
+              "url": "https://www.youtube.com/watch?v=3c-iBn73dDE"
+            },
+            {
+              "title": "Docker Official Docs",
+              "url": "https://docs.docker.com/"
+            }
+          ]
+        },
+        {
+          "name": "Kubernetes",
+          "category": "devops",
+          "weight": 0.5,
+          "resources": [
+            {
+              "title": "Kubernetes basics tutorial",
+              "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "Backend Developer",
       "label": "Backend Developer",
       "skills": [

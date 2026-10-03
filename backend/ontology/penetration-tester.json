@@ -1,0 +1,125 @@
+{
+  "role": "Penetration Tester",
+  "skills": [
+    {
+      "skill_name": "Penetration Testing",
+      "category": "testing",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.95
+        }
+      ]
+    },
+    {
+      "skill_name": "Vulnerability Assessment",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "skill_name": "Network Security",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "skill_name": "Linux",
+      "category": "core-cs",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "skill_name": "Cryptography",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "skill_name": "Python",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "skill_name": "Bash",
+      "category": "language",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Firewalls and VPNs",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "skill_name": "Threat Modeling",
+      "category": "architecture",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Wireshark",
+      "category": "tools",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "skill_name": "Incident Response",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "skill_name": "Compliance Frameworks",
+      "category": "security",
+      "roles": [
+        {
+          "role_name": "Penetration Tester",
+          "weight": 0.45
+        }
+      ]
+    }
+  ]
+}
