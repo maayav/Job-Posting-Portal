@@ -87,7 +87,11 @@ The integration suite uses its own randomly named local test database and tempor
 
 The existing Pages project has no Git provider connected, so a Git push alone does not publish the frontend; deploy its built assets to that project. The earlier audit release was verified as `65db9f28bd4c1c8cecc8004d68441b6bf117d33e` (2 October 2026). Its live frontend build marker and backend revision header matched provider deployment metadata. See [Profile release verification](docs/PROFILE_RELEASE_VERIFICATION.md) for the newer profile-assessment changes and their test/deployment coverage.
 
-That release passed safe SPA-route, CSP, health, and CORS checks. Those checks did **not** submit production login, use private profiles, call AI providers, write to the production database, verify its indexes, or establish resume durability. Vercel's resume directory is ephemeral `/tmp` storage until a durable provider is configured. See [Deployment](DEPLOYMENT.md), [Integration status](docs/INTEGRATION_STATUS.md), and [Baseline audit](docs/BASELINE_AUDIT.md) for exact evidence and limits. Do not describe an authenticated workflow as production-tested unless it has actually been tested with approved demo data.
+That release passed safe SPA-route, CSP, health, and CORS checks. Those checks did **not** submit production login, use private profiles, call AI providers, write to the production database, verify its indexes, or establish resume durability.
+
+Real user uploads still use Vercel's ephemeral `/tmp` filesystem. Generated demo resumes now use MongoDB blobs with `db:` references. Authorized resume views can rebuild missing PDFs for explicitly seed-marked demo submissions, with separate profile and application copies so deleting a profile does not delete the application's PDF. Re-running the local-only demo seed also migrates readable filesystem copies to blobs. This storage behavior is covered by local integration tests; authenticated production resume views have not been verified.
+
+See [Deployment](DEPLOYMENT.md), [Integration status](docs/INTEGRATION_STATUS.md), and [Baseline audit](docs/BASELINE_AUDIT.md) for exact evidence and limits. Do not describe an authenticated workflow as production-tested unless it has actually been tested with approved demo data.
 
 ## More documentation
 

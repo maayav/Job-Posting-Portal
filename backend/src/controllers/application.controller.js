@@ -5,7 +5,8 @@ import { User } from '../models/user.js';
 import { ProfileSubmission } from '../models/profileSubmission.js';
 import { ReadinessReport } from '../models/readinessReport.js';
 import { ExtractedSkillProfile } from '../models/extractedSkillProfile.js';
-import { deleteResume, readResume, saveResume } from '../services/storageService.js';
+import { deleteResume, readResume, saveResume, saveResumeBlob, isResumeBlobRef } from '../services/storageService.js';
+import { buildDemoResumePdf, isDemoSubmission } from '../services/demoResumeService.js';
 import { hydrateStudyPlan } from '../services/resourceService.js';
 import { notifyApplicationStatus, notifyApplicationSubmitted } from '../services/notificationService.js';
 import { AppError } from '../utils/errors.js';
@@ -410,6 +411,20 @@ export async function getApplicationDetails(req, res) {
   });
 }
 
+async function findApplicationSubmission(application) {
+  const fields = 'resume_file_ref resume_text demo_key';
+  if (application.profileSubmissionId) {
+    return ProfileSubmission.findOne({ _id: application.profileSubmissionId, user_id: application.applicant })
+      .select(fields)
+      .lean();
+  }
+  if (application.reviewSnapshotAt || application.readinessReportId) return null;
+  return ProfileSubmission.findOne({ user_id: application.applicant })
+    .sort({ submitted_at: -1 })
+    .select(fields)
+    .lean();
+}
+
 // GET /api/admin/applications/:applicationId/resume — authorized resume preview.
 // Resume files stay outside the public web root and are streamed only after the
 // admin route has verified access to the application.
@@ -417,7 +432,7 @@ export async function getApplicationDetails(req, res) {
 export async function getApplicationResume(req, res) {
   const id = objectIdSchema.parse(req.params.applicationId);
   const application = await Application.findById(id)
-    .select('applicant resumeFileRef resumeOriginalName resumeSource profileSubmissionId resumeUrl')
+    .select('applicant resumeFileRef resumeOriginalName resumeSource profileSubmissionId resumeUrl reviewSnapshotAt readinessReportId')
     .lean();
   if (!application) {
     throw new AppError('Application not found', 404, 'not_found');
@@ -433,28 +448,71 @@ export async function getApplicationResume(req, res) {
   // Legacy records retain the old fallback behavior for compatibility.
   let fileRef = application.resumeFileRef;
   let downloadName = application.resumeOriginalName || 'vortex-resume.pdf';
+  let submission = null;
   const legacyProfileFallback = !application.resumeSource && !application.resumeFileRef && !application.resumeUrl;
-  if (!fileRef && (application.resumeSource === 'profile' || legacyProfileFallback)) {
-    const submission = application.profileSubmissionId
-      ? await ProfileSubmission.findOne({ _id: application.profileSubmissionId, user_id: application.applicant }).select('resume_file_ref').lean()
-      : await ProfileSubmission.findOne({ user_id: application.applicant }).sort({ submitted_at: -1 }).select('resume_file_ref').lean();
+  const canUseProfileResume = application.resumeSource === 'profile' || legacyProfileFallback;
+  if (!fileRef && canUseProfileResume) {
+    submission = await findApplicationSubmission(application);
     fileRef = submission?.resume_file_ref;
     downloadName = 'vortex-resume.pdf';
   }
-  if (!fileRef) {
-    throw new AppError('Resume is not available for this application', 404, 'resume_not_found');
-  }
-  res.set('Cache-Control', 'private, no-store');
 
-  let buffer;
-  try {
-    buffer = await readResume(fileRef);
-  } catch (error) {
-    if (error?.code === 'ENOENT') {
-      throw new AppError('The saved resume file is no longer available', 404, 'resume_missing');
+  let buffer = null;
+  let missing = false;
+  if (fileRef) {
+    try {
+      buffer = await readResume(fileRef);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+      missing = true;
     }
-    throw error;
   }
+
+  if (!buffer && missing && canUseProfileResume) {
+    submission = submission ?? await findApplicationSubmission(application);
+    const resumeText = String(submission?.resume_text ?? '').trim();
+    if (submission && resumeText && isDemoSubmission(submission)) {
+      let profileBuffer = null;
+      try {
+        if (submission.resume_file_ref) profileBuffer = await readResume(submission.resume_file_ref);
+      } catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+      }
+      // Prefer the captured PDF when it still exists. Only marked demo records
+      // can be rebuilt from their stored text after ephemeral files disappear.
+      buffer = profileBuffer ?? buildDemoResumePdf(resumeText);
+      if (buffer) {
+        if (!profileBuffer || !isResumeBlobRef(submission.resume_file_ref)) {
+          const profileBlobRef = await saveResumeBlob(buffer, 'demo-resume.pdf');
+          try {
+            await ProfileSubmission.updateOne({ _id: submission._id }, { $set: { resume_file_ref: profileBlobRef } });
+          } catch (error) {
+            await deleteResume(profileBlobRef).catch(() => {});
+            throw error;
+          }
+        }
+        // An application owns its copy independently of the profile's lifetime.
+        const applicationBlobRef = await saveResumeBlob(buffer, downloadName);
+        try {
+          await Application.updateOne(
+            { _id: application._id },
+            { $set: { resumeFileRef: applicationBlobRef, resumeSource: 'profile', resumeUrl: `/api/applications/${application._id}/resume` } },
+          );
+        } catch (error) {
+          await deleteResume(applicationBlobRef).catch(() => {});
+          throw error;
+        }
+      }
+    }
+  }
+
+  if (!buffer) {
+    throw fileRef
+      ? new AppError('The saved resume file is no longer available', 404, 'resume_missing')
+      : new AppError('Resume is not available for this application', 404, 'resume_not_found');
+  }
+
+  res.set('Cache-Control', 'private, no-store');
   res.type('application/pdf');
   res.set('Content-Disposition', `inline; filename="${downloadName.replace(/[^\w.-]+/g, '-')}"`);
   res.send(buffer);

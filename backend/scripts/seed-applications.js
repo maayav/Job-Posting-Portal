@@ -10,7 +10,7 @@ import { generateReport } from '../src/services/scoringService.js';
 import { buildProfileAssessment } from '../src/services/profileAssessmentService.js';
 import { buildCareerActions } from '../src/services/careerActionService.js';
 import { createDemoResumePdf, demoResumeContent } from './demo-resumes.js';
-import { saveResume, readResume, deleteResume } from '../src/services/storageService.js';
+import { saveResumeBlob, readResume, deleteResume, isResumeBlobRef } from '../src/services/storageService.js';
 import { extractResumeText } from '../src/services/resumeService.js';
 import { assertLocalDemoDatabase } from './demo-guard.js';
 import { env } from '../src/config/env.js';
@@ -65,9 +65,10 @@ export async function ensureDemoReview(student, job, index) {
   let fileRef = oldRef;
   let buffer;
   try { if (fileRef) buffer = await readResume(fileRef); } catch { /* Rebuild missing demo files. */ }
-  if (!buffer || submission?.demo_content_hash !== contentHash) {
+  if (!buffer || submission?.demo_content_hash !== contentHash || !isResumeBlobRef(fileRef)) {
     buffer = await createDemoResumePdf(student, job, chosen);
-    fileRef = await saveResume(buffer, `${student.name}-demo-resume.pdf`);
+    // MongoDB-backed so demo resumes survive serverless cold starts and redeploys.
+    fileRef = await saveResumeBlob(buffer, `${student.name}-demo-resume.pdf`);
   }
   const resumeText = await extractResumeText(buffer);
   const fields = { demo_key: key, demo_content_hash: contentHash, resume_file_ref: fileRef, resume_text: resumeText, target_role: job.title, github_username: '', github_status: 'none', leetcode_username: '', leetcode_status: 'none', linkedinUrl: '', linkedinSummaryText: '', linkedinDataSource: null, codingProfileUrl: '', codingSummaryText: '', source_evidence: { capturedAt: new Date(), github: { available: false, repos: [] }, leetcode: { available: false, languages: [] } }, extraction_status: 'completed', extraction_error: null };
@@ -150,8 +151,8 @@ async function main() {
       let applicationBuffer;
       try { if (applicationRef && applicationRef !== review.fileRef) applicationBuffer = await readResume(applicationRef); } catch { /* Rebuild missing demo snapshot. */ }
       const profileBuffer = await readResume(review.fileRef);
-      if (!applicationBuffer?.equals(profileBuffer)) {
-        applicationRef = await saveResume(profileBuffer, `${student.name}-application.pdf`);
+      if (!applicationBuffer?.equals(profileBuffer) || !isResumeBlobRef(applicationRef)) {
+        applicationRef = await saveResumeBlob(profileBuffer, `${student.name}-application.pdf`);
       }
       const snapshot = { profileSubmissionId: review.submission._id, readinessReportId: review.report._id, reviewSnapshotAt: new Date(), resumeFileRef: applicationRef, resumeOriginalName: `${student.name}-demo-resume.pdf`, resumeSource: 'profile', applicantEmail: student.email };
       if (existing) {

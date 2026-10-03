@@ -160,6 +160,45 @@ describe('Application apply flow (email, resume, notifications)', () => {
     expect(download.body.error).toBe('resume_not_found');
   });
 
+  it('regenerates a viewable demo resume when the stored file is gone', async () => {
+    const { ProfileSubmission } = await import('../src/models/profileSubmission.js');
+    const { Application } = await import('../src/models/application.js');
+    const submission = await ProfileSubmission.create({
+      user_id: student.user.id,
+      demo_key: `demo:${student.user.id}:${jobId}`,
+      resume_file_ref: 'demo-review/missing.pdf',
+      resume_text: 'VORTEX / FICTIONAL DEMO RESUME\nAisha Verma\nFrontend Developer\nSkills: React, Node.js\nBuilt and tested a React dashboard.',
+      target_role: 'Frontend Developer',
+      extraction_status: 'completed',
+    });
+    const application = await Application.create({
+      applicant: student.user.id,
+      job: jobId,
+      status: 'applied',
+      profileSubmissionId: submission._id,
+      resumeFileRef: 'missing-application.pdf',
+      resumeSource: 'profile',
+    });
+
+    const response = await request(app)
+      .get(`/api/admin/applications/${application._id}/resume`)
+      .set(authHeader(admin.token));
+    expect(response.status).toBe(200);
+    expect(response.headers['content-type']).toContain('application/pdf');
+    const binary = Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.text ?? '', 'binary');
+    expect(binary.subarray(0, 5).toString()).toBe('%PDF-');
+
+    const healed = await Application.findById(application._id).lean();
+    expect(healed.resumeFileRef).toMatch(/^db:/);
+
+    // The second view reads the durable blob instead of regenerating.
+    const second = await request(app)
+      .get(`/api/admin/applications/${application._id}/resume`)
+      .set(authHeader(admin.token));
+    expect(second.status).toBe(200);
+    expect(Buffer.isBuffer(second.body) ? second.body.subarray(0, 5).toString() : String(second.text ?? '').slice(0, 5)).toBe('%PDF-');
+  });
+
   it('notifies the student when an admin changes the status', async () => {
     const applied = await request(app).post('/api/applications').set(authHeader(student.token)).send({ jobId });
     const applicationId = applied.body.application.id;
