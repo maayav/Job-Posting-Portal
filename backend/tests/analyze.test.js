@@ -203,10 +203,11 @@ describe('Analyze pipeline', () => {
 
     const again = await request(app).post('/api/analyze').set('Authorization', `Bearer ${token}`).send({ submission_id: sid });
     expect(again.status).toBe(429);
-    expect(Object.keys(again.body).sort()).toEqual(['error', 'message', 'retryAfterSeconds']);
+    expect(Object.keys(again.body).sort()).toEqual(['error', 'message', 'report_id', 'retryAfterSeconds']);
     expect(again.body.error).toBe('analysis_cooldown');
     expect(again.body.retryAfterSeconds).toBeGreaterThan(0);
     expect(again.body.retryAfterSeconds).toBeLessThanOrEqual(60);
+    expect(again.body.report_id).toBe(created.body.report_id);
   });
 
   it('allows a fresh analysis after the cooldown expires (completed reports do not block forever)', async () => {

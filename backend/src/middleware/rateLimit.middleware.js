@@ -6,6 +6,16 @@ const standard = {
   legacyHeaders: false,
 };
 
+// Keep the JSON body actionable: clients show the wait time instead of reading
+// the Retry-After header themselves.
+function rateLimited(req, res, next, options) {
+  const reset = req.rateLimit?.resetTime;
+  const retryAfterSeconds = reset instanceof Date
+    ? Math.max(1, Math.ceil((reset.getTime() - Date.now()) / 1000))
+    : Math.max(1, Math.ceil((options?.windowMs ?? 60000) / 1000));
+  res.status(options?.statusCode ?? 429).json({ ...(options?.message ?? {}), retryAfterSeconds });
+}
+
 const testLimit = env.NODE_ENV === 'test' ? 100000 : undefined;
 
 export const authLimiter = rateLimit({
@@ -13,6 +23,7 @@ export const authLimiter = rateLimit({
   limit: testLimit ?? 50,
   message: { error: 'rate_limited', message: 'Too many attempts, please try again later.' },
   ...standard,
+  handler: rateLimited,
 });
 
 export const analyzeLimiter = rateLimit({
@@ -21,6 +32,7 @@ export const analyzeLimiter = rateLimit({
   keyGenerator: (req) => req.user.id,
   message: { error: 'rate_limited', message: 'Too many analysis requests, please slow down.' },
   ...standard,
+  handler: rateLimited,
 });
 
 export const assistantLimiter = rateLimit({
@@ -29,6 +41,7 @@ export const assistantLimiter = rateLimit({
   keyGenerator: (req) => req.user.id,
   message: { error: 'rate_limited', message: 'Too many assistant requests, please slow down.' },
   ...standard,
+  handler: rateLimited,
 });
 
 export const profileLimiter = rateLimit({
@@ -37,6 +50,7 @@ export const profileLimiter = rateLimit({
   keyGenerator: (req) => req.user.id,
   message: { error: 'rate_limited', message: 'Too many profile extraction requests, please try again later.' },
   ...standard,
+  handler: rateLimited,
 });
 
 export const apiLimiter = rateLimit({
@@ -44,4 +58,5 @@ export const apiLimiter = rateLimit({
   limit: testLimit ?? 120,
   message: { error: 'rate_limited', message: 'Too many requests, please try again later.' },
   ...standard,
+  handler: rateLimited,
 });

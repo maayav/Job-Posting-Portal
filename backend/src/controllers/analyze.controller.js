@@ -42,6 +42,7 @@ export async function createAnalysis(req, res) {
         error: 'analysis_cooldown',
         message: 'Please wait before re-analyzing this submission.',
         retryAfterSeconds,
+        report_id: mostRecentCompleted._id.toString(),
       });
     }
   }

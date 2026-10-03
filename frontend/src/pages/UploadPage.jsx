@@ -22,6 +22,9 @@ export default function UploadPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState('queued');
+  const [analyzeBusy, setAnalyzeBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+  const [recentReportId, setRecentReportId] = useState(null);
   const pollCancelled = useRef(false);
 
   const poll = useCallback(async (id) => {
@@ -72,6 +75,12 @@ export default function UploadPage() {
   }, [poll]);
 
   useEffect(() => {
+    if (cooldown <= 0) return undefined;
+    const timer = setTimeout(() => setCooldown((seconds) => seconds - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  useEffect(() => {
     if (phase !== 'analyzing' || !submission?.id) return;
     let cancelled = false;
     let timer;
@@ -108,6 +117,8 @@ export default function UploadPage() {
       const profile = await api.get(`/profile/${submissionId}`);
       setSubmission(profile.data);
       setSkills(profile.data.extracted_skills ?? []);
+      setRecentReportId(null);
+      setCooldown(0);
       setPhase('review');
       if (res.data.extraction_status === 'failed') {
         setError('We could not extract skills yet. Retry below using your saved resume.');
@@ -129,15 +140,26 @@ export default function UploadPage() {
   }
 
   async function handleAnalyze() {
+    if (analyzeBusy) return;
     setError('');
+    setRecentReportId(null);
+    setCooldown(0);
     setPhase('analyzing');
     setStage('queued');
+    setAnalyzeBusy(true);
     try {
       const res = await api.post('/analyze', { submission_id: submission.id });
       const id = res.data.report_id;
       localStorage.setItem('analysis_report_id', id);
 
-      if (res.status === 202 && res.data.status === 'completed') {
+      if (res.data.status === 'failed') {
+        localStorage.removeItem('analysis_report_id');
+        setError(`Analysis failed: ${res.data.errorCode ?? 'unknown error'}.`);
+        setPhase('review');
+        return;
+      }
+
+      if (res.data.status === 'completed') {
         localStorage.setItem('report_id', id);
         localStorage.removeItem('analysis_report_id');
         localStorage.removeItem('analysis_submission_id');
@@ -148,12 +170,21 @@ export default function UploadPage() {
       await poll(id);
     } catch (err) {
       if (err.response?.status === 429) {
-        const data = err.response.data;
-        setError(`${data.message} (retry in ${data.retryAfterSeconds}s).`);
+        const data = err.response.data ?? {};
+        const seconds = Number(data.retryAfterSeconds) || Number(err.response.headers?.['retry-after']) || 60;
+        if (data.report_id) {
+          // A previous analysis is already ready; offer it instead of a dead end.
+          setRecentReportId(data.report_id);
+          setCooldown(seconds);
+        } else {
+          setError(`${data.message ?? 'Too many analysis requests.'} (retry in ${seconds}s).`);
+        }
       } else {
         setError(errorMessage(err));
       }
       setPhase('review');
+    } finally {
+      setAnalyzeBusy(false);
     }
   }
 
@@ -195,10 +226,24 @@ export default function UploadPage() {
                 <ExtractedSkillReview skills={skills} extractionError={submission?.extraction_status === 'failed' ? submission?.extraction_error : null} />
                 {['unavailable', 'not_found'].includes(submission?.leetcode_status) && <p className="muted small">The public LeetCode profile could not be retrieved. The analysis uses your other available evidence.</p>}
                 {error && <p className="error card-error">{error}</p>}
+                {recentReportId && (
+                  <div className="actions card student-analysis-actions">
+                    <p className="muted small">A recent analysis for this resume is ready to view.</p>
+                    <button
+                      className="primary"
+                      onClick={() => {
+                        localStorage.setItem('report_id', recentReportId);
+                        navigate('/dashboard');
+                      }}
+                    >
+                      View latest report <Icon name="arrow" size={16} />
+                    </button>
+                  </div>
+                )}
                 <div className="actions card student-analysis-actions">
                   {submission?.extraction_status === 'failed' && <button className="primary" disabled={loading} onClick={retryExtraction}>{loading ? 'Retrying extraction…' : 'Retry skill extraction'}</button>}
-                  <button className="primary" onClick={handleAnalyze} disabled={loading || submission?.extraction_status === 'failed'}>
-                    Analyze &amp; score for {submission?.target_role} <Icon name="arrow" size={16} />
+                  <button className="primary" onClick={handleAnalyze} disabled={loading || analyzeBusy || cooldown > 0 || submission?.extraction_status === 'failed'}>
+                    {cooldown > 0 ? `Analyze again in ${cooldown}s` : <>Analyze &amp; score for {submission?.target_role} <Icon name="arrow" size={16} /></>}
                   </button>
                   <button className="link" onClick={() => setPhase('upload')}>
                     Upload a different resume
