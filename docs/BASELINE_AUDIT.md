@@ -7,7 +7,7 @@ This record separates the inspected local implementation, safe public deployment
 ## Baseline repository state
 
 - Branch: `main`.
-- Starting commit: `9c4b2e0` (`docs: refresh project README and remove development-agent references`).
+- Starting commit: `9c4b2e0` (project README refresh).
 - Starting tracked diff: 42 modified files; no staged changes.
 - Existing untracked work included LinkedIn service/tests, technical documentation, frontend headers, and `.pt1-work`.
 - `.pt1-work` is an unrelated documentation working folder and is excluded from the project release.

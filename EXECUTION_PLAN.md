@@ -20,13 +20,13 @@
 
 ---
 
-## 0. Ground Rules for the Agent
+## 0. Implementation Guidelines
 
 1. **Backend before frontend.** Build and test each endpoint with real requests before wiring it into the UI.
 2. **Env vars for every secret, no exceptions.** `GEMINI_API_KEY` (covers both extraction and the `text-embedding-004` embedding calls, per Section 1), `MONGO_URI`, `JWT_SECRET`, `GITHUB_TOKEN` all go in `.env`, never committed. Provide a `.env.example` with empty values.
 3. **Gemini extracts, it does not score.** The final readiness score must come from a deterministic formula the codebase controls (Section 6), not from anything Gemini returns directly. This is what makes the score reproducible and defensible in a viva/demo.
 4. **Validate everything from a client or an external API** — resume text, GitHub usernames, file uploads, and especially Gemini's JSON output. Never trust an LLM response shape without a schema check.
-5. **Build the MVP in Section 7 first.** Don't let the agent start on deferred features (LeetCode, cohort dashboard, async queues) before the core pipeline in Sections 8's early phases is solid.
+5. **Build the MVP in Section 7 first.** Defer post-MVP features (LeetCode, cohort dashboard, async queues) until the core pipeline in the early phases of Section 12 is solid.
 6. **Commit after every working phase**, not after every file.
 7. **Section 10's security checklist applies throughout, not just at the end.**
 
@@ -217,14 +217,14 @@ Cohort/placement-cell endpoints (`/api/cohort`, `/api/cohort/export`) are **defe
 5. **Merge + deduplicate** skills; a skill appearing in 2+ sources is bumped in confidence.
 6. **Embed each candidate skill and each required ontology skill separately** — do not embed the whole skill list as one vector. **Embedding input for v1 is the bare skill name only** (`skill.name` for candidates, `skill_name` for ontology entries) — no concatenation with evidence text, descriptions, or category labels. **Normalize before embedding**: lowercase and trim whitespace, applied consistently to both candidate and ontology skill names — this avoids "React" vs "react" silently landing as different vectors. This keeps embeddings stable, reproducible, and easy to reason about; richer embedding input (e.g. including evidence context) is a reasonable post-MVP experiment, not a v1 default. Normalize the resulting vectors too, compute per-skill cosine similarity (`m_i` in Section 6), take the best match per required skill.
 7. **Score deterministically** using the formula in Section 6 — this step never calls Gemini.
-8. **Build the study plan** from `ResourceCatalog` entries matching each gap skill. Matching rule for v1: **exact match on `skill_name` only** — no fuzzy or synonym matching yet. If no catalog entry exists for a gap skill, surface it as a gap with no resource yet rather than fabricating one. (A small synonym map — e.g. "Node.js" ↔ "Node" — is a reasonable post-MVP addition once you see which near-misses actually occur in practice; don't have the agent invent fuzzy-matching logic for v1.) **Priority formula:** `priority = w_i × (1 − m_i)` per gap skill, then rescaled to `[0, 1]` by dividing by the max raw priority across that report's gaps — this is what Section 3's `priority: number in [0, 1]` refers to.
+8. **Build the study plan** from `ResourceCatalog` entries matching each gap skill. Matching rule for v1: **exact match on `skill_name` only** — no fuzzy or synonym matching yet. If no catalog entry exists for a gap skill, surface it as a gap with no resource yet rather than fabricating one. (A small synonym map — e.g. "Node.js" ↔ "Node" — is a reasonable post-MVP addition once you see which near-misses actually occur in practice; keep fuzzy matching out of v1.) **Priority formula:** `priority = w_i × (1 − m_i)` per gap skill, then rescaled to `[0, 1]` by dividing by the max raw priority across that report's gaps — this is what Section 3's `priority: number in [0, 1]` refers to.
 9. Update the report to `status: "completed"`, set `completedAt`. On any unrecoverable failure, `status: "failed"` with a specific `errorCode` the frontend can show ("resume unreadable", "GitHub profile not found", "AI service unavailable" etc.), never a raw stack trace.
 
 ---
 
 ## 6. Deterministic Scoring
 
-Define this before writing any scoring code — the agent should implement this exact formula, not approximate it:
+Use this exact formula; do not approximate it:
 
 ```
 score = 100 × ( Σ(w_i × m_i) / Σ(w_i) )
@@ -437,6 +437,6 @@ These apply on top of Section 9's fragility list — concrete handling, not just
 
 ---
 
-## 15. Handoff Prompt (copy-paste to start the agent)
+## 15. Implementation Summary
 
-> Build the AI-Assisted Placement & Skill-Gap Tracker described in this document. Implement the MVP scope in Section 7 first — do not start on anything in the deferred list until Phase 6 is complete and demoed. Work through Section 12's phases in order. Scoring must be deterministic per Section 6's formula — never let Gemini determine the final score. Apply Section 10's security checklist as you go, not as a final pass, especially the file-upload and authorization rules. Use the exact bounds and policies specified throughout (GitHub collection limits, file-size cap, retry/backoff timings, idempotency key) rather than inventing your own defaults. Apply Section 14's mitigations for the remaining known risks as you build the relevant piece, not afterward. Flag anything in Section 9 as soon as you hit it rather than silently working around it. Ask me before making an architectural decision this doc doesn't already specify.
+Build the AI-Assisted Placement & Skill-Gap Tracker described in this document. Complete the MVP scope in Section 7 before starting deferred features, and follow the phases in Section 12. Keep scoring deterministic according to Section 6; Gemini must not determine the final score. Apply the Section 10 security checklist throughout implementation, especially the file-upload and authorization rules. Follow the specified GitHub collection limits, file-size cap, retry/backoff behavior, and idempotency rules. Apply the mitigations in Section 14 and review any architectural decision that is not specified here before proceeding.
